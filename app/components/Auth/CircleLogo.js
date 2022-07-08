@@ -20,7 +20,7 @@ function CircleLogo({ children }) {
           justifyContent: "center",
           alignItems: "center",
           marginBottom: 17,
-          // marginTop: -10,
+          marginTop: 15,
         }}
       >
         {children ? (

@@ -41,35 +41,33 @@ function AccountScreen({ navigation }) {
   const [phone_number, setPhone_Number] = useState("");
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [image, setImage] = useState({
-    url: "",
-    public_id: "",
-  });
+  const user_id = state?.user_id || state?.user?.user_id;
+  const [image, setImage] = useState({});
 
   useEffect(() => {
     if (state.user) {
-      const { full_name, phone_number, user_id } = state.user;
+      const { full_name, phone_number } = state && state.user;
       setFullName(full_name);
       setPhone_Number(phone_number);
-      setUserId(user_id);
+      // setUserId(user_id);
       // setImage(profle_image);
     }
-    if (state.user === null) navigation.navigate("Signin");
-  }, [state]);
+    // if (state.user === null) navigation.navigate("Signin");
+  }, []);
 
   const handleSubmit = async () => {
-    // console.log("UPDATED DATA", userId);
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `https://beta.kpododo.com/api/v1/changeprofile?user_id=${userId}&full_name=${full_name}`
+        `https://beta.kpododo.com/api/v1/changeprofile?user_id=${user_id}&full_name=${full_name}`
       );
 
       const as = JSON.parse(await AsyncStorage.getItem("@auth"));
-      // it has {user:{}, token}
-      as.user = data;
 
-      await AsyncStorage.setItem("@auth", JSON.stringify(data));
+      as.user = data;
+      const prepData = { user: data, status: true };
+      await AsyncStorage.setItem("@auth", JSON.stringify(prepData));
+      setState(prepData);
       // update  constext
       setState({ ...state, user: data });
       if (Platform.OS === "android") {
@@ -190,6 +188,7 @@ function AccountScreen({ navigation }) {
             loading={loading}
           />
         </View>
+        {/* <Text>{JSON.stringify(state, null, 2)}</Text> */}
       </ScrollView>
     </KeyboardAwareScrollView>
   );
@@ -205,7 +204,7 @@ function PasswordScreen() {
 
   useEffect(() => {
     if (state) {
-      const { user_id } = state.user;
+      const { user_id } = state && state.user;
       setUserId(user_id);
     }
   }, [state]);
