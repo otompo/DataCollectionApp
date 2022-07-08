@@ -20,13 +20,12 @@ import moment from "moment";
 
 export const HomeScreen = ({ navigation }) => {
   const [state, setState] = useContext(AuthContext);
-  // const [forms, setForms] = useContext(FormsContext);
+  // const [formsData, setFormsData] = useContext(FormsContext);
   const [networkConnection, setNetworkConnection] = useState("");
   const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  // console.log("state", state);
 
   useEffect(() => {
     if (!state || state.status === false) {
@@ -60,7 +59,7 @@ export const HomeScreen = ({ navigation }) => {
       const { data } = await axios.get(`/forms?userid=${user_id}`);
       // console.log(data);
       setForms(data.formDetail);
-      await AsyncStorage.setItem("formdata", JSON.stringify(data.formDetail));
+      await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
       setLoading(false);
     } catch (err) {
       console.log(err);

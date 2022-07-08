@@ -11,6 +11,7 @@ import colors from "../../config/colors";
 import { AuthContext } from "../../context/authContext";
 import FormDetailsScreen from "../../screens/FormDetailsScreen";
 import ForgotPassword from "../../screens/ForgotPassword";
+import SettingsScreen from "../../screens/SettingsScreen";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -48,6 +49,14 @@ export default function AppNavigator() {
         <Stack.Screen
           name="FormDetailsScreen"
           component={FormDetailsScreen}
+          options={{
+            title: "",
+            // headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SettingsScreen"
+          component={SettingsScreen}
           options={{
             title: "",
             // headerShown: false,

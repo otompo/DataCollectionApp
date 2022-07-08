@@ -5,17 +5,18 @@ const FormDataContext = createContext();
 
 // context provider
 const FormDataProvider = ({ children }) => {
-  const [formsData, setFormsData] = useState([{}, function () {}]);
+  const [formsData, setFormsData] = useState({
+    formdata: "",
+  });
 
   useEffect(() => {
     const loadFromAsyncStorage = async () => {
-      let data = await AsyncStorage.getItem("formdata");
-      const as = JSON.parse(data);
-      console.log(as);
-      // setFormsData({
-      //   ...mills,
-      //   food: as.food,
-      // });
+      let data = await AsyncStorage.getItem("@formdata");
+      if (data !== null) {
+        const as = JSON.parse(data);
+        console.log(as);
+      }
+      setFormsData({ ...formsData });
     };
     loadFromAsyncStorage();
   }, []);
