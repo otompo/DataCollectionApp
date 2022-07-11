@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { AuthContext } from "../context/authContext";
-import { FormsContext } from "../context/formContext";
+import { FormDataContext } from "../context/formContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
@@ -20,7 +20,7 @@ import moment from "moment";
 
 export const HomeScreen = ({ navigation }) => {
   const [state, setState] = useContext(AuthContext);
-  // const [formsData, setFormsData] = useContext(FormsContext);
+  const [formsData, setFormsData] = useContext(FormDataContext);
   const [networkConnection, setNetworkConnection] = useState("");
   const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
@@ -31,11 +31,13 @@ export const HomeScreen = ({ navigation }) => {
     if (!state || state.status === false) {
       navigation.navigate("Signup");
     }
+
+    console.log("FORM3",formsData);
     // if (state.user) {
     //   const { user_id } = state.user;
     //   setUserId(user_id);
     // }
-  }, []);
+  }, [formsData]);
 
   useEffect(() => {
     loadForms();
