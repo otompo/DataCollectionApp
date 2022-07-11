@@ -57,7 +57,7 @@ export const HomeScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const { data } = await axios.get(`/forms?userid=${user_id}`);
-      // console.log(data);
+      //console.log(data);
       setForms(data.formDetail);
       await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
       setLoading(false);

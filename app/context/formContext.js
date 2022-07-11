@@ -15,6 +15,7 @@ const FormDataProvider = ({ children }) => {
       if (data !== null) {
         const as = JSON.parse(data);
         console.log(as);
+        setFormsData({ ...as,...formsData });
       }
       setFormsData({ ...formsData });
     };
