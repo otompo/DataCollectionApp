@@ -118,13 +118,18 @@ function FormDetailsScreen({ route, navigation }) {
 
   const handleSubmit = async (values) => {
     try {
-      const { data } = axios.get(
+
+      var queryString = Object.keys(values).map((key) => {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(values[key])
+      }).join('&');
+      console.log("query",queryString)
+      const { data } = await axios.get(
         `/questionResponse?formId=${
           forms.formId
-        }&auditorId=${userId}&auditorNumber=${phone_number}&values=${`0247895624`}`
+        }&auditorId=${userId}&auditorNumber=${phone_number}&values=${`0247895624`}&${queryString}`
       );
 
-      console.log(values);
+      console.log("VARS",data);
     } catch (err) {
       console.log(err);
     }
