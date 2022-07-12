@@ -7,10 +7,12 @@ import {
   FlatList,
   ActivityIndicator,
   ScrollView,
-  StyleSheet,
+  ToastAndroid,
+  Platform,
+  AlertIOS,
 } from "react-native";
 import { AuthContext } from "../context/authContext";
-import { FormsContext } from "../context/formContext";
+import { FormDataContext } from "../context/formContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
@@ -20,7 +22,7 @@ import moment from "moment";
 
 export const HomeScreen = ({ navigation }) => {
   const [state, setState] = useContext(AuthContext);
-  // const [formsData, setFormsData] = useContext(FormsContext);
+  const [formsData, setFormsData] = useContext(FormDataContext);
   const [networkConnection, setNetworkConnection] = useState("");
   const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
@@ -35,18 +37,40 @@ export const HomeScreen = ({ navigation }) => {
     //   const { user_id } = state.user;
     //   setUserId(user_id);
     // }
-  }, []);
+  }, [formsData]);
 
   useEffect(() => {
     loadForms();
-    // if (!forms.length) {
-    // }
+    if (!networkConnection) {
+      if (Platform.OS === "android") {
+        ToastAndroid.showWithGravityAndOffset(
+          "You are offline ",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+      } else {
+        AlertIOS.alert("You are offline");
+      }
+    } else {
+      if (Platform.OS === "android") {
+        ToastAndroid.showWithGravityAndOffset(
+          "Network Restored",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+      } else {
+        AlertIOS.alert("Network Restored");
+      }
+    }
   }, []);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setNetworkConnection(state.isInternetReachable);
-      // console.log(state.isInternetReachable);
     });
     return () => {
       unsubscribe();
@@ -57,12 +81,12 @@ export const HomeScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const { data } = await axios.get(`/forms?userid=${user_id}`);
-      // console.log(data);
+      //console.log(data);
       setForms(data.formDetail);
       await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
       setLoading(false);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       setLoading(false);
     }
   };
@@ -96,7 +120,22 @@ export const HomeScreen = ({ navigation }) => {
         </View>
       ) : (
         <>
-          {forms && forms.length > 0 ? (
+          {!networkConnection ? (
+            <FlatList
+              data={formsData}
+              keyExtractor={(formsData) => formsData.formId.toString()}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <FormListItem
+                  // image={{ uri: item.image.url }}
+                  title={item.formName}
+                  // subTitle={`GHC ${item.food.price}.00`}
+                  subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                  onPress={() => navigation.navigate("FormDetailsScreen", item)}
+                />
+              )}
+            />
+          ) : (
             <FlatList
               data={forms}
               keyExtractor={(forms) => forms.formId.toString()}
@@ -111,23 +150,6 @@ export const HomeScreen = ({ navigation }) => {
                 />
               )}
             />
-          ) : (
-            <View
-              style={{
-                marginVertical: 30,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: colors.danger,
-                  fontSize: 18,
-                }}
-              >
-                No Forms
-              </Text>
-            </View>
           )}
         </>
       )}
