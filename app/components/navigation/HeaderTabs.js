@@ -19,9 +19,8 @@ function HeaderTabs({ icon, name, onPress }) {
           <Text
             style={{
               color: colors.white,
-              fontWeight: "500",
-              fontSize: 18,
-              marginHorizontal: 5,
+              fontWeight: "bold",
+              fontSize: 18
             }}
           >
             {name}
@@ -42,9 +41,10 @@ const styles = StyleSheet.create({
     left: 20,
   },
   iconContainer: {
-    marginRight: 30,
+    marginLeft: 30,
   },
   nameText: {
     flexDirection: "row",
+    marginLeft: 10
   },
 });

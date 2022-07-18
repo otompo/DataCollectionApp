@@ -8,11 +8,11 @@ import AppTextInput from "../components/Auth/AppTextInput";
 import SubmitButton from "../components/Button/SubmitButton";
 import { nativeApplicationVersion } from "expo-application";
 import axios from "axios";
-import FrontBanner from "../components/Banner/FrontBanner";
 import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 
 export const Signup = ({ navigation }) => {
+  const [server_address, setServer_Address] = useState("beta.kpododo.com");
   const [fullName, setFullName] = useState("");
   const [phone_number, setPhone_Number] = useState("");
   const [password, setPassword] = useState("");
@@ -92,29 +92,35 @@ export const Signup = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
+      <View style={styles.logoContainer}>
         <Image
-          source={require("../assets/logo1.png")}
-          style={{ width: "30%", height: 30 }}
+          source={require("../assets/syncLogo-1.png")}
+          style={{ width: "80%", height: 100 }}
         />
-        <Text style={{ fontSize: 16 }}>v {nativeApplicationVersion}</Text>
-      </View>
-      <View style={{ height: 290 }}>
-        <FrontBanner />
+        <Text
+          center
+          style={{ marginTop: 20, fontWeight: "bold", fontSize: 18 }}
+        >
+          Welcome, Create an Account below
+        </Text>
       </View>
 
-      <View style={styleSheet.MainContainer}>
+      <View style={styles.MainContainer}>
+        <AppTextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          icon="web"
+          placeholder="Server Address"
+          keyboardType="text"
+          value={server_address}
+          setValue={setServer_Address}
+        />
+
         <AppTextInput
           autoCapitalize="words"
           autoCorrect={false}
           icon="account"
-          placeholder="Enter full name"
+          placeholder="Full Name"
           value={fullName}
           setValue={setFullName}
         />
@@ -123,7 +129,7 @@ export const Signup = ({ navigation }) => {
           autoCapitalize="none"
           autoCorrect={false}
           icon="phone"
-          placeholder="Enter phone number"
+          placeholder="Phone Number"
           keyboardType="numeric"
           value={phone_number}
           setValue={setPhone_Number}
@@ -135,29 +141,39 @@ export const Signup = ({ navigation }) => {
           icon="lock"
           value={password}
           setValue={setPassword}
-          placeholder="Password..."
+          placeholder="Set Password"
           secureTextEntry
           textContentType="password"
           autoCompleteType="password"
         />
+        <Text color={colors.medium}>
+          Password should have at least 6 characters.
+        </Text>
+
+        <SubmitButton
+          title="CREATE ACCOUNT"
+          onPress={handleSubmit}
+          loading={loading}
+        />
+
+        <View style={{ marginVertical: 10 }}>
+          <Text center>
+            By creating an account, you have accepted our Terms of Service and
+            Privacy Policy.
+          </Text>
+        </View>
 
         <View>
-          <SubmitButton
-            title="SIGN UP"
-            onPress={handleSubmit}
-            loading={loading}
-            bwidth={330}
-          />
-        </View>
-      </View>
-
-      <View style={{ marginBottom: 15 }}>
-        <Text center>
-          Already Joined?{" "}
-          <Text onPress={() => navigation.navigate("Signin")} color="#ff0000">
-            Sign In
+          <Text center>
+            Already Joined?{" "}
+            <Text
+              onPress={() => navigation.navigate("Signin")}
+              color={colors.primary}
+            >
+              Log In
+            </Text>
           </Text>
-        </Text>
+        </View>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -168,41 +184,16 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.white,
   },
-});
-
-const styleSheet = StyleSheet.create({
   MainContainer: {
     flex: 1,
+    paddingRight: 10,
+    paddingLeft: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
   },
-
-  heading: {
-    fontSize: 24,
-    textAlign: "center",
-    paddingBottom: 20,
-    color: "black",
-  },
-
-  phoneNumberView: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "white",
-  },
-
-  button: {
+  logoContainer: {
+    padding: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 25,
-    width: "80%",
-    padding: 8,
-    backgroundColor: "#00B8D4",
-  },
-
-  buttonText: {
-    fontSize: 20,
-    textAlign: "center",
-    color: "white",
   },
 });

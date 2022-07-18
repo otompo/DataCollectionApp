@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "DataCollectionApp",
+    "name": "Kpododo Sync",
     "slug": "datacollectionapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/kpododoSync-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashLoading.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -24,7 +24,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/kpododoSync-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.dataCollectionapp.dataCollectionapp",

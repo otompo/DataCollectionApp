@@ -26,10 +26,10 @@ export const HomeDrawerNavigator = () => (
         backgroundColor: colors.primary,
       },
       headerTitleStyle: {
-        fontWeight: "500",
+        fontWeight: "bold",
       },
       headerShown: false,
-      drawerActiveBackgroundColor: colors.green,
+      drawerActiveBackgroundColor: colors.secondary,
       drawerActiveTintColor: colors.white,
       drawerLabelStyle: { marginLeft: 10 },
     }}

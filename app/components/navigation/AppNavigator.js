@@ -33,17 +33,20 @@ export default function AppNavigator() {
           name={"Drawer"}
           component={HomeDrawerNavigator}
           options={({ navigation }) => ({
-            title: "",
+            title: "Home",
+            headerLeft: () => (
+              <HeaderTabs
+              icon="bars"
+              onPress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+            />
+            ),
             headerRight: () => (
               <HeaderTabs
-                icon="gear"
-                name="Settings"
-                onPress={() =>
-                  navigation.dispatch(DrawerActions.toggleDrawer())
-                }
-              />
-            ),
-            headerLeft: () => <HeaderTopLeft />,
+              icon="refresh"
+            />
+            )
           })}
         />
         <Stack.Screen
@@ -51,7 +54,6 @@ export default function AppNavigator() {
           component={FormDetailsScreen}
           options={{
             title: "",
-            // headerShown: false,
           }}
         />
         <Stack.Screen

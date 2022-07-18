@@ -110,6 +110,9 @@ export const HomeScreen = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
+      <View style={{ padding: 5 }}>
+        <Text>Showing 3 Forms</Text>
+      </View>
       {loading ? (
         <View
           style={{
@@ -127,9 +130,7 @@ export const HomeScreen = ({ navigation }) => {
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
                 <FormListItem
-                  // image={{ uri: item.image.url }}
                   title={item.formName}
-                  // subTitle={`GHC ${item.food.price}.00`}
                   subSubTitle={`${moment(item.createdDate).fromNow()} `}
                   onPress={() => navigation.navigate("FormDetailsScreen", item)}
                 />

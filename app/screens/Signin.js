@@ -10,6 +10,7 @@ import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 
 export const Signin = ({ navigation }) => {
+  const [server_address, setServer_Address] = useState("beta.kpododo.com");
   const [phone_number, setPhone_Number] = useState("5055856458");
   const [password, setPassword] = useState("otompo123@");
   const [loading, setLoading] = useState(false);
@@ -70,26 +71,33 @@ export const Signin = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
+
+      <View style={styles.logoContainer}>
         <Image
-          source={require("../assets/logo1.png")}
-          style={{ width: "50%", height: 50 }}
-        />
-        <Text style={{ fontSize: 20 }}> Welcome</Text>
+            source={require("../assets/syncLogo-1.png")}
+            style={{ width: "80%", height: 100 }}
+          />
+          <Text center style={{marginTop: 20, fontWeight: "bold", fontSize: 18}}>
+            Welcome Back, Login below
+          </Text>
       </View>
 
-      <View style={{ marginVertical: 80 }}>
+      <View style={styles.MainContainer}>
+
+        <AppTextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          icon="web"
+          placeholder="Server Address"
+          keyboardType="text"
+          value={server_address}
+          setValue={setServer_Address}
+        />
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
           icon="phone"
-          placeholder="Enter phone number"
+          placeholder="Phone Number"
           keyboardType="numeric"
           value={phone_number}
           setValue={setPhone_Number}
@@ -100,34 +108,28 @@ export const Signin = ({ navigation }) => {
           icon="lock"
           value={password}
           setValue={setPassword}
-          placeholder="Set a password"
+          placeholder="Password"
           secureTextEntry
           textContentType="password"
           autoCompleteType="password"
         />
 
-        <SubmitButton title="Signin" onPress={handleSubmit} loading={loading} />
+        <SubmitButton 
+        title="Log In" 
+        onPress={handleSubmit} 
+        loading={loading} />
 
-        <Text center medium color={colors.medium}>
-          *Password should have at least 6 characters.
-        </Text>
-        <View style={{ padding: 15 }}>
-          <Text center medium color={colors.medium}>
-            By creating an account, you have accepted our Terms of Service and
-            Privacy Policy.
-          </Text>
-        </View>
-        <Text center>
-          Not yet registered?{" "}
-          <Text onPress={() => navigation.navigate("Signup")} color="#ff0000">
-            Sign Up
+        <Text center style={{marginTop: 10}}>
+          Don't have an account?{" "}
+          <Text onPress={() => navigation.navigate("Signup")} color={colors.primary}>
+            Create Account
           </Text>
         </Text>
+
         <Text
           onPress={() => navigation.navigate("ForgotPassword")}
-          small
           center
-          color="orange"
+          color={colors.primary}
           style={{ marginTop: 15 }}
         >
           Forgot Password?
@@ -140,12 +142,18 @@ export const Signin = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    backgroundColor: colors.white
   },
-  logo: {
-    // width: 80,
-    // height: 80,
-    alignSelf: "center",
-    marginTop: 10,
-    marginBottom: 20,
+  MainContainer: {
+    flex: 1,
+    paddingRight: 10,
+    paddingLeft: 10,
+    justifyContent: "center",
+    alignItems: "center"
   },
+  logoContainer: {
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });

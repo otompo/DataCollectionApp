@@ -38,28 +38,24 @@ function ListItem({
 
         <View style={styles.detailsContainer}>
           <AppText style={styles.title} numberOfLines={1}>
-            <FontAwesome name={icons} size={20} color={colors.white} /> {title}
+            {title}
           </AppText>
           {subTitle && (
-            <>
-              <AppText style={styles.subTitle} numberOfLines={2}>
-                <FontAwesome name={iconc} size={20} color={colors.white} />{" "}
-                {subTitle}
-              </AppText>
-            </>
+            <AppText style={styles.subTitle} numberOfLines={2}>
+              {subTitle}
+            </AppText>
           )}
           {subSubTitle && (
             <AppText style={styles.subSubTitle} numberOfLines={2}>
               {networkConnection ? (
-                <FontAwesome name={oncono} size={20} color={colors.green} />
+                <FontAwesome name={oncono} size={12} color={colors.green} />
               ) : (
-                <FontAwesome name={offcono} size={20} color={colors.light} />
+                <FontAwesome name={offcono} size={12} color={colors.light} />
               )}
               {subSubTitle}
             </AppText>
           )}
         </View>
-        {/* <FontAwesome name={icon} size={size} color={colors.medium} /> */}
       </View>
     </TouchableHighlight>
   );
@@ -93,12 +89,16 @@ const styles = StyleSheet.create({
   title: {
     color: colors.white,
     marginVertical: 5,
+    fontSize: 18,
+    fontWeight: "bold"
   },
   subTitle: {
     color: colors.white,
+    fontSize: 16
   },
   subSubTitle: {
     color: colors.white,
+    fontSize: 12
   },
   detailsContainer: {
     marginLeft: 10,

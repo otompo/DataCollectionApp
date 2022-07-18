@@ -2,13 +2,13 @@ import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../../config/colors";
 
-function SubmitButton({
+function SaveButton({
   title,
   loading,
   onPress,
   disabled,
   bwidth = "100%",
-  bcolor = "primary",
+  bcolor = "secondary",
 }) {
   return (
     <TouchableOpacity
@@ -25,11 +25,11 @@ function SubmitButton({
   );
 }
 
-export default SubmitButton;
+export default SaveButton;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

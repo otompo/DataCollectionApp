@@ -263,8 +263,7 @@ function PasswordScreen() {
             center
             bold
             style={{
-              textTransform: "uppercase",
-              textDecorationLine: "underline",
+              textTransform: "uppercase"
             }}
           >
             Update Password
@@ -276,7 +275,7 @@ function PasswordScreen() {
           icon="lock"
           value={oldpassword.toString()}
           setValue={setOldPassword}
-          placeholder="Previous Password..."
+          placeholder="Current Password"
           secureTextEntry
           textContentType="password"
           autoCompleteType="password"
@@ -287,7 +286,7 @@ function PasswordScreen() {
           icon="lock"
           value={newpassword.toString()}
           setValue={setNewPassword}
-          placeholder="New Password..."
+          placeholder="New Password"
           secureTextEntry
           textContentType="password"
           autoCompleteType="password"
@@ -298,7 +297,7 @@ function PasswordScreen() {
           icon="lock"
           value={c_password.toString()}
           setValue={setC_Password}
-          placeholder="Confirm Password..."
+          placeholder="Confirm Password"
           secureTextEntry
           textContentType="password"
           autoCompleteType="password"
@@ -320,12 +319,13 @@ function TopTabs() {
     <TopTabNavigator.Navigator
       initialRouteName="History"
       screenOptions={{
-        tabBarActiveTintColor: "#e91e63",
+        tabBarActiveTintColor: colors.dark,
         tabBarLabelStyle: {
           fontSize: 12,
+          fontWeight: "bold",
           color: colors.white,
         },
-        tabBarStyle: { backgroundColor: colors.secoundary },
+        tabBarStyle: { backgroundColor: colors.primary },
       }}
     >
       <TopTabNavigator.Screen
@@ -385,10 +385,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     marginHorizontal: 5,
+    backgroundColor: colors.white
   },
   container: {
     marginTop: 15,
     alignItems: "center",
+    padding: 10
   },
   icon: {
     position: "absolute",

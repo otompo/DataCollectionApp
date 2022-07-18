@@ -50,7 +50,7 @@ export function DrawerContent(props) {
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
             <ListItem
-              icons="edit"
+              icons="user"
               title={state && state.user && state.user.full_name}
               iconc="phone"
               subTitle={state && state.user && state.user.phone_number}
@@ -60,11 +60,11 @@ export function DrawerContent(props) {
               onPress={() => navigation.navigate("Profile")}
             />
           </View>
-          <Divider />
+          {/* <Divider /> */}
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="form-select" color={color} size={size} />
+                <Icon name="form-select" color={colors.primary} size={size} />
               )}
               label="Forms"
               onPress={() => {
@@ -72,7 +72,7 @@ export function DrawerContent(props) {
               }}
             />
 
-            <DrawerItem
+            {/* <DrawerItem
               icon={({ color, size }) => (
                 <Icon name="qrcode" color={color} size={size} />
               )}
@@ -80,13 +80,22 @@ export function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate("QRCodeScanner");
               }}
-            />
+            /> */}
           </Drawer.Section>
         </View>
         <Drawer.Section>
+        <DrawerItem
+            icon={({ color, size }) => (
+              <Icon name="account-outline" color={colors.primary} size={size} />
+            )}
+            label="Profile"
+            onPress={() => {
+              props.navigation.navigate("Profile");
+            }}
+          />
           <DrawerItem
             icon={({ color, size }) => (
-              <Icon name="help" color={color} size={size} />
+              <Icon name="headset" color={colors.primary} size={size} />
             )}
             label="Help"
             onPress={() => {
@@ -95,29 +104,11 @@ export function DrawerContent(props) {
           />
           <DrawerItem
             icon={({ color, size }) => (
-              <Icon name="cog" color={color} size={size} />
+              <Icon name="cog" color={colors.primary} size={size} />
             )}
             label="Application Settings"
             onPress={() => {
               props.navigation.navigate("SettingsScreen");
-            }}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <Icon name="server" color={color} size={size} />
-            )}
-            label="Server Configration"
-            onPress={() => {
-              props.navigation.navigate("Configration");
-            }}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <Icon name="account-outline" color={color} size={size} />
-            )}
-            label="Profile"
-            onPress={() => {
-              props.navigation.navigate("Profile");
             }}
           />
         </Drawer.Section>
@@ -130,7 +121,7 @@ export function DrawerContent(props) {
           icon={({ color, size }) => (
             <Icon name="exit-to-app" color={colors.danger} size={size} />
           )}
-          label="Sign Out"
+          label="Logout"
           onPress={handleLogoutSubmit}
         />
       </Drawer.Section>
@@ -144,7 +135,7 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     // paddingLeft: 20,
-    backgroundColor: colors.medium,
+    backgroundColor: colors.primary,
     marginVertical: -10,
   },
   title: {

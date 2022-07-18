@@ -25,9 +25,13 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Rating } from "react-native-ratings";
 import { Divider } from "@ui-kitten/components";
 import { Checkbox, RadioButton } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export const UserTextInput = ({
   name,
+  pos,
+  desc,
+  type,
   value,
   onChange,
   setValue,
@@ -39,8 +43,26 @@ export const UserTextInput = ({
 }) => {
   return (
     <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -57,26 +79,31 @@ export const UserTextInput = ({
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
+        placeholderTextColor={colors.light}
         style={{
           borderBottomWidth: 0.5,
-          height: 28,
-          borderBottomColor: "#8e993a",
+          fontSize: 18,
+          height: 40,
+          borderBottomColor: colors.dark,
           borderRadius: 2,
+          fontFamily: "Roboto",
         }}
         value={value}
         onChangeText={onChange}
       />
-
-      {errors && (
-        <Text style={{ fontSize: 10, marginBottom: 30, color: "red" }}>
-          {errors}
+      <View>
+        <Text semi size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
-      )}
+      </View>
     </View>
   );
 };
 export const UserNoteInput = ({
   name,
+  pos,
+  desc,
+  type,
   value,
   onChange,
   questionMandatoryOption,
@@ -84,8 +111,26 @@ export const UserNoteInput = ({
 }) => {
   return (
     <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "2" ? (
           <Text
@@ -100,26 +145,31 @@ export const UserNoteInput = ({
       <AutoGrowingTextInput
         style={{
           borderBottomWidth: 0.5,
-          height: 28,
-          borderBottomColor: "#8e993a",
+          fontSize: 18,
+          height: 40,
+          borderBottomColor: colors.dark,
           borderRadius: 2,
+          fontFamily: "Roboto",
           padding: 10,
         }}
         value={value}
         onChangeText={onChange}
         // placeholder={"Your Message"}
       />
-      {errors && (
-        <Text style={{ fontSize: 10, marginBottom: 30, color: "red" }}>
-          {errors}
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
-      )}
+      </View>
     </View>
   );
 };
 
 export const UserPhoneInput = ({
   name,
+  pos,
+  desc,
+  type,
   value,
   onChange,
   autoCapitalize = "none",
@@ -130,8 +180,26 @@ export const UserPhoneInput = ({
 }) => {
   return (
     <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -149,21 +217,22 @@ export const UserPhoneInput = ({
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
+        placeholderTextColor={colors.light}
         style={{
           borderBottomWidth: 0.5,
-          height: 28,
-          borderBottomColor: "#8e993a",
+          fontSize: 18,
+          height: 40,
+          borderBottomColor: colors.dark,
           borderRadius: 2,
+          fontFamily: "Roboto",
         }}
         value={value}
         onChangeText={onChange}
       />
-      <View
-        style={{
-          marginBottom: 30,
-        }}
-      >
-        {errors && <Text style={{ fontSize: 10, color: "red" }}>{errors}</Text>}
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
       </View>
     </View>
   );
@@ -171,6 +240,9 @@ export const UserPhoneInput = ({
 
 export const UserDateInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   onChange,
@@ -211,8 +283,26 @@ export const UserDateInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -230,12 +320,16 @@ export const UserDateInput = ({
           autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
+          placeholderTextColor={colors.light}
           style={{
             borderBottomWidth: 0.5,
             height: 50,
             width: "80%",
-            borderBottomColor: "#8e993a",
             borderRadius: 2,
+            fontSize: 18,
+            borderBottomColor: colors.dark,
+            borderRadius: 2,
+            fontFamily: "Roboto",
           }}
           value={getDate()}
           onChangeText={onChange}
@@ -244,18 +338,12 @@ export const UserDateInput = ({
           <Text style={styles.text}>Date</Text>
         </TouchableOpacity>
       </View>
-      {errors && (
-        <Text
-          style={{
-            fontSize: 10,
-            marginBottom: 30,
-            marginTop: -15,
-            color: "red",
-          }}
-        >
-          {errors}
+      <View>
+        <Text size={12} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
-      )}
+      </View>
+
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
@@ -268,6 +356,9 @@ export const UserDateInput = ({
 
 export const UserTimeInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   onChange,
@@ -321,8 +412,26 @@ export const UserTimeInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -340,12 +449,16 @@ export const UserTimeInput = ({
           autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
+          placeholderTextColor={colors.light}
           style={{
             borderBottomWidth: 0.5,
             height: 50,
             width: "80%",
-            borderBottomColor: "#8e993a",
             borderRadius: 2,
+            fontSize: 18,
+            borderBottomColor: colors.dark,
+            borderRadius: 2,
+            fontFamily: "Roboto",
           }}
           value={getTime()}
           onChangeText={onChange}
@@ -354,18 +467,11 @@ export const UserTimeInput = ({
           <Text style={styles.text}>Time</Text>
         </TouchableOpacity>
       </View>
-      {errors && (
-        <Text
-          style={{
-            fontSize: 10,
-            marginBottom: 30,
-            marginTop: -15,
-            color: "red",
-          }}
-        >
-          {errors}
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
-      )}
+      </View>
       <DateTimePickerModal
         isVisible={isTimePickerVisible}
         mode="time"
@@ -380,6 +486,9 @@ export const UserTimeInput = ({
 
 export const UserImageInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   onChange,
@@ -428,9 +537,28 @@ export const UserImageInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={styles.imageContainer}>
         <View style={{ flexDirection: "row" }}>
-          <Text semi>{name}</Text>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -472,24 +600,20 @@ export const UserImageInput = ({
           </TouchableWithoutFeedback>
         )}
       </View>
-      {errors && (
-        <Text
-          style={{
-            fontSize: 10,
-            marginBottom: 20,
-            marginTop: -15,
-            color: "red",
-          }}
-        >
-          {errors}
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
-      )}
+      </View>
     </View>
   );
 };
 
 export const UserImageGeoTagInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   onChange,
@@ -549,9 +673,28 @@ export const UserImageGeoTagInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={styles.imageContainer}>
         <View style={{ flexDirection: "row" }}>
-          <Text semi>{name}</Text>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -593,12 +736,20 @@ export const UserImageGeoTagInput = ({
           </TouchableWithoutFeedback>
         )}
       </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
     </View>
   );
 };
 
 export const UserVideoInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   questionMandatoryOption,
@@ -645,9 +796,28 @@ export const UserVideoInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={styles.imageContainer}>
         <View style={{ flexDirection: "row" }}>
-          <Text semi>{name}</Text>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -690,13 +860,6 @@ export const UserVideoInput = ({
                 }
               />
             </View>
-
-            {/* <Image
-              source={{ uri: video }}
-              value={video}
-              onChange={onChange}
-              style={styles.video}
-            /> */}
           </>
         ) : (
           <TouchableWithoutFeedback onPress={openCamera}>
@@ -710,12 +873,20 @@ export const UserVideoInput = ({
           </TouchableWithoutFeedback>
         )}
       </View>
+      <View>
+        <Text size={12} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
     </View>
   );
 };
 
 export const UserAudioInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   questionMandatoryOption,
@@ -746,9 +917,28 @@ export const UserAudioInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={styles.imageContainer}>
         <View style={{ flexDirection: "row" }}>
-          <Text semi>{name}</Text>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -804,12 +994,20 @@ export const UserAudioInput = ({
           </TouchableWithoutFeedback>
         )}
       </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
     </View>
   );
 };
 
 export const UserSingleSelectInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   questionsDetail,
   questionMandatoryOption,
@@ -824,9 +1022,28 @@ export const UserSingleSelectInput = ({
   }, [id, checked]);
 
   return (
-    <View style={{ marginHorizontal: 24, marginBottom: 20 }}>
+    <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -841,25 +1058,21 @@ export const UserSingleSelectInput = ({
       <View>
         {questionsDetail.options.map((item) => (
           <>
-            <View style={{ marginVertical: 5, flexDirection: "row" }}>
+            <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
               <RadioButton
                 value={item}
                 status={checked === item ? "checked" : "unchecked"}
                 onPress={() => setChecked(item)}
               />
-              <Text style={{ marginTop: 10 }}>{item}</Text>
+              <Text style={{ marginTop: 8 }}>{item}</Text>
             </View>
           </>
         ))}
-        <View
-          style={{
-            marginBottom: 30,
-          }}
-        >
-          {errors && (
-            <Text style={{ fontSize: 10, color: "red" }}>{errors}</Text>
-          )}
-        </View>
+      </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
       </View>
     </View>
   );
@@ -867,6 +1080,9 @@ export const UserSingleSelectInput = ({
 
 export const UserMultySelectInput = ({
   name,
+  pos,
+  desc,
+  type,
   setFieldValue,
   questionMandatoryOption,
   questionsDetail,
@@ -887,9 +1103,28 @@ export const UserMultySelectInput = ({
   };
 
   return (
-    <View style={{ marginHorizontal: 24, marginBottom: 20 }}>
+    <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
         {questionMandatoryOption === "1" ? (
           <Text
             semi
@@ -904,7 +1139,7 @@ export const UserMultySelectInput = ({
         {questionsDetail.options.map((item) => (
           <View
             style={{
-              marginVertical: 2,
+              marginVertical: 1,
               flexDirection: "row",
               alignItems: "center",
             }}
@@ -919,7 +1154,11 @@ export const UserMultySelectInput = ({
             <Text>{item}</Text>
           </View>
         ))}
-        {errors && <Text style={{ fontSize: 10, color: "red" }}>{errors}</Text>}
+      </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 2 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
       </View>
     </View>
   );
@@ -927,6 +1166,9 @@ export const UserMultySelectInput = ({
 
 export const UserSliderScaletInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   questionMandatoryOption,
   setFieldValue,
@@ -942,38 +1184,62 @@ export const UserSliderScaletInput = ({
 
   return (
     <View style={{ marginHorizontal: 24 }}>
-      <>
-        <View style={{ flexDirection: "row" }}>
-          <Text semi>{name}</Text>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
 
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
-        </View>
-        <Slider
-          min={minimum}
-          max={maximum}
-          step={1}
-          valueOnChange={(value) => setValue(value)}
-          initialValue={minimum}
-          knobColor={colors.secoundary}
-          valueLabelsBackgroundColor="black"
-          inRangeBarColor={colors.close}
-          outOfRangeBarColor={colors.secoundary}
-        />
-      </>
+      <View style={{ flexDirection: "row" }}>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
+
+        {questionMandatoryOption === "1" ? (
+          <Text
+            semi
+            color={colors.danger}
+            style={{ marginLeft: 3, fontSize: 16 }}
+          >
+            *
+          </Text>
+        ) : null}
+      </View>
+      <Slider
+        min={minimum}
+        max={maximum}
+        step={1}
+        valueOnChange={(value) => setValue(value)}
+        initialValue={minimum}
+        knobColor={colors.primary}
+        valueLabelsBackgroundColor={colors.primary}
+        outOfRangeBarColor={colors.primary}
+      />
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
     </View>
   );
 };
 
 export const UserLikertScaletInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   questionMandatoryOption,
   setFieldValue,
@@ -989,8 +1255,27 @@ export const UserLikertScaletInput = ({
 
   return (
     <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={{ flexDirection: "row" }}>
-        <Text semi>{name}</Text>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+        >
+          {name}
+        </Text>
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -1020,12 +1305,10 @@ export const UserLikertScaletInput = ({
           </>
         ))}
       </ScrollView>
-      <View
-        style={{
-          marginBottom: 30,
-        }}
-      >
-        {errors && <Text style={{ fontSize: 10, color: "red" }}>{errors}</Text>}
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
       </View>
     </View>
   );
@@ -1033,6 +1316,9 @@ export const UserLikertScaletInput = ({
 
 export const UserBarQRCodeInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   questionMandatoryOption,
   setFieldValue,
@@ -1089,13 +1375,27 @@ export const UserBarQRCodeInput = ({
 
   return (
     <View style={{ marginHorizontal: 24 }}>
-      <View
-        style={{
-          padding: 10,
-        }}
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text semi>{name}</Text>
+        {type}
+      </Text>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row"}}>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -1107,22 +1407,16 @@ export const UserBarQRCodeInput = ({
             </Text>
           ) : null}
 
-          <Pressable style={styles.sbutton} onPress={askPermissions}>
+        </View>
+        
+        <Pressable style={styles.sbutton} onPress={askPermissions}>
             <Text style={styles.text}>Scan</Text>
           </Pressable>
-        </View>
-        {errors && (
-          <Text
-            style={{
-              fontSize: 10,
-              marginBottom: 20,
-              marginTop: -15,
-              color: "red",
-            }}
-          >
-            {errors}
-          </Text>
-        )}
+      </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
       </View>
     </View>
   );
@@ -1130,6 +1424,9 @@ export const UserBarQRCodeInput = ({
 
 export const UserRatingInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   questionMandatoryOption,
   setFieldValue,
@@ -1146,13 +1443,28 @@ export const UserRatingInput = ({
 
   return (
     <View style={{ marginHorizontal: 24 }}>
-      <View
-        style={{
-          padding: 10,
-        }}
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text semi>{name}</Text>
+        {type}
+      </Text>
+
+      <View>
+        <View style={{ flexDirection: "row"}}>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -1171,52 +1483,58 @@ export const UserRatingInput = ({
           style={{ paddingVertical: 10 }}
         />
       </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
     </View>
   );
 };
 
-export const UserSectionBreakInput = ({
-  name,
-  id,
-  questionMandatoryOption,
-  questionBreakTitle,
-}) => {
-  // console.log(rating);
-  // useEffect(() => {
-  //   setFieldValue(id, rating);
-  // }, [id, rating]);
-
+export const UserSectionBreakInput = ({ name }) => {
   return (
-    <View style={{ marginHorizontal: 24 }}>
-      <View
+    <View style={{ marginHorizontal: 24, paddingVertical: 1 }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Text
+          center
+          medium
+          color={colors.dark}
+          style={{ fontWeight: "bold", fontFamily: "Roboto" }}
+        >
+          {name}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+export const UserIntroductoryInput = ({ name, desc }) => {
+  return (
+    <View style={{ marginHorizontal: 24, paddingVertical: 1 }}>
+      <Text
+        color={colors.dark}
         style={{
-          padding: 10,
+          marginBottom: 10,
+          fontSize: 20,
+          fontWeight: "bold",
+          fontFamily: "Roboto",
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text semi>{name}</Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
-        </View>
-        <View style={{ marginVertical: 10 }}>
-          <Text>{questionBreakTitle}</Text>
-          <Divider />
-        </View>
-      </View>
+        {name}
+      </Text>
+      <Text color={colors.medium} style={{ fontFamily: "Roboto" }}>
+        {desc}
+      </Text>
     </View>
   );
 };
 
 export const UserSignatureCaptureInput = ({
   name,
+  pos,
+  desc,
+  type,
   id,
   setFieldValue,
   onChange,
@@ -1264,9 +1582,28 @@ export const UserSignatureCaptureInput = ({
 
   return (
     <View style={{ marginLeft: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
       <View style={styles.imageContainer}>
         <View style={{ flexDirection: "row" }}>
-          <Text semi>{name}</Text>
+          <TouchableOpacity style={styles.idButton}>
+            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+              {pos}
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            medium
+            color={colors.medium}
+            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+          >
+            {name}
+          </Text>
 
           {questionMandatoryOption === "1" ? (
             <Text
@@ -1308,19 +1645,11 @@ export const UserSignatureCaptureInput = ({
           </TouchableWithoutFeedback>
         )}
       </View>
-
-      {errors && (
-        <Text
-          style={{
-            fontSize: 10,
-            marginBottom: 20,
-            marginTop: -15,
-            color: "red",
-          }}
-        >
-          {errors}
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
-      )}
+      </View>
     </View>
   );
 };
@@ -1335,6 +1664,16 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
     marginVertical: 10,
+  },
+  idButton: {
+    color: colors.light,
+    backgroundColor: colors.primary,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 1,
+    width: 25,
+    height: 25,
   },
   text: {
     color: colors.white,
@@ -1390,7 +1729,9 @@ const styles = StyleSheet.create({
     color: colors.medium,
   },
   selected: {
-    color: colors.secoundary,
+    color: colors.primary,
+    fontWeight: "bold",
+    fontSize: 18,
     marginHorizontal: 10,
   },
   scaleText: {

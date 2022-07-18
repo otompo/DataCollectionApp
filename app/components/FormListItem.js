@@ -30,7 +30,7 @@ function FormListItem({
 
             <View style={styles.detailsContainer}>
               <AppText style={styles.title} numberOfLines={1}>
-                {title}
+              {title}
               </AppText>
               {subTitle && (
                 <AppText style={styles.subTitle} numberOfLines={2}>
@@ -82,13 +82,17 @@ const styles = StyleSheet.create({
     // marginRight: 10,
   },
   title: {
-    fontWeight: "500",
+    fontWeight: "bold",
+    fontSize: 20,
+    color: colors.medium
   },
   subTitle: {
     color: colors.medium,
+    fontSize: 12
   },
   subSubTitle: {
     color: colors.primary,
+    fontSize: 12
   },
   detailsContainer: {
     marginLeft: 10,

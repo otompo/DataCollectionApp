@@ -16,6 +16,7 @@ import { AuthContext } from "../context/authContext";
 import axios from "axios";
 
 function ForgotPassword({ navigation }) {
+  const [server_address, setServer_Address] = useState("beta.kpododo.com");
   const [phone_number, setPhone_Number] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ function ForgotPassword({ navigation }) {
   const handleSubmit = async () => {
     setLoading(true);
     if (!phone_number) {
-      alert("field is requied");
+      alert("Phone Number field is requied");
       setLoading(false);
       return;
     }
@@ -70,32 +71,32 @@ function ForgotPassword({ navigation }) {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
+      <View style={styles.logoContainer}>
         <Image
-          source={require("../assets/logo1.png")}
-          style={{ width: "50%", height: 50 }}
-        />
+            source={require("../assets/syncLogo-1.png")}
+            style={{ width: "80%", height: 100 }}
+          />
+          <Text center style={{marginTop: 20, fontWeight: "bold", fontSize: 18}}>
+            Reset your Password below
+          </Text>
       </View>
 
-      <View
-        style={{
-          marginVertical: 90,
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <View  style={styles.MainContainer}>
+        <AppTextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          icon="web"
+          placeholder="Server Address"
+          keyboardType="text"
+          value={server_address}
+          setValue={setServer_Address}
+        />
+
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
           icon="phone"
-          placeholder="Enter phone number"
+          placeholder="Phone Number"
           keyboardType="numeric"
           value={phone_number}
           setValue={setPhone_Number}
@@ -106,14 +107,14 @@ function ForgotPassword({ navigation }) {
           icon="lock"
           value={password}
           setValue={setPassword}
-          placeholder="Enter new password"
+          placeholder="New Password"
           secureTextEntry
           textContentType="password"
           autoCompleteType="password"
         />
 
         <SubmitButton
-          title="Forget Password"
+          title="Submit Password"
           onPress={handleSubmit}
           loading={loading}
         />
@@ -127,5 +128,18 @@ export default ForgotPassword;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    backgroundColor: colors.white
   },
+  MainContainer: {
+    flex: 1,
+    paddingRight: 10,
+    paddingLeft: 10,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  logoContainer: {
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });
