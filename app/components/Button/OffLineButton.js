@@ -2,10 +2,10 @@ import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../../config/colors";
 
-function SaveButton({
+function OffLineButton({
   title,
   loading,
-  onPress,
+  handlePress,
   disabled,
   bwidth = "100%",
   bcolor = "secondary",
@@ -18,14 +18,14 @@ function SaveButton({
         styles.button,
         { backgroundColor: colors[bcolor], width: bwidth },
       ]}
-      onPress={onPress}
+      onPress={handlePress}
     >
       <Text style={styles.text}>{loading ? "Please wait..." : title}</Text>
     </TouchableOpacity>
   );
 }
 
-export default SaveButton;
+export default OffLineButton;
 
 const styles = StyleSheet.create({
   button: {
@@ -40,6 +40,6 @@ const styles = StyleSheet.create({
   text: {
     color: colors.white,
     textTransform: "uppercase",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
 });

@@ -1,13 +1,13 @@
 {
   "expo": {
     "name": "Kpododo Sync",
-    "slug": "datacollectionapp",
+    "slug": "Kpododosync",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/kpododoSync-icon.png",
+    "icon": "./app/assets/kpododoSync-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splashLoading.png",
+      "image": "./app/assets/splashLoading.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,21 +19,21 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dataCollectionapp.dataCollectionapp",
+      "bundleIdentifier": "com.Kpododosync.Kpododosync",
       "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/kpododoSync-icon.png",
+        "foregroundImage": "./app/assets/kpododoSync-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.dataCollectionapp.dataCollectionapp",
+      "package": "com.Kpododosync.Kpododosync",
       "softwareKeyboardLayoutMode": "pan",
       "versionCode": 1,
       "permissions" : []
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./app/assets/favicon.png"
     }
   }
 }

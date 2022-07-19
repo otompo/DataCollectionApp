@@ -71,19 +71,20 @@ export const Signin = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-
       <View style={styles.logoContainer}>
         <Image
-            source={require("../assets/syncLogo-1.png")}
-            style={{ width: "80%", height: 100 }}
-          />
-          <Text center style={{marginTop: 20, fontWeight: "bold", fontSize: 18}}>
-            Welcome Back, Login below
-          </Text>
+          source={require("../assets/syncLogo-1.png")}
+          style={{ width: "83%", height: 100 }}
+        />
+        <Text
+          center
+          style={{ marginTop: 20, fontWeight: "bold", fontSize: 18 }}
+        >
+          Welcome Back, Login below
+        </Text>
       </View>
 
       <View style={styles.MainContainer}>
-
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -114,14 +115,14 @@ export const Signin = ({ navigation }) => {
           autoCompleteType="password"
         />
 
-        <SubmitButton 
-        title="Log In" 
-        onPress={handleSubmit} 
-        loading={loading} />
+        <SubmitButton title="Log In" onPress={handleSubmit} loading={loading} />
 
-        <Text center style={{marginTop: 10}}>
+        <Text center style={{ marginTop: 10 }}>
           Don't have an account?{" "}
-          <Text onPress={() => navigation.navigate("Signup")} color={colors.primary}>
+          <Text
+            onPress={() => navigation.navigate("Signup")}
+            color={colors.primary}
+          >
             Create Account
           </Text>
         </Text>
@@ -142,18 +143,19 @@ export const Signin = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   MainContainer: {
     flex: 1,
     paddingRight: 10,
     paddingLeft: 10,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   logoContainer: {
     padding: 10,
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+    paddingHorizontal: -15,
+  },
 });

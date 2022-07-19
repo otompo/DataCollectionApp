@@ -10,6 +10,7 @@ import {
   Button,
   Pressable,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import Text from "@kaloraat/react-native-text";
 import colors from "../../config/colors";
@@ -616,49 +617,20 @@ export const UserImageGeoTagInput = ({
   type,
   id,
   setFieldValue,
-  onChange,
   questionMandatoryOption,
 }) => {
-  const [image, setImage] = useState("");
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
   // console.log(location);
 
   useEffect(() => {
-    setFieldValue(id, image, location);
-  }, [image, location]);
-
-  const openCamera = async () => {
-    // Ask the user for the permission to access the camera
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync();
-    // Explore the result
-    // console.log(result);
-    if (!result.cancelled) {
-      setFieldValue(result.uri);
-      setImage(result.uri);
-      getLocation();
-    }
-  };
-
-  const handlePress = () => {
-    if (!image) setImage();
-    else
-      Alert.alert("Delete", "Are you sure you want to delete this image?", [
-        { text: "Yes", onPress: () => setImage(null) },
-        { text: "No" },
-      ]);
-  };
+    setFieldValue(id, location);
+  }, [location]);
 
   const getLocation = async () => {
     try {
+      setLoading(true);
       const { granted } = await Location.requestForegroundPermissionsAsync();
       if (!granted) return;
       const {
@@ -666,8 +638,13 @@ export const UserImageGeoTagInput = ({
       } = await Location.getLastKnownPositionAsync();
       setLocation({ latitude, longitude });
       setFieldValue({ latitude, longitude });
+      alert(
+        `Your Location Coordinates \n Latitude: ${latitude}   \n Longitude: ${longitude} `
+      );
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -706,35 +683,15 @@ export const UserImageGeoTagInput = ({
             </Text>
           ) : null}
         </View>
-        {image ? (
-          <>
-            <View style={styles.closeIcon}>
-              <TouchableWithoutFeedback onPress={handlePress}>
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={25}
-                  color={colors.danger}
-                />
-              </TouchableWithoutFeedback>
-            </View>
-            <Image
-              source={{ uri: image }}
-              value={image}
-              onChange={onChange}
-              style={styles.image}
-            />
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="camera"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
+        <TouchableOpacity onPress={getLocation} style={styles.dateButton}>
+          <Text style={styles.text}>
+            {loading ? (
+              <ActivityIndicator size="small" color={colors.white} />
+            ) : (
+              "Pick Location"
+            )}
+          </Text>
+        </TouchableOpacity>
       </View>
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
@@ -1382,7 +1339,7 @@ export const UserBarQRCodeInput = ({
         {type}
       </Text>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ flexDirection: "row"}}>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity style={styles.idButton}>
             <Text semi style={{ fontWeight: "bold", color: colors.white }}>
               {pos}
@@ -1406,12 +1363,11 @@ export const UserBarQRCodeInput = ({
               *
             </Text>
           ) : null}
-
         </View>
-        
+
         <Pressable style={styles.sbutton} onPress={askPermissions}>
-            <Text style={styles.text}>Scan</Text>
-          </Pressable>
+          <Text style={styles.text}>Scan</Text>
+        </Pressable>
       </View>
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
@@ -1451,7 +1407,7 @@ export const UserRatingInput = ({
       </Text>
 
       <View>
-        <View style={{ flexDirection: "row"}}>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity style={styles.idButton}>
             <Text semi style={{ fontWeight: "bold", color: colors.white }}>
               {pos}

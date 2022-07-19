@@ -32,12 +32,14 @@ import {
   UserSectionBreakInput,
   UserIntroductoryInput,
   UserSignatureCaptureInput,
+  UserImageGeoTagInput,
 } from "../components/forms/FormInput";
 import SubmitButton from "../components/Button/SubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Formik } from "formik";
 import NetInfo from "@react-native-community/netinfo";
 import * as yup from "yup";
+import OffLineButton from "../components/Button/OffLineButton";
 
 function FormDetailsScreen({ route, navigation }) {
   const forms = route.params;
@@ -123,6 +125,58 @@ function FormDetailsScreen({ route, navigation }) {
   });
 
   const handleSubmit = async (values) => {
+    console.log(values);
+    try {
+      setLoading(true);
+      var queryString = Object.keys(values)
+        .map((key) => {
+          return (
+            encodeURIComponent(key) + "=" + encodeURIComponent(values[key])
+          );
+        })
+        .join("&");
+
+      if (!networkConnection) {
+        await AsyncStorage.setItem("@saveddata", JSON.stringify(queryString));
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            "Data saved in draft",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert("Data saved in draft");
+        }
+      } else {
+        let getData = await AsyncStorage.getItem("@saveddata");
+        const as = JSON.parse(getData);
+        // console.log("get", as);
+        const { data } = await axios.get(
+          `/questionResponse?formId=${forms.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${as}`
+        );
+        // console.log("getData", data);
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            data.message,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert(data.message);
+        }
+      }
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+  const handleOfflineSubmit = async (values) => {
+    console.log(values);
     try {
       setLoading(true);
       var queryString = Object.keys(values)
@@ -370,15 +424,15 @@ function FormDetailsScreen({ route, navigation }) {
                                 />
                               </View>
                             ) : questionsDetail.questionType ===
-                            "Introductory" ? (
-                            <View style={styles.sectionBreak}>
-                              <UserIntroductoryInput
-                                name={questionsDetail.questionTittle}
-                                pos={questionsDetail.questionPosition}
-                                desc={questionsDetail.questionDescription}
-                              />
-                            </View>
-                          )  : questionsDetail.questionType === "Image" ? (
+                              "Introductory" ? (
+                              <View style={styles.sectionBreak}>
+                                <UserIntroductoryInput
+                                  name={questionsDetail.questionTittle}
+                                  pos={questionsDetail.questionPosition}
+                                  desc={questionsDetail.questionDescription}
+                                />
+                              </View>
+                            ) : questionsDetail.questionType === "Image" ? (
                               <View style={styles.questionCard}>
                                 <View>
                                   <UserImageInput
@@ -396,7 +450,7 @@ function FormDetailsScreen({ route, navigation }) {
                               "ImageGeoTag" ? (
                               <View style={styles.questionCard}>
                                 <View>
-                                  <UserImageInput
+                                  <UserImageGeoTagInput
                                     name={questionsDetail.questionTittle}
                                     pos={questionsDetail.questionPosition}
                                     desc={questionsDetail.questionDescription}
@@ -571,11 +625,11 @@ function FormDetailsScreen({ route, navigation }) {
                 </View>
                 <View flex style={styles.buttonContainer}>
                   <View>
-                    <SubmitButton
+                    <OffLineButton
                       title="Save Draft"
-                      onPress={null}
+                      handlePress={handleOfflineSubmit}
                       loading={loading}
-                      bwidth={180}
+                      bwidth={160}
                       bcolor={"dark"}
                     />
                   </View>
@@ -608,7 +662,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   sectionBreak: {
-    marginVertical: 10
+    marginVertical: 10,
   },
   questionCard: {
     paddingVertical: 15,
@@ -624,9 +678,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     marginBottom: 70,
-    marginHorizontal: 5,
+    marginHorizontal: 2,
     borderRadius: 5,
   },
   headContainer: {

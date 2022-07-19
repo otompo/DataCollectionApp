@@ -73,15 +73,18 @@ function ForgotPassword({ navigation }) {
     >
       <View style={styles.logoContainer}>
         <Image
-            source={require("../assets/syncLogo-1.png")}
-            style={{ width: "80%", height: 100 }}
-          />
-          <Text center style={{marginTop: 20, fontWeight: "bold", fontSize: 18}}>
-            Reset your Password below
-          </Text>
+          source={require("../assets/syncLogo-1.png")}
+          style={{ width: "80%", height: 100 }}
+        />
+        <Text
+          center
+          style={{ marginTop: 20, fontWeight: "bold", fontSize: 18 }}
+        >
+          Reset your Password below
+        </Text>
       </View>
 
-      <View  style={styles.MainContainer}>
+      <View style={styles.MainContainer}>
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -128,18 +131,19 @@ export default ForgotPassword;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   MainContainer: {
     flex: 1,
     paddingRight: 10,
     paddingLeft: 10,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   logoContainer: {
     padding: 10,
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+    paddingHorizontal: -15,
+  },
 });
