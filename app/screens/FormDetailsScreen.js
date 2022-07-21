@@ -229,9 +229,9 @@ function FormDetailsScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={{ backgroundColor: colors.light }}>
-      <View style={styles.headContainer}>
+      {/* <View style={styles.headContainer}>
         <Text style={styles.headTitle}>{forms.formName}</Text>
-      </View>
+      </View> */}
       {/* <Text>{JSON.stringify(formsData, null, 4)}</Text> */}
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -624,7 +624,7 @@ function FormDetailsScreen({ route, navigation }) {
                     })}
                 </View>
                 <View flex style={styles.buttonContainer}>
-                  <View>
+                  {/* <View>
                     <OffLineButton
                       title="Save Draft"
                       handlePress={handleOfflineSubmit}
@@ -632,13 +632,13 @@ function FormDetailsScreen({ route, navigation }) {
                       bwidth={160}
                       bcolor={"dark"}
                     />
-                  </View>
+                  </View> */}
                   <View>
                     <SubmitButton
                       title="Submit"
                       onPress={handleSubmit}
                       loading={loading}
-                      bwidth={180}
+                      bwidth={280}
                     />
                   </View>
                 </View>
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 70,
-    marginHorizontal: 2,
+    // marginHorizontal: 2,
     borderRadius: 5,
   },
   headContainer: {

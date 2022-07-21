@@ -37,6 +37,7 @@
     "react-native-autogrow-textinput": "^5.4.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^13.1.2",
     "react-native-paper": "^4.12.2",
     "react-native-range-slider-expo": "^1.4.3",

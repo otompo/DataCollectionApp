@@ -8,7 +8,7 @@ import { Signup } from "../../screens/Signup";
 import HeaderTabs from "./HeaderTabs";
 import HeaderTopLeft from "./HeaderTopLeft";
 import colors from "../../config/colors";
-import { AuthContext } from "../../context/authContext";
+// import { AuthContext } from "../../context/authContext";
 import FormDetailsScreen from "../../screens/FormDetailsScreen";
 import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
@@ -36,24 +36,28 @@ export default function AppNavigator() {
             title: "Home",
             headerLeft: () => (
               <HeaderTabs
-              icon="bars"
-              onPress={() =>
-                navigation.dispatch(DrawerActions.toggleDrawer())
-              }
-            />
+                icon="bars"
+                onPress={() =>
+                  navigation.dispatch(DrawerActions.toggleDrawer())
+                }
+              />
             ),
-            headerRight: () => (
-              <HeaderTabs
-              icon="refresh"
-            />
-            )
+            headerRight: () => <HeaderTabs icon="refresh" />,
           })}
         />
         <Stack.Screen
           name="FormDetailsScreen"
           component={FormDetailsScreen}
           options={{
-            title: "",
+            title: "Form Questions",
+            headerLeft: () => (
+              <HeaderTopLeft
+                icon="arrow-left-thick"
+                onPress={() =>
+                  navigation.dispatch(DrawerActions.toggleDrawer())
+                }
+              />
+            ),
           }}
         />
         <Stack.Screen
