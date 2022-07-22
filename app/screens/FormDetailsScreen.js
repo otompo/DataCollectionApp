@@ -624,7 +624,7 @@ function FormDetailsScreen({ route, navigation }) {
                     })}
                 </View>
                 <View flex style={styles.buttonContainer}>
-                  {/* <View>
+                  <View>
                     <OffLineButton
                       title="Save Draft"
                       handlePress={handleOfflineSubmit}
@@ -632,13 +632,13 @@ function FormDetailsScreen({ route, navigation }) {
                       bwidth={160}
                       bcolor={"dark"}
                     />
-                  </View> */}
+                  </View>
                   <View>
                     <SubmitButton
                       title="Submit"
                       onPress={handleSubmit}
                       loading={loading}
-                      bwidth={280}
+                      bwidth={160}
                     />
                   </View>
                 </View>

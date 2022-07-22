@@ -25,8 +25,8 @@ function HeaderTopLeft({ icon, name, onPress }) {
   };
 
   const handleAlert = async () => {
-    setModalVisible(!isModalVisible);
-    // navigation.navigate("Home");
+    // setModalVisible(!isModalVisible);
+    navigation.navigate("Home");
   };
 
   return (
