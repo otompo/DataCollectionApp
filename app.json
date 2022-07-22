@@ -29,11 +29,10 @@
       },
       "package": "com.Kpododosync.Kpododosync",
       "softwareKeyboardLayoutMode": "pan",
-      "versionCode": 1,
-      "permissions" : []
+      "versionCode": 1
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
-    }
+    }    
   }
 }
