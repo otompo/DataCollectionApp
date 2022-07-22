@@ -12,6 +12,7 @@ import { AuthContext } from "../../context/authContext";
 import FormDetailsScreen from "../../screens/FormDetailsScreen";
 import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
+import ResponseStats from '../../screens/ResponseStats'
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -48,6 +49,13 @@ export default function AppNavigator() {
             />
             )
           })}
+        />
+         <Stack.Screen
+          name="ResponseStats"
+          component={ResponseStats}
+          options={{
+            title: "Responses",
+          }}
         />
         <Stack.Screen
           name="FormDetailsScreen"

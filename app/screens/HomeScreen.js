@@ -10,6 +10,7 @@ import {
   ToastAndroid,
   Platform,
   AlertIOS,
+  TouchableOpacity
 } from "react-native";
 import { AuthContext } from "../context/authContext";
 import { FormDataContext } from "../context/formContext";
@@ -40,7 +41,6 @@ export const HomeScreen = ({ navigation }) => {
   }, [formsData]);
 
   useEffect(() => {
-    loadForms();
     if (!networkConnection) {
       if (Platform.OS === "android") {
         ToastAndroid.showWithGravityAndOffset(
@@ -66,6 +66,7 @@ export const HomeScreen = ({ navigation }) => {
         AlertIOS.alert("Network Restored");
       }
     }
+    loadForms();
   }, []);
 
   useEffect(() => {
@@ -142,6 +143,7 @@ export const HomeScreen = ({ navigation }) => {
               keyExtractor={(forms) => forms.formId.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
+                <View style={{backgroundColor:'white',elevation:2,marginBottom:5}}>
                 <FormListItem
                   // image={{ uri: item.image.url }}
                   title={item.formName}
@@ -149,6 +151,13 @@ export const HomeScreen = ({ navigation }) => {
                   subSubTitle={`${moment(item.createdDate).fromNow()} `}
                   onPress={() => navigation.navigate("FormDetailsScreen", item)}
                 />
+                <Divider />
+                <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
+                </TouchableOpacity>
+                </View>
               )}
             />
           )}
