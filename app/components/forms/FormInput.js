@@ -19,12 +19,12 @@ import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
 import { Video, Audio } from "expo-av";
 import * as DocumentPicker from "expo-document-picker";
 import { Slider } from "react-native-range-slider-expo";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Rating } from "react-native-ratings";
-import { Divider } from "@ui-kitten/components";
 import { Checkbox, RadioButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -508,8 +508,8 @@ export const UserImageInput = ({
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
+    if (permissionResult.granted !== true) {
+      alert("You've refused to allow this app to access your camera!");
       return;
     }
 
@@ -620,7 +620,6 @@ export const UserImageGeoTagInput = ({
   questionMandatoryOption,
 }) => {
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(false);
   // console.log(location);
 
@@ -631,11 +630,15 @@ export const UserImageGeoTagInput = ({
   const getLocation = async () => {
     try {
       setLoading(true);
+      // const { granted } = await Permissions.askAsync(Permissions.LOCATION);
       const { granted } = await Location.requestForegroundPermissionsAsync();
       if (!granted) return;
       const {
         coords: { latitude, longitude },
-      } = await Location.getLastKnownPositionAsync();
+      } = await Location.getLastKnownPositionAsync({});
+
+      // await Location.getCurrentPositionAsync({});
+
       setLocation({ latitude, longitude });
       setFieldValue({ latitude, longitude });
       alert(
@@ -726,7 +729,7 @@ export const UserVideoInput = ({
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (permissionResult.granted === false) {
+    if (permissionResult.granted !== true) {
       alert("You've refused to allow this appp to access your camera!");
       return;
     }

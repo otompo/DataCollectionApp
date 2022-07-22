@@ -275,9 +275,9 @@ function FormDetailsScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={{ backgroundColor: colors.light }}>
-      <View style={styles.headContainer}>
+      {/* <View style={styles.headContainer}>
         <Text style={styles.headTitle}>{forms.formName}</Text>
-      </View>
+      </View> */}
       {/* <Text>{JSON.stringify(formsData, null, 4)}</Text> */}
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -444,21 +444,17 @@ function FormDetailsScreen({ route, navigation }) {
                               </View>
                             ) : questionsDetail.questionType === "Location" ? (
                               <View style={styles.questionCard}>
-                                <UserTextInput
-                                  name={questionsDetail.questionTittle}
-                                  pos={questionsDetail.questionPosition}
-                                  desc={questionsDetail.questionDescription}
-                                  type={questionsDetail.questionType}
-                                  onChange={handleChange(
-                                    questionsDetail.questionId
-                                  )}
-                                  questionMandatoryOption={
-                                    questionsDetail.questionMandatoryOption
-                                  }
-                                  autoCapitalize="words"
-                                  autoCorrect={false}
-                                  errors={questionsDetail.questionType}
-                                />
+                                <View>
+                                  <UserImageGeoTagInput
+                                    name={questionsDetail.questionTittle}
+                                    pos={questionsDetail.questionPosition}
+                                    desc={questionsDetail.questionDescription}
+                                    type={questionsDetail.questionType}
+                                    setFieldValue={setFieldValue}
+                                    id={questionsDetail.questionId}
+                                    errors={questionsDetail.questionType}
+                                  />
+                                </View>
                               </View>
                             ) : questionsDetail.questionType ===
                               "SectionBreak" ? (
@@ -684,7 +680,7 @@ function FormDetailsScreen({ route, navigation }) {
                       title="Submit"
                       onPress={handleSubmit}
                       loading={loading}
-                      bwidth={180}
+                      bwidth={160}
                     />
                   </View>
                 </View>
@@ -726,7 +722,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 70,
-    marginHorizontal: 2,
+    // marginHorizontal: 2,
     borderRadius: 5,
   },
   headContainer: {
