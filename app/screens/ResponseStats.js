@@ -3,8 +3,9 @@ import { View, StyleSheet, Text } from "react-native";
 import { FormDataContext } from "../context/formContext";
 import FormListItem from '../components/FormListItem'
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+// import {  } from '../context/statsContext'
 
-function ResponseStats(props) {
+function ResponseStats({navigation}) {
 
 
   return (
@@ -28,7 +29,7 @@ function ResponseStats(props) {
             IconComponent={<MaterialCommunityIcons name="book-edit-outline" color="gray" size={30}/>}
             title={"Draft"}
             subSubTitle={"Draft responses"}
-            onPress={() => console.log("draft pressed")}
+            onPress={() => navigation.navigate("Response")}
         >
         </FormListItem>
     </View>

@@ -19,7 +19,7 @@ import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
-import { Video } from "expo-av";
+import { Video, Audio } from "expo-av";
 import * as DocumentPicker from "expo-document-picker";
 import { Slider } from "react-native-range-slider-expo";
 import { BarCodeScanner } from "expo-barcode-scanner";
@@ -849,28 +849,94 @@ export const UserAudioInput = ({
   questionMandatoryOption,
 }) => {
   const [audio, setAudio] = useState("");
-  const audioData = React.useRef(null);
+  const sound = React.useRef(new Audio.Sound());
   const [status, setStatus] = React.useState({});
+  const [recording, setRecording] = React.useState(false)
+  const [recordedMedia, setRecordedMedia] = React.useState(null)
+  const [timer, setTimer] = React.useState("00:00:00")
   // console.log(audio);
 
   useEffect(() => {
-    setFieldValue(id, audio);
-  }, [id, audio]);
+    setFieldValue(id, recordedMedia);
+  }, [recordedMedia]);
 
-  const pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
-    setAudio(result.uri);
-    setFieldValue(result.uri);
+  useEffect(()=>{
+    setTimeout(()=>{
+      let hours = new Date().getHours();
+      let min = new Date().getMinutes();
+      let sec = new Date().getSeconds();
+      setTimer(hours+":"+min+":"+sec);
+    },1000);
+
+
+  })
+
+  // useEffect(async() => {
+  //   const audio = await Audio.Sound.loadAsync(recordedMedia)
+  //   setAudio(audio)
+  //   return audio
+  //     ? () => {
+  //         console.log('Unloading Sound');
+  //         audio.unloadAsync(); }
+  //     : undefined;
+  // }, [recordedMedia]);
+
+  const playSound = async () => {
+    console.log("Loading Sound");
+
+    await sound.current.createAsync(recordedMedia);
+
+    console.log("playing sound");
+
+    const checkLoaded = await sound.current.getStatusAsync();
+    if (checkLoaded.isLoaded === true) {
+      console.log("Error in Loading mp3");
+    } else {
+      await sound.current.playAsync();
+
+    }
+    const stat = await sound.current.getStatusAsync()
+    setStatus(stat)
   };
 
+  
+  async function startRecording() {
+
+    try {
+      console.log('Requesting permissions..');
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      }); 
+      console.log('Starting recording..');
+      const { recording } = await Audio.Recording.createAsync(
+         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      );
+      setRecording(recording);
+    } catch (err) {
+      Alert.alert("Failed to start recording:",err)
+      console.error('Failed to start recording', err);
+    }
+  }
+
+  async function stopRecording() {
+    console.log('Stopping recording..');
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    setRecordedMedia(recording.getURI())
+    console.log('Recording stopped and stored at',recording.getURI());
+  }
+
   const handleRemoveAudio = () => {
-    if (!audio) setAudio();
+    if (!recordedMedia) setRecordedMedia();
     else
       Alert.alert("Delete", "Are you sure you want to delete this audio?", [
-        { text: "Yes", onPress: () => setAudio(null) },
+        { text: "Yes", onPress: () => {setRecordedMedia(null); setFieldValue(id,"")}},
         { text: "No" },
       ]);
   };
+
 
   return (
     <View style={{ marginLeft: 24 }}>
@@ -907,50 +973,64 @@ export const UserAudioInput = ({
             </Text>
           ) : null}
         </View>
-        {audio ? (
-          <>
-            <View style={styles.closeVideoIcon}>
-              <TouchableWithoutFeedback onPress={handleRemoveAudio}>
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={25}
-                  color={colors.danger}
-                />
-              </TouchableWithoutFeedback>
+
+      
+          <TouchableWithoutFeedback onPress={startRecording}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name={"volume-high"}
+                size={40}
+              />
             </View>
-            <Video
+          </TouchableWithoutFeedback>
+
+
+          {recordedMedia && 
+            <View style={styles.closeVideoIcon}>
+            <TouchableWithoutFeedback onPress={handleRemoveAudio}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={25}
+                color={colors.danger}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+          }
+        
+      </View>
+          
+      {recordedMedia &&
+          <>
+            
+            {/* <Video
               ref={audioData}
               style={styles.media}
-              source={{ uri: audio }}
+              source={{ uri: recordedMedia }}
               useNativeControls
               resizeMode="contain"
               isLooping
               onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-            />
+            /> */}
 
             <View style={styles.buttons}>
               <Button
                 title={status.isPlaying ? "Pause" : "Play"}
                 onPress={() =>
                   status.isPlaying
-                    ? audioData.current.pauseAsync()
-                    : audioData.current.playAsync()
+                    ? sound.current.pauseAsync()
+                    : playSound()
                 }
               />
             </View>
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={pickDocument}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="volume-high"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+          </>}
+
+      {recording && <View><Text style={{fontWeight:'bold'}}>{timer}</Text>
+      <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+        <Icon size={30} name="pause" color="yellow" />
+        <Icon size={30} name="stop" color="red" onPress={stopRecording} />
+      </View></View>}
+
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}

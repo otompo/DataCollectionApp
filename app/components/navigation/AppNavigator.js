@@ -13,6 +13,8 @@ import FormDetailsScreen from "../../screens/FormDetailsScreen";
 import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ResponseStats from '../../screens/ResponseStats'
+import Response from '../../screens/Response'
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -57,6 +59,15 @@ export default function AppNavigator() {
             title: "Responses",
           }}
         />
+
+        <Stack.Screen
+          name="Response"
+          component={Response}
+          options={{
+            title: "Responses",
+          }}
+        />
+
         <Stack.Screen
           name="FormDetailsScreen"
           component={FormDetailsScreen}
