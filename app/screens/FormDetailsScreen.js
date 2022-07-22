@@ -398,21 +398,17 @@ function FormDetailsScreen({ route, navigation }) {
                               </View>
                             ) : questionsDetail.questionType === "Location" ? (
                               <View style={styles.questionCard}>
-                                <UserTextInput
-                                  name={questionsDetail.questionTittle}
-                                  pos={questionsDetail.questionPosition}
-                                  desc={questionsDetail.questionDescription}
-                                  type={questionsDetail.questionType}
-                                  onChange={handleChange(
-                                    questionsDetail.questionId
-                                  )}
-                                  questionMandatoryOption={
-                                    questionsDetail.questionMandatoryOption
-                                  }
-                                  autoCapitalize="words"
-                                  autoCorrect={false}
-                                  errors={questionsDetail.questionType}
-                                />
+                                <View>
+                                  <UserImageGeoTagInput
+                                    name={questionsDetail.questionTittle}
+                                    pos={questionsDetail.questionPosition}
+                                    desc={questionsDetail.questionDescription}
+                                    type={questionsDetail.questionType}
+                                    setFieldValue={setFieldValue}
+                                    id={questionsDetail.questionId}
+                                    errors={questionsDetail.questionType}
+                                  />
+                                </View>
                               </View>
                             ) : questionsDetail.questionType ===
                               "SectionBreak" ? (

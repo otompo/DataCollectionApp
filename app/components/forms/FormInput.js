@@ -630,11 +630,14 @@ export const UserImageGeoTagInput = ({
   const getLocation = async () => {
     try {
       setLoading(true);
-      const { granted } = await Permissions.askAsync(Permissions.LOCATION);
+      // const { granted } = await Permissions.askAsync(Permissions.LOCATION);
+      const { granted } = await Location.requestForegroundPermissionsAsync();
       if (!granted) return;
       const {
         coords: { latitude, longitude },
-      } = await Location.getCurrentPositionAsync({});
+      } = await Location.getLastKnownPositionAsync({});
+
+      // await Location.getCurrentPositionAsync({});
 
       setLocation({ latitude, longitude });
       setFieldValue({ latitude, longitude });
