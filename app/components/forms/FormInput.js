@@ -20,13 +20,14 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
-import { Video } from "expo-av";
+import { Video, Audio } from "expo-av";
 import * as DocumentPicker from "expo-document-picker";
 import { Slider } from "react-native-range-slider-expo";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Rating } from "react-native-ratings";
 import { Checkbox, RadioButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import SignatureModal from '../SignatureModal'
 
 export const UserTextInput = ({
   name,
@@ -571,7 +572,21 @@ export const UserImageInput = ({
             </Text>
           ) : null}
         </View>
-        {image ? (
+       
+
+          <TouchableWithoutFeedback onPress={openCamera}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="image"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+      
+      </View>
+
+      {image ? (
           <>
             <View style={styles.closeIcon}>
               <TouchableWithoutFeedback onPress={handleRemoveImage}>
@@ -589,18 +604,8 @@ export const UserImageInput = ({
               style={styles.image}
             />
           </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="image"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+        ):null}
+
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -640,7 +645,7 @@ export const UserImageGeoTagInput = ({
       // await Location.getCurrentPositionAsync({});
 
       setLocation({ latitude, longitude });
-      setFieldValue({ latitude, longitude });
+      setFieldValue(id,{ latitude, longitude });
       alert(
         `Your Location Coordinates \n Latitude: ${latitude}   \n Longitude: ${longitude} `
       );
@@ -702,6 +707,7 @@ export const UserImageGeoTagInput = ({
           </Text>
         </TouchableOpacity>
       </View>
+      {location?<Text style={{fontSize:15, fontWeight:'bold'}} >Location recorded</Text>:null}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -795,7 +801,21 @@ export const UserVideoInput = ({
             </Text>
           ) : null}
         </View>
-        {video ? (
+       
+      
+          <TouchableWithoutFeedback onPress={openCamera}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="video"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+      
+      </View>
+
+      {video ? (
           <>
             <View style={styles.closeVideoIcon}>
               <TouchableWithoutFeedback onPress={handleRemoveVideo}>
@@ -816,29 +836,9 @@ export const UserVideoInput = ({
               onPlaybackStatusUpdate={(status) => setStatus(() => status)}
             />
 
-            <View style={styles.buttons}>
-              <Button
-                title={status.isPlaying ? "Pause" : "Play"}
-                onPress={() =>
-                  status.isPlaying
-                    ? videoData.current.pauseAsync()
-                    : videoData.current.playAsync()
-                }
-              />
-            </View>
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="video"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+          </>):null}
+
+
       <View>
         <Text size={12} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -848,126 +848,6 @@ export const UserVideoInput = ({
   );
 };
 
-export const UserAudioInput = ({
-  name,
-  pos,
-  desc,
-  type,
-  id,
-  setFieldValue,
-  questionMandatoryOption,
-}) => {
-  const [audio, setAudio] = useState("");
-  const audioData = React.useRef(null);
-  const [status, setStatus] = React.useState({});
-  // console.log(audio);
-
-  useEffect(() => {
-    setFieldValue(id, audio);
-  }, [id, audio]);
-
-  const pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
-    setAudio(result.uri);
-    setFieldValue(result.uri);
-  };
-
-  const handleRemoveAudio = () => {
-    if (!audio) setAudio();
-    else
-      Alert.alert("Delete", "Are you sure you want to delete this audio?", [
-        { text: "Yes", onPress: () => setAudio(null) },
-        { text: "No" },
-      ]);
-  };
-
-  return (
-    <View style={{ marginLeft: 24 }}>
-      <Text
-        color={colors.primary}
-        style={{ textTransform: "uppercase", marginBottom: 7 }}
-      >
-        {type}
-      </Text>
-
-      <View style={styles.imageContainer}>
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity style={styles.idButton}>
-            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
-              {pos}
-            </Text>
-          </TouchableOpacity>
-
-          <Text
-            medium
-            color={colors.medium}
-            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
-          >
-            {name}
-          </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
-        </View>
-        {audio ? (
-          <>
-            <View style={styles.closeVideoIcon}>
-              <TouchableWithoutFeedback onPress={handleRemoveAudio}>
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={25}
-                  color={colors.danger}
-                />
-              </TouchableWithoutFeedback>
-            </View>
-            <Video
-              ref={audioData}
-              style={styles.media}
-              source={{ uri: audio }}
-              useNativeControls
-              resizeMode="contain"
-              isLooping
-              onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-            />
-
-            <View style={styles.buttons}>
-              <Button
-                title={status.isPlaying ? "Pause" : "Play"}
-                onPress={() =>
-                  status.isPlaying
-                    ? audioData.current.pauseAsync()
-                    : audioData.current.playAsync()
-                }
-              />
-            </View>
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={pickDocument}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="volume-high"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
-      <View>
-        <Text size={10} style={{ marginBottom: 5 }}>
-          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
-        </Text>
-      </View>
-    </View>
-  );
-};
 
 export const UserSingleSelectInput = ({
   name,
@@ -1253,7 +1133,7 @@ export const UserLikertScaletInput = ({
           </Text>
         ) : null}
       </View>
-      <ScrollView horizontal={true}>
+      <ScrollView >
         {likerValue.map((item) => (
           <>
             <Pressable onPress={() => setOption(item)}>
@@ -1310,6 +1190,7 @@ export const UserBarQRCodeInput = ({
   const handleScanned = ({ type, data }) => {
     setScannedData(data);
     setScanned(true);
+    setShowScanner(false)
     alert(`Code with type ${type} and data ${data} has been scanned!`);
   };
 
@@ -1333,7 +1214,9 @@ export const UserBarQRCodeInput = ({
 
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleScanned}
-          style={{ height: 150, width: 150 }}
+          style={{ height: 300, width: 300,
+            flexDirection: 'column',
+            justifyContent: 'center', }}
         />
       </View>
     );
@@ -1378,6 +1261,7 @@ export const UserBarQRCodeInput = ({
           <Text style={styles.text}>Scan</Text>
         </Pressable>
       </View>
+      {scannedData? <Text style={{fontSize:15,fontWeight:'bold'}}>Code captured</Text>:null}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -1507,11 +1391,16 @@ export const UserSignatureCaptureInput = ({
   errors,
 }) => {
   const [image, setImage] = useState("");
+  const [open, setOpen] = useState(false)
   // console.log(image);
 
   useEffect(() => {
     setFieldValue(id, image);
   }, [id, image]);
+
+  const opneModal = () =>{
+    setOpen(true)
+  }
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -1555,7 +1444,8 @@ export const UserSignatureCaptureInput = ({
       </Text>
 
       <View style={styles.imageContainer}>
-        <View style={{ flexDirection: "row" }}>
+        <>
+         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity style={styles.idButton}>
             <Text semi style={{ fontWeight: "bold", color: colors.white }}>
               {pos}
@@ -1579,10 +1469,25 @@ export const UserSignatureCaptureInput = ({
               *
             </Text>
           ) : null}
-        </View>
-        {image ? (
-          <>
-            <View style={styles.closeIcon}>
+         </View>
+       
+        
+          <TouchableWithoutFeedback onPress={opneModal}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="signature-freehand"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </>
+      </View>
+
+
+     
+      {image ?( <View>
+            <View style={[styles.closeIcon,{marginLeft:150}]}>
               <TouchableWithoutFeedback onPress={handleRemoveImage}>
                 <MaterialCommunityIcons
                   name="close-circle"
@@ -1595,26 +1500,18 @@ export const UserSignatureCaptureInput = ({
               source={{ uri: image }}
               value={image}
               onChange={onChange}
-              style={styles.image}
+              style={{width:150, height:150}}
             />
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="camera"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+          </View>):null}
+
+    
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
       </View>
+
+      <SignatureModal open={open} close={(signature)=>{setOpen(false);setImage(signature)}}/>
     </View>
   );
 };
@@ -1666,15 +1563,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   closeIcon: {
-    position: "absolute",
+    //position: "absolute",
     zIndex: 3,
-    marginLeft: 300,
+    marginLeft: 200,
   },
   closeVideoIcon: {
-    position: "absolute",
+    //position: "absolute",
     zIndex: 3,
-    marginLeft: 230,
-    bottom: 30,
+    marginLeft: 250,
+    //bottom: 30,
   },
   imageContainer: {
     flexDirection: "row",
@@ -1683,8 +1580,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: 50,
-    height: 50,
+    width: 250,
+    height: 200,
     borderWidth: 5,
     borderRadius: 10,
     marginTop: 10,
@@ -1692,8 +1589,8 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   media: {
-    width: 50,
-    height: 50,
+    width: 300,
+    height: 250,
     borderWidth: 5,
     borderRadius: 10,
     marginRight: -40,
