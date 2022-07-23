@@ -27,7 +27,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Rating } from "react-native-ratings";
 import { Checkbox, RadioButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import SignatureModal from '../SignatureModal'
+import SignatureModal from "../SignatureModal";
 
 export const UserTextInput = ({
   name,
@@ -572,39 +572,37 @@ export const UserImageInput = ({
             </Text>
           ) : null}
         </View>
-       
 
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="image"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-      
+        <TouchableWithoutFeedback onPress={openCamera}>
+          <View style={styles.mediaContainer}>
+            <MaterialCommunityIcons
+              color={colors.medium}
+              name="image"
+              size={40}
+            />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
 
       {image ? (
-          <>
-            <View style={styles.closeIcon}>
-              <TouchableWithoutFeedback onPress={handleRemoveImage}>
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={25}
-                  color={colors.danger}
-                />
-              </TouchableWithoutFeedback>
-            </View>
-            <Image
-              source={{ uri: image }}
-              value={image}
-              onChange={onChange}
-              style={styles.image}
-            />
-          </>
-        ):null}
+        <>
+          <View style={styles.closeIcon}>
+            <TouchableWithoutFeedback onPress={handleRemoveImage}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={25}
+                color={colors.danger}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+          <Image
+            source={{ uri: image }}
+            value={image}
+            onChange={onChange}
+            style={styles.image}
+          />
+        </>
+      ) : null}
 
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
@@ -645,7 +643,7 @@ export const UserImageGeoTagInput = ({
       // await Location.getCurrentPositionAsync({});
 
       setLocation({ latitude, longitude });
-      setFieldValue(id,{ latitude, longitude });
+      setFieldValue(id, { latitude, longitude });
       alert(
         `Your Location Coordinates \n Latitude: ${latitude}   \n Longitude: ${longitude} `
       );
@@ -698,7 +696,7 @@ export const UserImageGeoTagInput = ({
             ) : (
               <View>
                 <MaterialCommunityIcons
-                  color={colors.white}
+                  color={colors.medium}
                   name="map-marker-plus"
                   size={40}
                 />
@@ -707,7 +705,11 @@ export const UserImageGeoTagInput = ({
           </Text>
         </TouchableOpacity>
       </View>
-      {location?<Text style={{fontSize:15, fontWeight:'bold'}} >Location recorded</Text>:null}
+      {location ? (
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+          Location recorded
+        </Text>
+      ) : null}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -801,43 +803,40 @@ export const UserVideoInput = ({
             </Text>
           ) : null}
         </View>
-       
-      
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="video"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-      
+
+        <TouchableWithoutFeedback onPress={openCamera}>
+          <View style={styles.mediaContainer}>
+            <MaterialCommunityIcons
+              color={colors.medium}
+              name="video"
+              size={40}
+            />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
 
       {video ? (
-          <>
-            <View style={styles.closeVideoIcon}>
-              <TouchableWithoutFeedback onPress={handleRemoveVideo}>
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={25}
-                  color={colors.danger}
-                />
-              </TouchableWithoutFeedback>
-            </View>
-            <Video
-              ref={videoData}
-              style={styles.media}
-              source={{ uri: video }}
-              useNativeControls
-              resizeMode="contain"
-              isLooping
-              onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-            />
-
-          </>):null}
-
+        <>
+          <View style={styles.closeVideoIcon}>
+            <TouchableWithoutFeedback onPress={handleRemoveVideo}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={25}
+                color={colors.danger}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+          <Video
+            ref={videoData}
+            style={styles.media}
+            source={{ uri: video }}
+            useNativeControls
+            resizeMode="contain"
+            isLooping
+            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+          />
+        </>
+      ) : null}
 
       <View>
         <Text size={12} style={{ marginBottom: 5 }}>
@@ -847,7 +846,6 @@ export const UserVideoInput = ({
     </View>
   );
 };
-
 
 export const UserSingleSelectInput = ({
   name,
@@ -1133,7 +1131,7 @@ export const UserLikertScaletInput = ({
           </Text>
         ) : null}
       </View>
-      <ScrollView >
+      <ScrollView>
         {likerValue.map((item) => (
           <>
             <Pressable onPress={() => setOption(item)}>
@@ -1190,7 +1188,7 @@ export const UserBarQRCodeInput = ({
   const handleScanned = ({ type, data }) => {
     setScannedData(data);
     setScanned(true);
-    setShowScanner(false)
+    setShowScanner(false);
     alert(`Code with type ${type} and data ${data} has been scanned!`);
   };
 
@@ -1214,9 +1212,12 @@ export const UserBarQRCodeInput = ({
 
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleScanned}
-          style={{ height: 300, width: 300,
-            flexDirection: 'column',
-            justifyContent: 'center', }}
+          style={{
+            height: 300,
+            width: 300,
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
         />
       </View>
     );
@@ -1261,7 +1262,9 @@ export const UserBarQRCodeInput = ({
           <Text style={styles.text}>Scan</Text>
         </Pressable>
       </View>
-      {scannedData? <Text style={{fontSize:15,fontWeight:'bold'}}>Code captured</Text>:null}
+      {scannedData ? (
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>Code captured</Text>
+      ) : null}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -1391,16 +1394,16 @@ export const UserSignatureCaptureInput = ({
   errors,
 }) => {
   const [image, setImage] = useState("");
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   // console.log(image);
 
   useEffect(() => {
     setFieldValue(id, image);
   }, [id, image]);
 
-  const opneModal = () =>{
-    setOpen(true)
-  }
+  const opneModal = () => {
+    setOpen(true);
+  };
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -1445,33 +1448,32 @@ export const UserSignatureCaptureInput = ({
 
       <View style={styles.imageContainer}>
         <>
-         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity style={styles.idButton}>
-            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
-              {pos}
-            </Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity style={styles.idButton}>
+              <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+                {pos}
+              </Text>
+            </TouchableOpacity>
 
-          <Text
-            medium
-            color={colors.medium}
-            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
-          >
-            {name}
-          </Text>
-
-          {questionMandatoryOption === "1" ? (
             <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
+              medium
+              color={colors.medium}
+              style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
             >
-              *
+              {name}
             </Text>
-          ) : null}
-         </View>
-       
-        
+
+            {questionMandatoryOption === "1" ? (
+              <Text
+                semi
+                color={colors.danger}
+                style={{ marginLeft: 3, fontSize: 16 }}
+              >
+                *
+              </Text>
+            ) : null}
+          </View>
+
           <TouchableWithoutFeedback onPress={opneModal}>
             <View style={styles.mediaContainer}>
               <MaterialCommunityIcons
@@ -1484,34 +1486,39 @@ export const UserSignatureCaptureInput = ({
         </>
       </View>
 
+      {image ? (
+        <View>
+          <View style={[styles.closeIcon, { marginLeft: 150 }]}>
+            <TouchableWithoutFeedback onPress={handleRemoveImage}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={25}
+                color={colors.danger}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+          <Image
+            source={{ uri: image }}
+            value={image}
+            onChange={onChange}
+            style={{ width: 150, height: 150 }}
+          />
+        </View>
+      ) : null}
 
-     
-      {image ?( <View>
-            <View style={[styles.closeIcon,{marginLeft:150}]}>
-              <TouchableWithoutFeedback onPress={handleRemoveImage}>
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={25}
-                  color={colors.danger}
-                />
-              </TouchableWithoutFeedback>
-            </View>
-            <Image
-              source={{ uri: image }}
-              value={image}
-              onChange={onChange}
-              style={{width:150, height:150}}
-            />
-          </View>):null}
-
-    
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
       </View>
 
-      <SignatureModal open={open} close={(signature)=>{setOpen(false);setImage(signature)}}/>
+      <SignatureModal
+        open={open}
+        close={(signature) => {
+          setOpen(false);
+          setImage(signature);
+        }}
+      />
     </View>
   );
 };
@@ -1529,7 +1536,7 @@ const styles = StyleSheet.create({
   },
 
   geoButton: {
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
