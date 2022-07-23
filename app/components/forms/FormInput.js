@@ -686,12 +686,18 @@ export const UserImageGeoTagInput = ({
             </Text>
           ) : null}
         </View>
-        <TouchableOpacity onPress={getLocation} style={styles.dateButton}>
+        <TouchableOpacity onPress={getLocation} style={styles.geoButton}>
           <Text style={styles.text}>
             {loading ? (
               <ActivityIndicator size="small" color={colors.white} />
             ) : (
-              "Pick Location"
+              <View>
+                <MaterialCommunityIcons
+                  color={colors.white}
+                  name="map-marker-plus"
+                  size={40}
+                />
+              </View>
             )}
           </Text>
         </TouchableOpacity>
@@ -1620,6 +1626,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 15,
+    width: 55,
+    height: 55,
+    marginVertical: 10,
+  },
+
+  geoButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
     width: 55,
     height: 55,
     marginVertical: 10,
