@@ -27,6 +27,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Rating } from "react-native-ratings";
 import { Checkbox, RadioButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import SignatureModal from '../SignatureModal'
 
 export const UserTextInput = ({
   name,
@@ -842,206 +843,6 @@ export const UserVideoInput = ({
   );
 };
 
-export const UserAudioInput = ({
-  name,
-  pos,
-  desc,
-  type,
-  id,
-  setFieldValue,
-  questionMandatoryOption,
-}) => {
-  const [audio, setAudio] = useState("");
-  const sound = React.useRef(new Audio.Sound());
-  const [status, setStatus] = React.useState({});
-  const [recording, setRecording] = React.useState(false)
-  const [recordedMedia, setRecordedMedia] = React.useState(null)
-  const [timer, setTimer] = React.useState("00:00:00")
-  // console.log(audio);
-
-  useEffect(() => {
-    setFieldValue(id, recordedMedia);
-  }, [recordedMedia]);
-
-  useEffect(()=>{
-    setTimeout(()=>{
-      let hours = new Date().getHours();
-      let min = new Date().getMinutes();
-      let sec = new Date().getSeconds();
-      setTimer(hours+":"+min+":"+sec);
-    },1000);
-
-
-  })
-
-  // useEffect(async() => {
-  //   const audio = await Audio.Sound.loadAsync(recordedMedia)
-  //   setAudio(audio)
-  //   return audio
-  //     ? () => {
-  //         console.log('Unloading Sound');
-  //         audio.unloadAsync(); }
-  //     : undefined;
-  // }, [recordedMedia]);
-
-  const playSound = async () => {
-    console.log("Loading Sound");
-
-    await sound.current.createAsync(recordedMedia);
-
-    console.log("playing sound");
-
-    const checkLoaded = await sound.current.getStatusAsync();
-    if (checkLoaded.isLoaded === true) {
-      console.log("Error in Loading mp3");
-    } else {
-      await sound.current.playAsync();
-
-    }
-    const stat = await sound.current.getStatusAsync()
-    setStatus(stat)
-  };
-
-  
-  async function startRecording() {
-
-    try {
-      console.log('Requesting permissions..');
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      }); 
-      console.log('Starting recording..');
-      const { recording } = await Audio.Recording.createAsync(
-         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
-      setRecording(recording);
-    } catch (err) {
-      Alert.alert("Failed to start recording:",err)
-      console.error('Failed to start recording', err);
-    }
-  }
-
-  async function stopRecording() {
-    console.log('Stopping recording..');
-    setRecording(undefined);
-    await recording.stopAndUnloadAsync();
-    setRecordedMedia(recording.getURI())
-    console.log('Recording stopped and stored at',recording.getURI());
-  }
-
-  const handleRemoveAudio = () => {
-    if (!recordedMedia) setRecordedMedia();
-    else
-      Alert.alert("Delete", "Are you sure you want to delete this audio?", [
-        { text: "Yes", onPress: () => {setRecordedMedia(null); setFieldValue(id,"")}},
-        { text: "No" },
-      ]);
-  };
-
-
-  return (
-    <View style={{ marginLeft: 24 }}>
-      <Text
-        color={colors.primary}
-        style={{ textTransform: "uppercase", marginBottom: 7 }}
-      >
-        {type}
-      </Text>
-
-      <View style={styles.imageContainer}>
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity style={styles.idButton}>
-            <Text semi style={{ fontWeight: "bold", color: colors.white }}>
-              {pos}
-            </Text>
-          </TouchableOpacity>
-
-          <Text
-            medium
-            color={colors.medium}
-            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
-          >
-            {name}
-          </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
-        </View>
-
-      
-          <TouchableWithoutFeedback onPress={startRecording}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name={"volume-high"}
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-
-
-          {recordedMedia && 
-            <View style={styles.closeVideoIcon}>
-            <TouchableWithoutFeedback onPress={handleRemoveAudio}>
-              <MaterialCommunityIcons
-                name="close-circle"
-                size={25}
-                color={colors.danger}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-          }
-        
-      </View>
-          
-      {recordedMedia &&
-          <>
-            
-            {/* <Video
-              ref={audioData}
-              style={styles.media}
-              source={{ uri: recordedMedia }}
-              useNativeControls
-              resizeMode="contain"
-              isLooping
-              onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-            /> */}
-
-            <View style={styles.buttons}>
-              <Button
-                title={status.isPlaying ? "Pause" : "Play"}
-                onPress={() =>
-                  status.isPlaying
-                    ? sound.current.pauseAsync()
-                    : playSound()
-                }
-              />
-            </View>
-          </>}
-
-      {recording && <View><Text style={{fontWeight:'bold'}}>{timer}</Text>
-      <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-        <Icon size={30} name="pause" color="yellow" />
-        <Icon size={30} name="stop" color="red" onPress={stopRecording} />
-      </View></View>}
-
-      <View>
-        <Text size={10} style={{ marginBottom: 5 }}>
-          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
-        </Text>
-      </View>
-    </View>
-  );
-};
 
 export const UserSingleSelectInput = ({
   name,
@@ -1581,11 +1382,16 @@ export const UserSignatureCaptureInput = ({
   errors,
 }) => {
   const [image, setImage] = useState("");
+  const [open, setOpen] = useState(false)
   // console.log(image);
 
   useEffect(() => {
     setFieldValue(id, image);
   }, [id, image]);
+
+  const opneModal = () =>{
+    setOpen(true)
+  }
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -1629,6 +1435,7 @@ export const UserSignatureCaptureInput = ({
       </Text>
 
       <View style={styles.imageContainer}>
+        <>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity style={styles.idButton}>
             <Text semi style={{ fontWeight: "bold", color: colors.white }}>
@@ -1654,9 +1461,23 @@ export const UserSignatureCaptureInput = ({
             </Text>
           ) : null}
         </View>
-        {image ? (
-          <>
-            <View style={styles.closeIcon}>
+       
+        
+          <TouchableWithoutFeedback onPress={opneModal}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="signature-freehand"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </>
+      </View>
+
+      {image &&
+          <View>
+            <View style={[styles.closeIcon,{marginLeft:150}]}>
               <TouchableWithoutFeedback onPress={handleRemoveImage}>
                 <MaterialCommunityIcons
                   name="close-circle"
@@ -1669,26 +1490,16 @@ export const UserSignatureCaptureInput = ({
               source={{ uri: image }}
               value={image}
               onChange={onChange}
-              style={styles.image}
+              style={{width:150, height:150}}
             />
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="camera"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+          </View>}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
       </View>
+
+      <SignatureModal open={open} close={(signature)=>{setOpen(false);setImage(signature);console.log(signature)}}/>
     </View>
   );
 };

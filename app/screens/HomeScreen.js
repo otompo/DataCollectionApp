@@ -134,7 +134,7 @@ export const HomeScreen = ({ navigation }) => {
               keyExtractor={(formsData) => formsData.formId.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View>
+                <View style={{backgroundColor:'white',elevation:2,marginBottom:5}}>
                 <FormListItem
                   title={item.formName}
                   subSubTitle={`${moment(item.createdDate).fromNow()} `}

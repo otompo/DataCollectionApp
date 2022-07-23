@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import colors from "../config/colors";
+import {UserAudioInput} from '../components/Audio/AudioInput'
 import {
   UserTextInput,
   UserPhoneInput,
@@ -23,7 +24,7 @@ import {
   UserNoteInput,
   UserImageInput,
   UserVideoInput,
-  UserAudioInput,
+  //UserAudioInput,
   UserSingleSelectInput,
   UserMultySelectInput,
   UserSliderScaletInput,
