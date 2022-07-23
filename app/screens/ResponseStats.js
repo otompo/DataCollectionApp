@@ -14,14 +14,14 @@ function ResponseStats({navigation}) {
             IconComponent={<MaterialCommunityIcons name="access-point-network" color="green" size={30}/>}
             title={"Online"}
             subSubTitle={"Online responses"}
-            onPress={() => console.log("online pressed")}
+            onPress={() => navigation.navigate("Response")}
         >
         </FormListItem>
         <FormListItem
             IconComponent={<MaterialCommunityIcons name="access-point-network-off" color="red" size={30}/>}
             title={"Offline"}
             subSubTitle={"Offline responses"}
-            onPress={() => console.log("offline pressed")}
+            onPress={() => navigation.navigate("Response")}
 
         >
         </FormListItem>
