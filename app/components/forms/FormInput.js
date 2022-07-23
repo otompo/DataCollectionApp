@@ -572,7 +572,21 @@ export const UserImageInput = ({
             </Text>
           ) : null}
         </View>
-        {image ? (
+       
+
+          <TouchableWithoutFeedback onPress={openCamera}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="image"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+      
+      </View>
+
+      {image ? (
           <>
             <View style={styles.closeIcon}>
               <TouchableWithoutFeedback onPress={handleRemoveImage}>
@@ -590,18 +604,8 @@ export const UserImageInput = ({
               style={styles.image}
             />
           </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="image"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+        ):null}
+
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -641,7 +645,7 @@ export const UserImageGeoTagInput = ({
       // await Location.getCurrentPositionAsync({});
 
       setLocation({ latitude, longitude });
-      setFieldValue({ latitude, longitude });
+      setFieldValue(id,{ latitude, longitude });
       alert(
         `Your Location Coordinates \n Latitude: ${latitude}   \n Longitude: ${longitude} `
       );
@@ -697,6 +701,7 @@ export const UserImageGeoTagInput = ({
           </Text>
         </TouchableOpacity>
       </View>
+      {location?<Text style={{fontSize:15, fontWeight:'bold'}} >Location recorded</Text>:null}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -790,7 +795,21 @@ export const UserVideoInput = ({
             </Text>
           ) : null}
         </View>
-        {video ? (
+       
+      
+          <TouchableWithoutFeedback onPress={openCamera}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="video"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+      
+      </View>
+
+      {video ? (
           <>
             <View style={styles.closeVideoIcon}>
               <TouchableWithoutFeedback onPress={handleRemoveVideo}>
@@ -811,29 +830,9 @@ export const UserVideoInput = ({
               onPlaybackStatusUpdate={(status) => setStatus(() => status)}
             />
 
-            <View style={styles.buttons}>
-              <Button
-                title={status.isPlaying ? "Pause" : "Play"}
-                onPress={() =>
-                  status.isPlaying
-                    ? videoData.current.pauseAsync()
-                    : videoData.current.playAsync()
-                }
-              />
-            </View>
-          </>
-        ) : (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="video"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View>
+          </>):null}
+
+
       <View>
         <Text size={12} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -1128,7 +1127,7 @@ export const UserLikertScaletInput = ({
           </Text>
         ) : null}
       </View>
-      <ScrollView horizontal={true}>
+      <ScrollView >
         {likerValue.map((item) => (
           <>
             <Pressable onPress={() => setOption(item)}>
@@ -1185,6 +1184,7 @@ export const UserBarQRCodeInput = ({
   const handleScanned = ({ type, data }) => {
     setScannedData(data);
     setScanned(true);
+    setShowScanner(false)
     alert(`Code with type ${type} and data ${data} has been scanned!`);
   };
 
@@ -1208,7 +1208,9 @@ export const UserBarQRCodeInput = ({
 
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleScanned}
-          style={{ height: 150, width: 150 }}
+          style={{ height: 300, width: 300,
+            flexDirection: 'column',
+            justifyContent: 'center', }}
         />
       </View>
     );
@@ -1253,6 +1255,7 @@ export const UserBarQRCodeInput = ({
           <Text style={styles.text}>Scan</Text>
         </Pressable>
       </View>
+      {scannedData? <Text style={{fontSize:15,fontWeight:'bold'}}>Code captured</Text>:null}
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
@@ -1436,7 +1439,7 @@ export const UserSignatureCaptureInput = ({
 
       <View style={styles.imageContainer}>
         <>
-        <View style={{ flexDirection: "row" }}>
+         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity style={styles.idButton}>
             <Text semi style={{ fontWeight: "bold", color: colors.white }}>
               {pos}
@@ -1460,7 +1463,7 @@ export const UserSignatureCaptureInput = ({
               *
             </Text>
           ) : null}
-        </View>
+         </View>
        
         
           <TouchableWithoutFeedback onPress={opneModal}>
@@ -1475,8 +1478,9 @@ export const UserSignatureCaptureInput = ({
         </>
       </View>
 
-      {image &&
-          <View>
+
+     
+      {image ?( <View>
             <View style={[styles.closeIcon,{marginLeft:150}]}>
               <TouchableWithoutFeedback onPress={handleRemoveImage}>
                 <MaterialCommunityIcons
@@ -1492,14 +1496,16 @@ export const UserSignatureCaptureInput = ({
               onChange={onChange}
               style={{width:150, height:150}}
             />
-          </View>}
+          </View>):null}
+
+    
       <View>
         <Text size={10} style={{ marginBottom: 5 }}>
           <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
         </Text>
       </View>
 
-      <SignatureModal open={open} close={(signature)=>{setOpen(false);setImage(signature);console.log(signature)}}/>
+      <SignatureModal open={open} close={(signature)=>{setOpen(false);setImage(signature)}}/>
     </View>
   );
 };
@@ -1541,15 +1547,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   closeIcon: {
-    position: "absolute",
+    //position: "absolute",
     zIndex: 3,
-    marginLeft: 300,
+    marginLeft: 200,
   },
   closeVideoIcon: {
-    position: "absolute",
+    //position: "absolute",
     zIndex: 3,
-    marginLeft: 230,
-    bottom: 30,
+    marginLeft: 250,
+    //bottom: 30,
   },
   imageContainer: {
     flexDirection: "row",
@@ -1558,8 +1564,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: 50,
-    height: 50,
+    width: 250,
+    height: 200,
     borderWidth: 5,
     borderRadius: 10,
     marginTop: 10,
@@ -1567,8 +1573,8 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   media: {
-    width: 50,
-    height: 50,
+    width: 300,
+    height: 250,
     borderWidth: 5,
     borderRadius: 10,
     marginRight: -40,

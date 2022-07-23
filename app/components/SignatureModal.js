@@ -41,7 +41,7 @@ const SignatureModal = ({open,close}) => {
             clearText="Clear"
             confirmText="Save"
             webStyle={style}
-      />
+          />
             
           </View>
         </View>

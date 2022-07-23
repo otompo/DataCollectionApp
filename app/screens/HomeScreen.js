@@ -142,8 +142,8 @@ export const HomeScreen = ({ navigation }) => {
                 />
                 <Divider />
                 <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{formsStats && formsStats[`online-${item.formId}`]||0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{formsStats && formsStats[`saved-${item.formId}`]||0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
                   <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{formsStats && formsStats[`draft-${item.formId}`]+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
                 </TouchableOpacity>
                 </View>
@@ -165,8 +165,8 @@ export const HomeScreen = ({ navigation }) => {
                 />
                 <Divider />
                 <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{formsStats && formsStats[`online-${item.formId}`]||0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
+                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{formsStats && formsStats[`saved-${item.formId}`]||0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
                   <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{formsStats && formsStats[`draft-${item.formId}`]||0+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
                 </TouchableOpacity>
                 </View>

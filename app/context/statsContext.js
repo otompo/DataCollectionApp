@@ -11,6 +11,7 @@ const StatsDataProvider = ({ children }) => {
     let data = await AsyncStorage.getItem("@Stats");
     if (data !== null) {
       const as = JSON.parse(data);
+      console.log({...as,...formsStats})
       setStatsData({...as,...formsStats});
     }
   },[]);

@@ -8,6 +8,7 @@ import {
   Platform,
   AlertIOS,
   Image,
+  FlatList
 } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -16,6 +17,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Text from "@kaloraat/react-native-text";
 import * as ImagePicker from "expo-image-picker";
+import FormListItem from '../components/FormListItem'
+import DraftScreen from './tabs/Draft'
 import axios from "axios";
 
 // import { Avatar } from "react-native-paper";
@@ -40,51 +43,49 @@ const getOffline=async()=>{
     
        forms.map(async form=>{
             const drf = await AsyncStorage.getItem(`saved-${form.formId}`);
-            if(drf){
-                setSaved([...saved,...JSON.parse(drf)])
-            }
+                if(drf){
+                  let save =  JSON.parse(drf);
+                  let formSave = {form,save}
+                  setSaved([...saved,formSave])
+              }
+            
        })
     }
     console.log("saved",saved)
 }
 
-
+  if(!saved.length){
+    return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}><Text style={{fontWeight:'bold'}}>No saved responses</Text></View>
+  }
   return (
-    <View>
-      <Text>History</Text>
-    </View>
+    <ScrollView>
+    {saved.map(df=>(
+      <View>
+       <FormListItem
+      //  IconComponent={<MaterialCommunityIcons name="access-point-network" color="green" size={30}/>}
+       title={df.form.formName}
+       subSubTitle={df.form.createdDate}
+       onPress={() => console.log("online pressed")}
+       icon=""
+      />
+        <View style={{marginLeft:25}}>
+          {df.save.map(saveIn=>{
+             const answeres = Object.values(saveIn);
+             //count only real values, skip ""
+             const length = answeres.filter(ans=>ans !== "" && ans != null).length
+            return <FormListItem
+             title={new Date().toLocaleDateString()}
+             subSubTitle={`${"Answered"+" "+length }`}
+             onPress={() => console.log("online pressed")}
+             />
+          })}
+        </View>
+      </View>
+    ))}
+  </ScrollView>
   );
 }
 
-function DraftScreen({ navigation }) {
-
-    useEffect(()=>{
-        getDraft();
-    },[])
-
-    const [drafts, setDrafts] = useState([])
-
-    const getDraft=async()=>{
-        const data = await AsyncStorage.getItem('@formdata');
-        if(data){
-           const forms = JSON.parse(data);
-        
-           forms.map(async form=>{
-                const drf = await AsyncStorage.getItem(`draft-${form.formId}`);
-                if(drf){
-                    setDrafts([...drafts,...JSON.parse(drf)])
-                }
-           })
-        }
-        console.log("DRAFT",drafts)
-    }
-    
-    return (
-      <View>
-        <Text>Draft</Text>
-      </View>
-    );
-  }
 
 function OnlineScreen({ navigation }) {
 

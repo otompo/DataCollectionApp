@@ -236,7 +236,7 @@ function FormDetailsScreen({ route, navigation }) {
   };
 
   const handleOfflineSubmit = async (values) => {
-    //console.log(values);
+   // console.log(values);
     try {
       setLoading(true);
       const draftData = await AsyncStorage.getItem(`draft-${forms.formId}`);
@@ -446,15 +446,21 @@ function FormDetailsScreen({ route, navigation }) {
                             ) : questionsDetail.questionType === "Location" ? (
                               <View style={styles.questionCard}>
                                 <View>
-                                  <UserImageGeoTagInput
-                                    name={questionsDetail.questionTittle}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.questionDescription}
-                                    type={questionsDetail.questionType}
-                                    setFieldValue={setFieldValue}
-                                    id={questionsDetail.questionId}
-                                    errors={questionsDetail.questionType}
-                                  />
+                                <UserTextInput
+                                  name={questionsDetail.questionTittle}
+                                  pos={questionsDetail.questionPosition}
+                                  desc={questionsDetail.questionDescription}
+                                  type={questionsDetail.questionType}
+                                  onChange={handleChange(
+                                    questionsDetail.questionId
+                                  )}
+                                  questionMandatoryOption={
+                                    questionsDetail.questionMandatoryOption
+                                  }
+                                  autoCapitalize="words"
+                                  autoCorrect={false}
+                                  errors={questionsDetail.questionType}
+                                />
                                 </View>
                               </View>
                             ) : questionsDetail.questionType ===
@@ -516,7 +522,8 @@ function FormDetailsScreen({ route, navigation }) {
                                   errors={questionsDetail.questionType}
                                 />
                               </View>
-                            ) : questionsDetail.questionType === "Email" ? (
+                            )
+                             : questionsDetail.questionType === "Email" ? (
                               <View style={styles.questionCard}>
                                 <UserTextInput
                                   name={questionsDetail.questionTittle}
@@ -535,7 +542,8 @@ function FormDetailsScreen({ route, navigation }) {
                                   errors={questionsDetail.questionType}
                                 />
                               </View>
-                            ) : questionsDetail.questionType === "Audio" ? (
+                            ) 
+                            : questionsDetail.questionType === "Audio" ? (
                               <View style={styles.questionCard}>
                                 <UserAudioInput
                                   name={questionsDetail.questionTittle}
@@ -550,7 +558,8 @@ function FormDetailsScreen({ route, navigation }) {
                                   autoCorrect={false}
                                 />
                               </View>
-                            ) : questionsDetail.questionType === "Video" ? (
+                            )
+                             : questionsDetail.questionType === "Video" ? (
                               <View style={styles.questionCard}>
                                 <UserVideoInput
                                   name={questionsDetail.questionTittle}
