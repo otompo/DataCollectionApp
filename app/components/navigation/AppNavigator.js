@@ -36,7 +36,7 @@ export default function AppNavigator() {
           name={"Drawer"}
           component={HomeDrawerNavigator}
           options={({ navigation }) => ({
-            title: "Home",
+            title: "",
             headerLeft: () => (
               <HeaderTabs
                 icon="bars"
@@ -87,7 +87,6 @@ export default function AppNavigator() {
             // headerShown: false,
           }}
         />
-
         <Stack.Screen
           name="Signin"
           component={Signin}
