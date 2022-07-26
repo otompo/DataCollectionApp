@@ -9,8 +9,25 @@ function ResponseScanner({ route }) {
   const [data, setData] = useState("");
 
   useEffect(() => {
-    const { data } = axios.post(`/qr-scan-read.php`);
-    setData(data);
+    const readData = async () => {
+      var bodyFormData = new FormData();
+      bodyFormData.append("resData", resData);
+      const { data } = await axios({
+        method: "post",
+        url: "https://beta.kpododo.com/api/v1/qr-scan-read.php",
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+        .then(function (response) {
+          //handle success
+          console.log(response);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
+    };
+    readData();
   }, []);
 
   return (
