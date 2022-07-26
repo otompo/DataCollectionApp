@@ -4,15 +4,9 @@ import SubmitButton from "../components/Button/SubmitButton";
 import axios from "axios";
 
 function ResponseScanner({ route }) {
-  const resData = route.params;
+  const responseData = route.params;
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
-
-  var objectData = {
-    tracker_id: 0,
-    response_id: 52,
-    form_id: 2,
-  };
 
   useEffect(() => {
     handleReadData();
@@ -20,7 +14,7 @@ function ResponseScanner({ route }) {
 
   const handleReadData = () => {
     var bodyFormData = new FormData();
-    bodyFormData.append("objectData", objectData);
+    bodyFormData.append("responseData", responseData);
     axios({
       method: "post",
       url: "https://beta.kpododo.com/api/v1/qr-scan-read.php",
@@ -40,7 +34,7 @@ function ResponseScanner({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text>{resData}</Text>
+      <Text>{responseData}</Text>
       <Text>{readData}</Text>
     </View>
   );
