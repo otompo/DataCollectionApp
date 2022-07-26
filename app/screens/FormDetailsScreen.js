@@ -12,6 +12,7 @@ import {
   ToastAndroid,
   Platform,
   AlertIOS,
+  Alert,
 } from "react-native";
 import axios from "axios";
 import colors from "../config/colors";
@@ -250,10 +251,12 @@ function FormDetailsScreen({ route, navigation }) {
           AlertIOS.alert(data.message);
         }
       }
+      navigation.navigate("Home");
       setLoading(false);
       navigation.navigate("Home");
     } catch (err) {
       console.log(err);
+      Alert.alert(err.toString())
       setLoading(false);
     } finally {
       setLoading(false);

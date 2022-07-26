@@ -14,21 +14,23 @@ function ResponseScanner({ route }) {
 
   const handleReadData = () => {
     var bodyFormData = new FormData();
-    // console.log(responseData);
     bodyFormData.append("form", responseData.form);
     bodyFormData.append("response", responseData.response);
     bodyFormData.append("tracker", responseData.tracker);
+
     axios({
       method: "post",
-      url: "https://beta.kpododo.com/api/v1/qr_scan_read.php",
+      url: "/qr_scan_read.php",
       data: bodyFormData,
       headers: { "Content-Type": "application/json" },
     })
       .then(function (response) {
-        console.log(response);
+        setReadData(response);
+        console.log("response", response);
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch(function (err) {
+        //handle error
+        console.log(err.response);
       });
   };
 
