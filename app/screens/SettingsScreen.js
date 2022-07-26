@@ -9,7 +9,8 @@ function SettingsScreen(props) {
   return (
     <View style={styles.container}>
       <Text style={{ marginLeft: 30 }}>
-        {JSON.stringify(formsData, null, 4)}
+        Application Screen
+        {/* {JSON.stringify(formsData, null, 4)} */}
       </Text>
     </View>
   );

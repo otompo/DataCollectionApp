@@ -98,10 +98,11 @@ function FormDetailsScreen({ route, navigation }) {
         setSuccess(true);
       } else {
         //lets load questions from the local storage
-        console.log("Loading offline forms");
+        // console.log("Loading offline forms");
         const data = await AsyncStorage.getItem(`${forms.formId}`);
         setQuestionsDails(JSON.parse(data));
       }
+      navigation.navigate("Home");
     } catch (err) {
       // console.log(err);
       setSuccess(false);
@@ -127,7 +128,6 @@ function FormDetailsScreen({ route, navigation }) {
       setQuestionsDails(data.questionDetail);
       setSuccess(true);
     } catch (err) {
-      // console.log(err);
       setSuccess(false);
     } finally {
       setInitLoading(false);
@@ -148,7 +148,7 @@ function FormDetailsScreen({ route, navigation }) {
     questionsDetails?.map((question) => {
       return (values[question.questionId] = "");
     });
-    // console.log(values);
+
     return values;
   }, [questionsDetails]);
 
@@ -164,7 +164,6 @@ function FormDetailsScreen({ route, navigation }) {
   });
 
   const handleSubmit = async (values) => {
-    //console.log(values);
     try {
       setLoading(true);
 
@@ -218,7 +217,6 @@ function FormDetailsScreen({ route, navigation }) {
           })
           .join("&");
 
-        // console.log("get", as);
         const { data } = await axios.get(
           `/questionResponse?formId=${forms.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
         );
@@ -240,7 +238,6 @@ function FormDetailsScreen({ route, navigation }) {
             : 1,
         });
 
-        // console.log("getData", data);
         if (Platform.OS === "android") {
           ToastAndroid.showWithGravityAndOffset(
             data.message,
@@ -254,6 +251,7 @@ function FormDetailsScreen({ route, navigation }) {
         }
       }
       setLoading(false);
+      navigation.navigate("Home");
     } catch (err) {
       console.log(err);
       setLoading(false);
@@ -263,7 +261,6 @@ function FormDetailsScreen({ route, navigation }) {
   };
 
   const handleOfflineSubmit = async (values) => {
-    // console.log(values);
     try {
       setLoading(true);
       const draftData = await AsyncStorage.getItem(`draft-${forms.formId}`);
@@ -271,7 +268,6 @@ function FormDetailsScreen({ route, navigation }) {
 
       if (draftData) {
         //draft already exists for this form, lets push some more drat data to it
-        //console.log(draftData)
         dd = JSON.parse(draftData);
       }
 

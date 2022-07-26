@@ -101,6 +101,7 @@ export const UserTextInput = ({
     </View>
   );
 };
+
 export const UserNoteInput = ({
   name,
   pos,
@@ -514,17 +515,12 @@ export const UserImageInput = ({
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.5,
-      base64: true,
-    });
+    const result = await ImagePicker.launchImageLibraryAsync();
     // Explore the result
     // console.log(result);
     if (!result.cancelled) {
-      let base64Image = `data:image/jpg;base64,${result.base64}`;
-      setFieldValue(base64Image);
-      setImage(base64Image);
+      setFieldValue(result.uri);
+      setImage(result.uri);
     }
   };
 
@@ -642,8 +638,8 @@ export const UserImageGeoTagInput = ({
 
       // await Location.getCurrentPositionAsync({});
 
-      setLocation({ latitude, longitude });
-      setFieldValue(id, { latitude, longitude });
+      setLocation(latitude, longitude);
+      setFieldValue(id, latitude, longitude);
       alert(
         `Your Location Coordinates \n Latitude: ${latitude}   \n Longitude: ${longitude} `
       );
@@ -692,7 +688,7 @@ export const UserImageGeoTagInput = ({
         <TouchableOpacity onPress={getLocation} style={styles.geoButton}>
           <Text style={styles.text}>
             {loading ? (
-              <ActivityIndicator size="small" color={colors.white} />
+              <ActivityIndicator size="large" color={colors.primary} />
             ) : (
               <View>
                 <MaterialCommunityIcons
@@ -1242,7 +1238,7 @@ export const UserBarQRCodeInput = ({
           <Text
             medium
             color={colors.medium}
-            style={{ marginBottom: 5, marginLeft: 10, fontWeight: "bold" }}
+            style={{ marginBottom: 5, marginRight: 15, fontWeight: "bold" }}
           >
             {name}
           </Text>
@@ -1259,7 +1255,13 @@ export const UserBarQRCodeInput = ({
         </View>
 
         <Pressable style={styles.sbutton} onPress={askPermissions}>
-          <Text style={styles.text}>Scan</Text>
+          <Text style={styles.text}>
+            <MaterialCommunityIcons
+              color={colors.white}
+              name="magnify-scan"
+              size={40}
+            />
+          </Text>
         </Pressable>
       </View>
       {scannedData ? (
@@ -1403,29 +1405,6 @@ export const UserSignatureCaptureInput = ({
 
   const opneModal = () => {
     setOpen(true);
-  };
-
-  const openCamera = async () => {
-    // Ask the user for the permission to access the camera
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("You've refused to allow this appp to access your camera!");
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.5,
-      base64: true,
-    });
-    // Explore the result
-    // console.log(result);
-    if (!result.cancelled) {
-      let base64Image = `data:image/jpg;base64,${result.base64}`;
-      setFieldValue(base64Image);
-      setImage(base64Image);
-    }
   };
 
   const handleRemoveImage = () => {
