@@ -119,7 +119,7 @@ function ResponseScanner(props) {
                 <Text
                   style={{ fontSize: 18, fontWeight: "400", paddingBottom: 20 }}
                 >
-                  Data Scanned
+                  Scanned Data
                 </Text>
                 <Text>{scannedData}</Text>
               </View>
