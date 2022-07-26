@@ -12,10 +12,10 @@ function ResponseScanner({ route }) {
     handleReadData();
   }, []);
 
-  const handleReadData = async () => {
+  const handleReadData = () => {
     var bodyFormData = new FormData();
     bodyFormData.append("resData", resData);
-    const { data } = await axios({
+    axios({
       method: "post",
       url: "https://beta.kpododo.com/api/v1/qr-scan-read.php",
       data: bodyFormData,
