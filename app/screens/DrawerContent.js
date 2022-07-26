@@ -78,7 +78,7 @@ export function DrawerContent(props) {
               )}
               label="QR Scanner"
               onPress={() => {
-                props.navigation.navigate("ResponseScanner");
+                props.navigation.navigate("QRCodeScanner");
               }}
             />
           </Drawer.Section>
