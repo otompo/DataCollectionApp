@@ -103,7 +103,7 @@ function FormDetailsScreen({ route, navigation }) {
         const data = await AsyncStorage.getItem(`${forms.formId}`);
         setQuestionsDails(JSON.parse(data));
       }
-      navigation.navigate("Home");
+    
     } catch (err) {
       // console.log(err);
       setSuccess(false);
@@ -164,7 +164,7 @@ function FormDetailsScreen({ route, navigation }) {
       .required("Phone number is required"),
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmitForm = async (values) => {
     try {
       setLoading(true);
 
@@ -253,7 +253,6 @@ function FormDetailsScreen({ route, navigation }) {
       }
       navigation.navigate("Home");
       setLoading(false);
-      navigation.navigate("Home");
     } catch (err) {
       console.log(err);
       Alert.alert(err.toString())
@@ -337,7 +336,7 @@ function FormDetailsScreen({ route, navigation }) {
           initialValues={initialVars}
           enableReinitialize={true}
           //TODO: add validationScheme/ read about validation scheme and yup
-          onSubmit={(values) => handleSubmit(values)}
+          onSubmit={(values) => handleSubmitForm(values)}
         >
           {({
             handleChange,

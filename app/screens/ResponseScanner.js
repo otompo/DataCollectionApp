@@ -23,16 +23,16 @@ function ResponseScanner({ route }) {
       method: "post",
       url: "https://beta.kpododo.com/api/v1/qr_scan_read.php",
       data: bodyFormData,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "multipart/form-data" },
     })
       .then(function (response) {
         //handle success
-        setReadData(response);
-        console.log(response);
+        //setReadData(response);
+        console.log("SUCCESS",response);
       })
       .catch(function (response) {
         //handle error
-         console.log(response.response);
+         console.log("ERROR",response.response);
       });
   };
 

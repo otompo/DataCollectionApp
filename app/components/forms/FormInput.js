@@ -516,6 +516,7 @@ export const UserImageInput = ({
     // Explore the result
     // console.log(result);
     if (!result.cancelled) {
+      console.log(result.uri)
       setFieldValue(result.uri);
       setImage(result.uri);
     }
@@ -1490,7 +1491,7 @@ export const UserSignatureCaptureInput = ({
         open={open}
         close={(signature) => {
           setOpen(false);
-          setImage(signature);
+          setImage(signature.uri);
         }}
       />
     </View>
