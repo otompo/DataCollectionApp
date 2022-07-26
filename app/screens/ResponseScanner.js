@@ -35,7 +35,7 @@ function ResponseScanner({ route }) {
   return (
     <View style={styles.container}>
       <Text>{resData}</Text>
-      <Text>{data}</Text>
+      <Text>{readData}</Text>
     </View>
   );
 }
