@@ -8,18 +8,24 @@ function ResponseScanner({ route }) {
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
 
+  var objectData = {
+    tracker_id: 0,
+    response_id: 52,
+    form_id: 2,
+  };
+
   useEffect(() => {
     handleReadData();
   }, []);
 
   const handleReadData = () => {
     var bodyFormData = new FormData();
-    bodyFormData.append("resData", resData);
+    bodyFormData.append("objectData", objectData);
     axios({
       method: "post",
-      url: "https://beta.kpododo.com/api/v1/qr-scan-read.php",
+      url: "/qr-scan-read.php",
       data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "application/json" },
     })
       .then(function (response) {
         //handle success
@@ -28,7 +34,7 @@ function ResponseScanner({ route }) {
       })
       .catch(function (response) {
         //handle error
-        console.log(response);
+        // console.log(response);
       });
   };
 
