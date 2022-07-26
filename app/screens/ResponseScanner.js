@@ -23,7 +23,7 @@ function ResponseScanner({ route }) {
     bodyFormData.append("objectData", objectData);
     axios({
       method: "post",
-      url: "/qr-scan-read.php",
+      url: "https://beta.kpododo.com/api/v1/qr-scan-read.php",
       data: bodyFormData,
       headers: { "Content-Type": "application/json" },
     })
