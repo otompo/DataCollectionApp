@@ -7,7 +7,6 @@ import {
   Image,
   Alert,
   TouchableWithoutFeedback,
-  Button,
   Pressable,
   ScrollView,
   ActivityIndicator,
@@ -19,9 +18,7 @@ import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
-import * as Permissions from "expo-permissions";
-import { Video, Audio } from "expo-av";
-import * as DocumentPicker from "expo-document-picker";
+import { Video } from "expo-av";
 import { Slider } from "react-native-range-slider-expo";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Rating } from "react-native-ratings";
@@ -1164,7 +1161,6 @@ export const UserBarQRCodeInput = ({
   setFieldValue,
   errors,
 }) => {
-  const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
   const [showScanner, setShowScanner] = useState(false);
@@ -1176,7 +1172,6 @@ export const UserBarQRCodeInput = ({
   const askPermissions = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
-      // setHasPermission(status == "granted");
       setShowScanner(status == "granted");
     })();
   };

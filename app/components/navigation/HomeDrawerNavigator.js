@@ -14,6 +14,7 @@ import { DrawerContent } from "../../screens/DrawerContent";
 import { HomeScreen } from "../../screens/HomeScreen";
 import colors from "../../config/colors";
 import Profile from "../../screens/Profile";
+import ResponseScanner from "../../screens/ResponseScanner";
 
 const { Navigator, Screen } = createDrawerNavigator();
 
@@ -37,6 +38,7 @@ export const HomeDrawerNavigator = () => (
   >
     <Screen name="Home" component={HomeScreen} />
     <Screen name="Profile" component={Profile} />
+    <Screen name="ResponseScanner" component={ResponseScanner} />
     {/* 
     <Screen name="Login" component={LoginScreen} />
     <Screen name="Register" component={RegisterScreen} /> */}

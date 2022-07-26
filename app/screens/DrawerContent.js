@@ -72,19 +72,19 @@ export function DrawerContent(props) {
               }}
             />
 
-            {/* <DrawerItem
+            <DrawerItem
               icon={({ color, size }) => (
                 <Icon name="qrcode" color={color} size={size} />
               )}
               label="QR Scanner"
               onPress={() => {
-                props.navigation.navigate("QRCodeScanner");
+                props.navigation.navigate("ResponseScanner");
               }}
-            /> */}
+            />
           </Drawer.Section>
         </View>
         <Drawer.Section>
-        <DrawerItem
+          <DrawerItem
             icon={({ color, size }) => (
               <Icon name="account-outline" color={colors.primary} size={size} />
             )}

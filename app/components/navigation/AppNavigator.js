@@ -12,8 +12,8 @@ import colors from "../../config/colors";
 import FormDetailsScreen from "../../screens/FormDetailsScreen";
 import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
-import ResponseStats from '../../screens/ResponseStats'
-import Response from '../../screens/Response'
+import ResponseStats from "../../screens/ResponseStats";
+import Response from "../../screens/Response";
 
 const Stack = createStackNavigator();
 
@@ -48,7 +48,7 @@ export default function AppNavigator() {
             headerRight: () => <HeaderTabs icon="refresh" />,
           })}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="ResponseStats"
           component={ResponseStats}
           options={{
@@ -87,6 +87,7 @@ export default function AppNavigator() {
             // headerShown: false,
           }}
         />
+
         <Stack.Screen
           name="Signin"
           component={Signin}
