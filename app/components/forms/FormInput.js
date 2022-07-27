@@ -516,7 +516,7 @@ export const UserImageInput = ({
     // Explore the result
     // console.log(result);
     if (!result.cancelled) {
-      console.log(result.uri)
+      console.log(result.uri);
       setFieldValue(result.uri);
       setImage(result.uri);
     }

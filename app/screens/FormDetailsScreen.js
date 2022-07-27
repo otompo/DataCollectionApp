@@ -103,7 +103,6 @@ function FormDetailsScreen({ route, navigation }) {
         const data = await AsyncStorage.getItem(`${forms.formId}`);
         setQuestionsDails(JSON.parse(data));
       }
-    
     } catch (err) {
       // console.log(err);
       setSuccess(false);
@@ -255,7 +254,7 @@ function FormDetailsScreen({ route, navigation }) {
       setLoading(false);
     } catch (err) {
       console.log(err);
-      Alert.alert(err.toString())
+      Alert.alert(err.toString());
       setLoading(false);
     } finally {
       setLoading(false);
