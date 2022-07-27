@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
   },
   nameText: {
     flexDirection: "row",
-    marginLeft: 10
+    marginLeft: 10,
+    marginRight: 20
   },
 });

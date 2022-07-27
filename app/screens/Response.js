@@ -37,21 +37,27 @@ useEffect(()=>{
 },[])
 
 const getOffline=async()=>{
-    const data = await AsyncStorage.getItem('@formdata');
-    if(data){
-       const forms = JSON.parse(data);
-    
-       forms.map(async form=>{
+       const data = await AsyncStorage.getItem('@formdata');
+        //console.log(data);
+        if(data){
+           const forms = JSON.parse(data);
+          // const itemCount = forms.length
+        const output = forms.map(async form=>{
+            let dataobj = [];
             const drf = await AsyncStorage.getItem(`saved-${form.formId}`);
-                if(drf){
-                  let save =  JSON.parse(drf);
-                  let formSave = {form,save}
-                  setSaved([...saved,formSave])
-              }
-            
+            if(drf){
+                let saved =  JSON.parse(drf);
+                let formDrafts = {form,saved}
+                dataobj = [formDrafts,...dataobj]
+                return dataobj
+            }
        })
-    }
-    console.log("saved",saved)
+           Promise.all(
+            output
+           ).then(res=>{setSaved(res)})
+           
+        }
+   
 }
 
   if(!saved.length){
@@ -63,13 +69,13 @@ const getOffline=async()=>{
       <View>
        <FormListItem
       //  IconComponent={<MaterialCommunityIcons name="access-point-network" color="green" size={30}/>}
-       title={df.form.formName}
-       subSubTitle={df.form.createdDate}
+       title={df[0].form.formName}
+       subSubTitle={df[0].form.createdDate}
        onPress={() => console.log("online pressed")}
        icon=""
       />
         <View style={{marginLeft:25}}>
-          {df.save.map(saveIn=>{
+          {df[0].save.map(saveIn=>{
              const answeres = Object.values(saveIn);
              //count only real values, skip ""
              const length = answeres.filter(ans=>ans !== "" && ans != null).length
