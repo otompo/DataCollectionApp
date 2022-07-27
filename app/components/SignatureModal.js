@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
 import Signature from "react-native-signature-canvas";
+import * as FileSystem from "expo-file-system";
 
 const SignatureModal = ({ open, close }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -11,7 +12,15 @@ const SignatureModal = ({ open, close }) => {
     }`;
 
   const handleOK = (signature) => {
-    close(signature);
+    const path = FileSystem.cacheDirectory + "sign.png";
+    FileSystem.writeAsStringAsync(
+      path,
+      signature.replace("data:image/png;base64,", ""),
+      { encoding: FileSystem.EncodingType.Base64 }
+    )
+      .then(() => FileSystem.getInfoAsync(path))
+      .then(path=>close(path))
+      .catch(console.error);
   };
 
   const handleEmpty = () => {
