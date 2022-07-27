@@ -78,8 +78,7 @@ function ResponseScanner({ route }) {
     })
       .then(function (response) {
         // setReadData(response.data);
-        console.log("response Data", response);
-
+        // console.log("response Data", response);
         if (Platform.OS === "android") {
           ToastAndroid.showWithGravityAndOffset(
             "Success",
