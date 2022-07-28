@@ -71,12 +71,12 @@ function ResponseScanner({ route }) {
       //JSON.parse(response.data);
     
       setReadData(data);
-      setIdentifier(data.identifier);
-      setCreatedBy(data.created_by);
-      setCreatedAt(data.created_at);
-      setFullName(data.full_name);
-      setLocation(data.location);
-      setLanguage(data.language);
+      setIdentifier(data?.identifier);
+      setCreatedBy(data?.created_by);
+      setCreatedAt(data?.created_at);
+      setFullName(data?.full_name);
+      setLocation(data?.location);
+      setLanguage(data?.language);
     })
     .catch(function (error) {
       console.log(error);
