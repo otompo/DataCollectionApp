@@ -15,7 +15,7 @@ import axios from "axios";
 import colors from "../config/colors";
 import moment from "moment";
 
-function ResponseScanner({ route }) {
+function ResponseScanner({ route,navigation }) {
   const responseData = JSON.parse(route.params)
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
@@ -25,7 +25,7 @@ function ResponseScanner({ route }) {
   const [fullName, setFullName] = useState("");
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
-  const [remarks, setRemasks] = useState("");
+  const [remarks, setRemarks] = useState("");
   const [locationInfo, setLocationInfo] = useState("");
 
   // const dataSay = {
@@ -45,10 +45,6 @@ function ResponseScanner({ route }) {
 
   const handleReadData = () => {
     console.log("DATA",responseData)
-    var bodyFormData = new FormData();
-    bodyFormData.append("form", responseData.form);
-    bodyFormData.append("response", responseData.response);
-    bodyFormData.append("tracker", responseData.tracker);
 
     var data = new FormData();
     data.append('form', responseData.form);
@@ -82,46 +78,16 @@ function ResponseScanner({ route }) {
       console.log(error);
     });
 
-    // axios.post(`https://beta.kpododo.com/api/v1/qr_scan_read.php?tracker=${responseData.tracker}&response=${responseData.response}&form=${responseData.form}`,{},{
-    //   headers: { "Content-Type": "multipart/form-data" }
-    // }).then(function (response) {
-    //   setReadData(response.data);
-    //   setIdentifier(response.data.identifier);
-    //   setCreatedBy(response.data.created_by);
-    //   setCreatedAt(response.data.created_at);
-    //   setFullName(response.data.full_name);
-    //   setLocation(response.data.location);
-    //   setLanguage(response.data.language);
-    // })
-    // .catch(function (err) {
-    //   console.log(err.response);
-    // });
-
-  //   axios({
-  //     method: "post",
-  //     url: "/qr_scan_read.php",
-  //     data: bodyFormData,
-  //     headers: { "Content-Type": "multipart/form-data" },
-  //   })
-  //     .then(function (response) {
-  //       setReadData(response.data);
-  //       setIdentifier(response.data.identifier);
-  //       setCreatedBy(response.data.created_by);
-  //       setCreatedAt(response.data.created_at);
-  //       setFullName(response.data.full_name);
-  //       setLocation(response.data.location);
-  //       setLanguage(response.data.language);
-  //     })
-  //     .catch(function (err) {
-  //       console.log(err.response);
-  //     });
+    
    };
 
   const handleSubmit = async () => {
-    var bodyFormData = new FormData();
-    bodyFormData.append("form", responseData.form);
-    bodyFormData.append("response", responseData.response);
-    bodyFormData.append("tracker", responseData.tracker);
+    var bodyFormData = new FormData(readData);
+    Object.keys(readData).map(key=>{
+      bodyFormData.append(key,readData[key])
+    })
+    bodyFormData.append("remark",remarks);
+  
     setLoading(true);
     axios({
       method: "post",
@@ -143,7 +109,7 @@ function ResponseScanner({ route }) {
         } else {
           AlertIOS.alert("Success");
         }
-
+        navigation.navigate("Home")
         setLoading(false);
       })
       .catch(function (err) {
@@ -171,10 +137,11 @@ function ResponseScanner({ route }) {
         <AutoGrowingTextInput
           style={styles.remarks}
           value={remarks}
-          // onChangeText={onChange}
-          placeholder={"Remask "}
+          rows={10}
+          onChangeText={(txt)=>setRemarks(txt)}
+          placeholder={"Remark "}
         />
-        <AppTextInput
+        {/* <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
           icon="map-marker-plus"
@@ -192,7 +159,7 @@ function ResponseScanner({ route }) {
           keyboardType="numeric"
           value={identifier}
           setValue={setIdentifier}
-        />
+        /> */}
 
         <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
       </View>
