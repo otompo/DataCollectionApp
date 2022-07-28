@@ -132,7 +132,7 @@ function ResponseScanner({ route }) {
           style={styles.remarks}
           value={remarks}
           onChangeText={(text) => setRemasks(text)}
-          placeholder={"Remask "}
+          placeholder={"Remask"}
           height={200}
         />
         {/* <AppTextInput
