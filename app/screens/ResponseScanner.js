@@ -6,6 +6,7 @@ import {
   Platform,
   AlertIOS,
   ToastAndroid,
+  TextInput,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -16,7 +17,7 @@ import colors from "../config/colors";
 import moment from "moment";
 
 function ResponseScanner({ route }) {
-  const responseData = route.params;
+  const responseData = JSON.parse(route.params);
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
   const [identifier, setIdentifier] = useState("");
@@ -25,8 +26,7 @@ function ResponseScanner({ route }) {
   const [fullName, setFullName] = useState("");
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
-  const [remarks, setRemasks] = useState("");
-  const [locationInfo, setLocationInfo] = useState("");
+  const [remarks, setRemasks] = useState({});
 
   // const dataSay = {
   //   response: "52",
@@ -35,15 +35,18 @@ function ResponseScanner({ route }) {
   // };
 
   useEffect(() => {
-    handleReadData();
-  }, []);
+    if (route.params != null) {
+      handleReadData();
+    } else {
+      console.log("empty");
+    }
+  }, [route.parama]);
 
   const handleReadData = () => {
     var bodyFormData = new FormData();
     bodyFormData.append("form", responseData.form);
     bodyFormData.append("response", responseData.response);
     bodyFormData.append("tracker", responseData.tracker);
-
     axios({
       method: "post",
       url: "/qr_scan_read.php",
@@ -67,8 +70,15 @@ function ResponseScanner({ route }) {
   const handleSubmit = async () => {
     var bodyFormData = new FormData();
     bodyFormData.append("form", responseData.form);
+    bodyFormData.append("created_by", responseData.createdBy);
+    bodyFormData.append("Name", responseData.full_name);
+    bodyFormData.append("location", responseData.location);
     bodyFormData.append("response", responseData.response);
+    bodyFormData.append("language", responseData.language);
+    bodyFormData.append("identifier", responseData.identifier);
+    bodyFormData.append("Contact", responseData.identifier);
     bodyFormData.append("tracker", responseData.tracker);
+    bodyFormData.append("remasks", remarks);
     setLoading(true);
     axios({
       method: "post",
@@ -98,6 +108,7 @@ function ResponseScanner({ route }) {
         setLoading(false);
       });
   };
+
   return (
     <KeyboardAwareScrollView
       enableOnAndroid={true}
@@ -108,20 +119,23 @@ function ResponseScanner({ route }) {
     >
       <View style={styles.questionCard}>
         {/* <Text>{responseData}</Text> */}
-        <Text>Full Name: {fullName}</Text>
-        <Text>Identifier:{identifier}</Text>
-        <Text>CreatedAt :{moment(createdAt).format("ll")}</Text>
-        <Text>Language:{language}</Text>
-        <Text>Location: {location}</Text>
+        <Text style={styles.text}>Full Name: {fullName}</Text>
+        <Text style={styles.text}>Identifier:{identifier}</Text>
+        <Text style={styles.text}>
+          CreatedAt :{moment(createdAt).format("ll")}
+        </Text>
+        <Text style={styles.text}>Language:{language}</Text>
+        <Text style={styles.text}>Location: {location}</Text>
       </View>
       <View style={styles.MainContainer}>
         <AutoGrowingTextInput
           style={styles.remarks}
           value={remarks}
-          // onChangeText={onChange}
+          onChangeText={(text) => setRemasks(text)}
           placeholder={"Remask "}
+          height={200}
         />
-        <AppTextInput
+        {/* <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
           icon="map-marker-plus"
@@ -129,17 +143,7 @@ function ResponseScanner({ route }) {
           keyboardType="text"
           value={location}
           setValue={setLocation}
-        />
-
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="phone"
-          placeholder="Phone Number"
-          keyboardType="numeric"
-          value={identifier}
-          setValue={setIdentifier}
-        />
+        /> */}
 
         <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
       </View>
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     width: "100%",
-    height: 50,
+    height: 550,
     padding: 10,
     marginVertical: 10,
     shadowColor: "#171717",
@@ -186,5 +190,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 2,
+  },
+  text: {
+    fontSize: 20,
   },
 });
