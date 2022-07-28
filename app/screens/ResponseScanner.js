@@ -16,7 +16,7 @@ import colors from "../config/colors";
 import moment from "moment";
 
 function ResponseScanner({ route }) {
-  const responseData = route.params;
+  const responseData = JSON.parse(route.params)
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
   const [identifier, setIdentifier] = useState("");
@@ -35,8 +35,13 @@ function ResponseScanner({ route }) {
   // };
 
   useEffect(() => {
-    handleReadData();
-  }, []);
+    if(route.params != null){
+      handleReadData();
+    }else{
+      console.log("empty")
+    }
+   
+  }, [route.parama]);
 
   const handleReadData = () => {
     console.log("DATA",responseData)
@@ -46,13 +51,13 @@ function ResponseScanner({ route }) {
     bodyFormData.append("tracker", responseData.tracker);
 
     var data = new FormData();
-    data.append('form', '4');
-    data.append('tracker', '2');
-    data.append('response', '126');
+    data.append('form', responseData.form);
+    data.append('tracker', responseData.tracker);
+    data.append('response', responseData.response);
 
     var config = {
       method: 'post',
-      url: 'https://beta.kpododo.com/api/v1/qr_scan_read.php?tracker=2&response=126&form=4',
+      url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
       headers: { 
         "Content-Type":"multipart/form-data"
       },
@@ -61,7 +66,17 @@ function ResponseScanner({ route }) {
 
     axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
+     // console.log(response)
+      const data = response.data
+      //JSON.parse(response.data);
+    
+      setReadData(data);
+      setIdentifier(data.identifier);
+      setCreatedBy(data.created_by);
+      setCreatedAt(data.created_at);
+      setFullName(data.full_name);
+      setLocation(data.location);
+      setLanguage(data.language);
     })
     .catch(function (error) {
       console.log(error);
