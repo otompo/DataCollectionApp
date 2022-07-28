@@ -39,30 +39,68 @@ function ResponseScanner({ route }) {
   }, []);
 
   const handleReadData = () => {
+    console.log("DATA",responseData)
     var bodyFormData = new FormData();
     bodyFormData.append("form", responseData.form);
     bodyFormData.append("response", responseData.response);
     bodyFormData.append("tracker", responseData.tracker);
 
-    axios({
-      method: "post",
-      url: "/qr_scan_read.php",
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
+    var data = new FormData();
+    data.append('form', '4');
+    data.append('tracker', '2');
+    data.append('response', '126');
+
+    var config = {
+      method: 'post',
+      url: 'https://beta.kpododo.com/api/v1/qr_scan_read.php?tracker=2&response=126&form=4',
+      headers: { 
+        "Content-Type":"multipart/form-data"
+      },
+      data : data
+    };
+
+    axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
     })
-      .then(function (response) {
-        setReadData(response.data);
-        setIdentifier(response.data.identifier);
-        setCreatedBy(response.data.created_by);
-        setCreatedAt(response.data.created_at);
-        setFullName(response.data.full_name);
-        setLocation(response.data.location);
-        setLanguage(response.data.language);
-      })
-      .catch(function (err) {
-        console.log(err.response);
-      });
-  };
+    .catch(function (error) {
+      console.log(error);
+    });
+
+    // axios.post(`https://beta.kpododo.com/api/v1/qr_scan_read.php?tracker=${responseData.tracker}&response=${responseData.response}&form=${responseData.form}`,{},{
+    //   headers: { "Content-Type": "multipart/form-data" }
+    // }).then(function (response) {
+    //   setReadData(response.data);
+    //   setIdentifier(response.data.identifier);
+    //   setCreatedBy(response.data.created_by);
+    //   setCreatedAt(response.data.created_at);
+    //   setFullName(response.data.full_name);
+    //   setLocation(response.data.location);
+    //   setLanguage(response.data.language);
+    // })
+    // .catch(function (err) {
+    //   console.log(err.response);
+    // });
+
+  //   axios({
+  //     method: "post",
+  //     url: "/qr_scan_read.php",
+  //     data: bodyFormData,
+  //     headers: { "Content-Type": "multipart/form-data" },
+  //   })
+  //     .then(function (response) {
+  //       setReadData(response.data);
+  //       setIdentifier(response.data.identifier);
+  //       setCreatedBy(response.data.created_by);
+  //       setCreatedAt(response.data.created_at);
+  //       setFullName(response.data.full_name);
+  //       setLocation(response.data.location);
+  //       setLanguage(response.data.language);
+  //     })
+  //     .catch(function (err) {
+  //       console.log(err.response);
+  //     });
+   };
 
   const handleSubmit = async () => {
     var bodyFormData = new FormData();
