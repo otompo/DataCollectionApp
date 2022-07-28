@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Platform,
+  AlertIOS,
+  ToastAndroid,
+} from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
@@ -57,6 +64,40 @@ function ResponseScanner({ route }) {
       });
   };
 
+  const handleSubmit = async () => {
+    var bodyFormData = new FormData();
+    bodyFormData.append("form", responseData.form);
+    bodyFormData.append("response", responseData.response);
+    bodyFormData.append("tracker", responseData.tracker);
+    setLoading(true);
+    axios({
+      method: "post",
+      url: "/qr_scan_write.php",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then(function (response) {
+        // setReadData(response.data);
+        // console.log("response Data", response);
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            "Success",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert("Success");
+        }
+
+        setLoading(false);
+      })
+      .catch(function (err) {
+        console.log(err);
+        setLoading(false);
+      });
+  };
   return (
     <KeyboardAwareScrollView
       enableOnAndroid={true}
@@ -66,17 +107,17 @@ function ResponseScanner({ route }) {
       style={styles.container}
     >
       <View style={styles.questionCard}>
-        <Text>{identifier}</Text>
-        <Text>{createdBy}</Text>
-        <Text>{moment(createdAt).format("ll")}</Text>
-        <Text>{language}</Text>
-        <Text>{location}</Text>
-        <Text>{fullName}</Text>
+        {/* <Text>{responseData}</Text> */}
+        <Text>Full Name: {fullName}</Text>
+        <Text>Identifier:{identifier}</Text>
+        <Text>CreatedAt :{moment(createdAt).format("ll")}</Text>
+        <Text>Language:{language}</Text>
+        <Text>Location: {location}</Text>
       </View>
       <View style={styles.MainContainer}>
         <AutoGrowingTextInput
           style={styles.remarks}
-          // value={value}
+          value={remarks}
           // onChangeText={onChange}
           placeholder={"Remask "}
         />
@@ -86,8 +127,8 @@ function ResponseScanner({ route }) {
           icon="map-marker-plus"
           placeholder="Location Info"
           keyboardType="text"
-          // value={server_address}
-          // setValue={setServer_Address}
+          value={location}
+          setValue={setLocation}
         />
 
         <AppTextInput
@@ -100,11 +141,7 @@ function ResponseScanner({ route }) {
           setValue={setIdentifier}
         />
 
-        <SubmitButton
-          title="Submit"
-          // onPress={handleSubmit}
-          //  loading={loading}
-        />
+        <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
       </View>
     </KeyboardAwareScrollView>
   );
