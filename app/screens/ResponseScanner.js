@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     fontWeight: 'bold',
-    lineHeight:5
+    lineHeight:30,
+    textTransform:'uppercase'
   },
 });
