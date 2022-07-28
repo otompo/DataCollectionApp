@@ -6,6 +6,7 @@ import {
   Platform,
   AlertIOS,
   ToastAndroid,
+  TextInput,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -35,12 +36,11 @@ function ResponseScanner({ route,navigation }) {
   // };
 
   useEffect(() => {
-    if(route.params != null){
+    if (route.params != null) {
       handleReadData();
-    }else{
-      console.log("empty")
+    } else {
+      console.log("empty");
     }
-   
   }, [route.parama]);
 
   const handleReadData = () => {
@@ -117,6 +117,7 @@ function ResponseScanner({ route,navigation }) {
         setLoading(false);
       });
   };
+
   return (
     <KeyboardAwareScrollView
       enableOnAndroid={true}
@@ -127,11 +128,13 @@ function ResponseScanner({ route,navigation }) {
     >
       <View style={styles.questionCard}>
         {/* <Text>{responseData}</Text> */}
-        <Text>Full Name: {fullName}</Text>
-        <Text>Identifier:{identifier}</Text>
-        <Text>CreatedAt :{moment(createdAt).format("ll")}</Text>
-        <Text>Language:{language}</Text>
-        <Text>Location: {location}</Text>
+        <Text style={styles.text}>Full Name: {fullName}</Text>
+        <Text style={styles.text}>Identifier:{identifier}</Text>
+        <Text style={styles.text}>
+          CreatedAt :{moment(createdAt).format("ll")}
+        </Text>
+        <Text style={styles.text}>Language:{language}</Text>
+        <Text style={styles.text}>Location: {location}</Text>
       </View>
       <View style={styles.MainContainer}>
         <AutoGrowingTextInput
@@ -149,16 +152,6 @@ function ResponseScanner({ route,navigation }) {
           keyboardType="text"
           value={location}
           setValue={setLocation}
-        />
-
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="phone"
-          placeholder="Phone Number"
-          keyboardType="numeric"
-          value={identifier}
-          setValue={setIdentifier}
         /> */}
 
         <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
@@ -198,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     width: "100%",
-    height: 50,
+    height: 550,
     padding: 10,
     marginVertical: 10,
     shadowColor: "#171717",
@@ -206,5 +199,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 2,
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    lineHeight:5
   },
 });
