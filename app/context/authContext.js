@@ -31,6 +31,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     loadFromAsyncStorage();
   });
+
   return (
     <AuthContext.Provider value={[state, setState]}>
       {children}

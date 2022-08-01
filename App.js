@@ -8,9 +8,10 @@ import { LogBox, StatusBar } from "react-native";
 import colors from "./app/config/colors";
 import { AuthProvider } from "./app/context/authContext";
 import { FormDataProvider } from "./app/context/formContext";
-import {StatsDataProvider} from './app/context/statsContext'
+import { StatsDataProvider } from "./app/context/statsContext";
 
 LogBox.ignoreAllLogs(true);
+
 export default () => (
   <AuthProvider>
     <IconRegistry icons={EvaIconsPack} />
@@ -18,9 +19,9 @@ export default () => (
       <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
       <FormDataProvider>
         <StatsDataProvider>
-        <SafeAreaProvider>
-          <AppNavigator />
-        </SafeAreaProvider>
+          <SafeAreaProvider>
+            <AppNavigator />
+          </SafeAreaProvider>
         </StatsDataProvider>
       </FormDataProvider>
     </ApplicationProvider>

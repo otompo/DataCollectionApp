@@ -16,7 +16,7 @@ import axios from "axios";
 import colors from "../config/colors";
 import moment from "moment";
 
-function ResponseScanner({ route }) {
+function ResponseScanner({ route, navigation }) {
   const responseData = JSON.parse(route.params);
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
@@ -26,7 +26,8 @@ function ResponseScanner({ route }) {
   const [fullName, setFullName] = useState("");
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
-  const [remarks, setRemasks] = useState({});
+  const [remarks, setRemarks] = useState("");
+  const [locationInfo, setLocationInfo] = useState("");
 
   // const dataSay = {
   //   response: "52",
@@ -43,42 +44,44 @@ function ResponseScanner({ route }) {
   }, [route.parama]);
 
   const handleReadData = () => {
-    var bodyFormData = new FormData();
-    bodyFormData.append("form", responseData.form);
-    bodyFormData.append("response", responseData.response);
-    bodyFormData.append("tracker", responseData.tracker);
-    axios({
+    // console.log("DATA", responseData);
+    var data = new FormData();
+    data.append("form", responseData.form);
+    data.append("tracker", responseData.tracker);
+    data.append("response", responseData.response);
+
+    var config = {
       method: "post",
-      url: "/qr_scan_read.php",
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+      url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: data,
+    };
+
+    axios(config)
       .then(function (response) {
-        setReadData(response.data);
-        setIdentifier(response.data.identifier);
-        setCreatedBy(response.data.created_by);
-        setCreatedAt(response.data.created_at);
-        setFullName(response.data.full_name);
-        setLocation(response.data.location);
-        setLanguage(response.data.language);
+        const data = response.data;
+        setReadData(data);
+        setIdentifier(data?.identifier);
+        setCreatedBy(data?.created_by);
+        setCreatedAt(data?.created_at);
+        setFullName(data?.full_name);
+        setLocation(data?.location);
+        setLanguage(data?.language);
       })
-      .catch(function (err) {
-        console.log(err.response);
+      .catch(function (error) {
+        console.log(error);
       });
   };
 
   const handleSubmit = async () => {
-    var bodyFormData = new FormData();
-    bodyFormData.append("form", responseData.form);
-    bodyFormData.append("created_by", responseData.createdBy);
-    bodyFormData.append("Name", responseData.full_name);
-    bodyFormData.append("location", responseData.location);
-    bodyFormData.append("response", responseData.response);
-    bodyFormData.append("language", responseData.language);
-    bodyFormData.append("identifier", responseData.identifier);
-    bodyFormData.append("Contact", responseData.identifier);
-    bodyFormData.append("tracker", responseData.tracker);
-    bodyFormData.append("remasks", remarks);
+    var bodyFormData = new FormData(readData);
+    Object.keys(readData).map((key) => {
+      bodyFormData.append(key, readData[key]);
+    });
+    bodyFormData.append("remark", remarks);
+
     setLoading(true);
     axios({
       method: "post",
@@ -100,7 +103,7 @@ function ResponseScanner({ route }) {
         } else {
           AlertIOS.alert("Success");
         }
-
+        navigation.navigate("Home");
         setLoading(false);
       })
       .catch(function (err) {
@@ -131,9 +134,10 @@ function ResponseScanner({ route }) {
         <AutoGrowingTextInput
           style={styles.remarks}
           value={remarks}
-          onChangeText={(text) => setRemasks(text)}
-          placeholder={"Remask"}
           height={200}
+          rows={10}
+          onChangeText={(txt) => setRemarks(txt)}
+          placeholder={"Remark "}
         />
         {/* <AppTextInput
           autoCapitalize="none"
@@ -193,5 +197,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
+    fontWeight: "bold",
+    lineHeight: 30,
+    textTransform: "uppercase",
   },
 });

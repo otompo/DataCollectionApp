@@ -61,6 +61,7 @@ export const Signin = ({ navigation }) => {
     let data = await AsyncStorage.getItem("@auth");
     console.log("data from AsyncStorage", data);
   };
+
   // loadAsyncStorage();
 
   return (
