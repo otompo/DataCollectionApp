@@ -14,7 +14,7 @@ import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ResponseStats from "../../screens/ResponseStats";
 import Response from "../../screens/Response";
-import sync_response from '../../utils/sync_response'
+import sync_response from "../../utils/sync_response";
 
 const Stack = createStackNavigator();
 
@@ -46,10 +46,15 @@ export default function AppNavigator() {
                 }
               />
             ),
-            headerRight: () => <HeaderTabs icon="refresh" onPress={()=>
-              //function to sync offline forms to online
-              sync_response()
-            } />
+            headerRight: () => (
+              <HeaderTabs
+                icon="refresh"
+                onPress={() =>
+                  //function to sync offline forms to online
+                  sync_response()
+                }
+              />
+            ),
           })}
         />
         <Stack.Screen

@@ -26,7 +26,6 @@ function ResponseScanner({ route, navigation }) {
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
   const [remarks, setRemarks] = useState("");
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (route.params != null) {

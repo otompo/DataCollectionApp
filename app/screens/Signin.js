@@ -57,12 +57,6 @@ export const Signin = ({ navigation }) => {
     }
   };
 
-  const loadAsyncStorage = async () => {
-    let data = await AsyncStorage.getItem("@auth");
-    console.log("data from AsyncStorage", data);
-  };
-  // loadAsyncStorage();
-
   return (
     <KeyboardAwareScrollView
       enableOnAndroid={true}

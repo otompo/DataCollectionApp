@@ -99,7 +99,6 @@ function FormDetailsScreen({ route, navigation }) {
         setSuccess(true);
       } else {
         //lets load questions from the local storage
-        // console.log("Loading offline forms");
         const data = await AsyncStorage.getItem(`${forms.formId}`);
         setQuestionsDails(JSON.parse(data));
       }

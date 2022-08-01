@@ -24,7 +24,6 @@ export function DrawerContent(props) {
   const paperTheme = useTheme();
 
   const [state, setState] = useContext(AuthContext);
-  // console.log(state.full_name);
   const [networkConnection, setNetworkConnection] = useState("");
   const navigation = useNavigation();
 
