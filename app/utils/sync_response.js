@@ -25,7 +25,33 @@ const sync_response=async()=>{
                console.log("SAVED",res)
 
                //loop current array and for each response upload and update statistics
+            //    var queryString = Object.keys(res)
+            //    .map((key) => {
+            //      return (
+            //        encodeURIComponent(key) + "=" + encodeURIComponent(res[key])
+            //      );
+            //    })
+            //    .join("&");
+     
+            //  const { data } = await axios.get(
+            //    `/questionResponse?formId=${forms.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
+            //  );
 
+            //    await AsyncStorage.setItem(
+            //     "@Stats",
+            //     JSON.stringify({
+            //       ...formsStats,
+            //       [`saved-${forms.formId}`]: formsStats?.offline
+            //         ? formsStats?.offline + 1
+            //         : 1,
+            //     })
+            //   );
+            //   setStatsData({
+            //     ...formsStats,
+            //     [`saved-${forms.formId}`]: formsStats?.offline
+            //       ? formsStats?.offline + 1
+            //       : 1,
+            //   });
                
            })
            
