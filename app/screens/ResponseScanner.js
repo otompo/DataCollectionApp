@@ -6,18 +6,17 @@ import {
   Platform,
   AlertIOS,
   ToastAndroid,
-  TextInput,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
 import AppTextInput from "../components/Auth/AppTextInput";
+import AppTextArea from "../components/Auth/AppTextArea";
 import axios from "axios";
 import colors from "../config/colors";
 import moment from "moment";
 
-function ResponseScanner({ route,navigation }) {
-  const responseData = JSON.parse(route.params)
+function ResponseScanner({ route, navigation }) {
+  const responseData = JSON.parse(route.params);
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
   const [identifier, setIdentifier] = useState("");
@@ -27,13 +26,7 @@ function ResponseScanner({ route,navigation }) {
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
   const [remarks, setRemarks] = useState("");
-  const [locationInfo, setLocationInfo] = useState("");
-
-  // const dataSay = {
-  //   response: "52",
-  //   tracker: "0",
-  //   form: "2",
-  // };
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (route.params != null) {
@@ -41,53 +34,49 @@ function ResponseScanner({ route,navigation }) {
     } else {
       console.log("empty");
     }
-  }, [route.parama]);
+  }, [route.params]);
 
   const handleReadData = () => {
-    console.log("DATA",responseData)
+    // console.log("DATA", responseData);
 
     var data = new FormData();
-    data.append('form', responseData.form);
-    data.append('tracker', responseData.tracker);
-    data.append('response', responseData.response);
+    data.append("form", responseData.form);
+    data.append("tracker", responseData.tracker);
+    data.append("response", responseData.response);
 
     var config = {
-      method: 'post',
+      method: "post",
       url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
-      headers: { 
-        "Content-Type":"multipart/form-data"
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
-      data : data
+      data: data,
     };
 
     axios(config)
-    .then(function (response) {
-     // console.log(response)
-      const data = response.data
-      //JSON.parse(response.data);
-    
-      setReadData(data);
-      setIdentifier(data?.identifier);
-      setCreatedBy(data?.created_by);
-      setCreatedAt(data?.created_at);
-      setFullName(data?.full_name);
-      setLocation(data?.location);
-      setLanguage(data?.language);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-
-    
-   };
+      .then(function (response) {
+        const data = response.data;
+        //JSON.parse(response.data);
+        setReadData(data);
+        setIdentifier(data?.identifier);
+        setCreatedBy(data?.created_by);
+        setCreatedAt(data?.created_at);
+        setFullName(data?.full_name);
+        setLocation(data?.location);
+        setLanguage(data?.language);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   const handleSubmit = async () => {
     var bodyFormData = new FormData(readData);
-    Object.keys(readData).map(key=>{
-      bodyFormData.append(key,readData[key])
-    })
-    bodyFormData.append("remark",remarks);
-  
+    Object.keys(readData).map((key) => {
+      bodyFormData.append(key, readData[key]);
+    });
+    bodyFormData.append("remark", remarks);
+
     setLoading(true);
     axios({
       method: "post",
@@ -109,7 +98,7 @@ function ResponseScanner({ route,navigation }) {
         } else {
           AlertIOS.alert("Success");
         }
-        navigation.navigate("Home")
+        navigation.navigate("Home");
         setLoading(false);
       })
       .catch(function (err) {
@@ -137,13 +126,14 @@ function ResponseScanner({ route,navigation }) {
         <Text style={styles.text}>Location: {location}</Text>
       </View>
       <View style={styles.MainContainer}>
-        <AutoGrowingTextInput
-          style={styles.remarks}
+        <AppTextArea
+          multiline={true}
+          numberOfLines={4}
           value={remarks}
-          rows={10}
-          onChangeText={(txt)=>setRemarks(txt)}
-          placeholder={"Remark "}
+          setValue={setRemarks}
+          placeholder="Remark... "
         />
+
         {/* <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -202,8 +192,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    fontWeight: 'bold',
-    lineHeight:30,
-    textTransform:'uppercase'
+    fontWeight: "bold",
+    lineHeight: 30,
+    textTransform: "uppercase",
   },
 });

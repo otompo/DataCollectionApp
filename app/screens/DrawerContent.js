@@ -74,7 +74,7 @@ export function DrawerContent(props) {
 
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="qrcode" color={color} size={size} />
+                <Icon name="qrcode" color={colors.primary} size={size} />
               )}
               label="QR Scanner"
               onPress={() => {

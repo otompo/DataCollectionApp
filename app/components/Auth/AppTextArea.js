@@ -41,9 +41,10 @@ function AppTextArea({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: defaultStyles.colors.light,
-    borderRadius: 25,
+    borderRadius: 10,
     flexDirection: "row",
     width: "100%",
+    height: "50%",
     padding: 14,
     marginVertical: 15,
     shadowColor: "#171717",
