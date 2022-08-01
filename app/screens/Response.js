@@ -67,9 +67,11 @@ const getOffline=async()=>{
     <ScrollView>
     {saved.map(df=>(
       <View>
+      {df&&
+      <View>
        <FormListItem
       //  IconComponent={<MaterialCommunityIcons name="access-point-network" color="green" size={30}/>}
-       title={df[0].form.formName}
+       title={df[0]?.form.formName}
        subSubTitle={df[0].form.createdDate}
        onPress={() => console.log("online pressed")}
        icon=""
@@ -86,6 +88,8 @@ const getOffline=async()=>{
              />
           })}
         </View>
+      </View>
+        }
       </View>
     ))}
   </ScrollView>
