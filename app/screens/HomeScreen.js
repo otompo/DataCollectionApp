@@ -10,11 +10,11 @@ import {
   ToastAndroid,
   Platform,
   AlertIOS,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { AuthContext } from "../context/authContext";
 import { FormDataContext } from "../context/formContext";
-import { StatsDataContext } from '../context/statsContext'
+import { StatsDataContext } from "../context/statsContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
@@ -25,7 +25,7 @@ import moment from "moment";
 export const HomeScreen = ({ navigation }) => {
   const [state, setState] = useContext(AuthContext);
   const [formsData, setFormsData] = useContext(FormDataContext);
-  const [formsStats, setStatsData] = useContext(StatsDataContext)
+  const [formsStats, setStatsData] = useContext(StatsDataContext);
   const [networkConnection, setNetworkConnection] = useState("");
   const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
@@ -43,7 +43,6 @@ export const HomeScreen = ({ navigation }) => {
   }, [formsData]);
 
   useEffect(() => {
-
     if (!networkConnection) {
       if (Platform.OS === "android") {
         //load forms from local storage
@@ -115,9 +114,7 @@ export const HomeScreen = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View style={{ padding: 5 }}>
-        {/* <Text>Showing 3 Forms</Text> */}
-      </View>
+      <View style={{ padding: 5 }}>{/* <Text>Showing 3 Forms</Text> */}</View>
       {loading ? (
         <View
           style={{
@@ -134,18 +131,57 @@ export const HomeScreen = ({ navigation }) => {
               keyExtractor={(formsData) => formsData.formId.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View style={{backgroundColor:'white',elevation:2,marginBottom:5}}>
-                <FormListItem
-                  title={item.formName}
-                  subSubTitle={`${moment(item.createdDate).fromNow()} `}
-                  onPress={() => navigation.navigate("FormDetailsScreen", item)}
-                />
-                <Divider />
-                <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{formsStats && formsStats[`online-${item.formId}`]||0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{formsStats && formsStats[`saved-${item.formId}`]||0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{formsStats && formsStats[`draft-${item.formId}`]+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
-                </TouchableOpacity>
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    elevation: 2,
+                    marginBottom: 5,
+                  }}
+                >
+                  <FormListItem
+                    title={item.formName}
+                    subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                    onPress={() =>
+                      navigation.navigate("FormDetailsScreen", item)
+                    }
+                  />
+                  <Divider />
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => navigation.navigate("ResponseStats")}
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      paddingVertical: 15,
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "green", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`online-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "green" }}>Online</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "red", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`saved-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "red" }}>Offline</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "gray", fontWeight: "bold" }}>
+                        {formsStats && formsStats[`draft-${item.formId}`] + " "}
+                      </Text>
+                      <Text style={{ color: "gray" }}>Draft</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               )}
             />
@@ -155,20 +191,63 @@ export const HomeScreen = ({ navigation }) => {
               keyExtractor={(forms) => forms.formId.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View style={{backgroundColor:'white',elevation:2,marginBottom:5}}>
-                <FormListItem
-                  // image={{ uri: item.image.url }}
-                  title={item.formName}
-                  // subTitle={`GHC ${item.food.price}.00`}
-                  subSubTitle={`${moment(item.createdDate).fromNow()} `}
-                  onPress={() => navigation.navigate("FormDetailsScreen", item)}
-                />
-                <Divider />
-                <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{formsStats && formsStats[`online-${item.formId}`]||0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{formsStats && formsStats[`saved-${item.formId}`]||0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{formsStats && formsStats[`draft-${item.formId}`]||0+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
-                </TouchableOpacity>
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    elevation: 2,
+                    marginBottom: 5,
+                  }}
+                >
+                  <FormListItem
+                    // image={{ uri: item.image.url }}
+                    title={item.formName}
+                    // subTitle={`GHC ${item.food.price}.00`}
+                    subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                    onPress={() =>
+                      navigation.navigate("FormDetailsScreen", item)
+                    }
+                  />
+                  <Divider />
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => navigation.navigate("ResponseStats")}
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      paddingVertical: 15,
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "green", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`online-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "green" }}>Online</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "red", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`saved-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "red" }}>Offline</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "gray", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`draft-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "gray" }}>Draft</Text>
+                    </View>
+                  </TouchableOpacity>
+                  {/* <View>
+                    <Text>{JSON.stringify(formsStats, null, 4)}</Text>
+                  </View> */}
                 </View>
               )}
             />

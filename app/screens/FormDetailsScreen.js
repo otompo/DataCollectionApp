@@ -58,7 +58,6 @@ function FormDetailsScreen({ route, navigation }) {
   const [userId, setUserId] = useState("");
   const [phone_number, setPhone_Number] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState("");
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {

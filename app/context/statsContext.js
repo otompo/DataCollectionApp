@@ -9,6 +9,7 @@ const StatsDataProvider = ({ children }) => {
 
   const loadFromAsyncStorage = useCallback(async () => {
     let data = await AsyncStorage.getItem("@Stats");
+
     if (data !== null) {
       const as = JSON.parse(data);
       setStatsData({ ...as, ...formsStats });
