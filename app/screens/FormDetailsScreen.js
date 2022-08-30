@@ -177,19 +177,22 @@ function FormDetailsScreen({ route, navigation }) {
 
         await AsyncStorage.setItem(`saved-${forms.formId}`, JSON.stringify(dd));
         //update response statistics
+        // console.log({[`saved-${forms.formId}`]: formsStats?.offline})
+        // let jj = {[`saved-${forms.formId}`]: formsStats?.offline? formsStats?.offline + 1: 1}
+        // console.log(jj)
         await AsyncStorage.setItem(
           "@Stats",
           JSON.stringify({
             ...formsStats,
-            [`saved-${forms.formId}`]: formsStats?.offline
-              ? formsStats?.offline + 1
+            [`saved-${forms.formId}`]: formsStats?.[`saved-${forms.formId}`]
+              ? formsStats?.[`saved-${forms.formId}`] + 1
               : 1,
           })
         );
         setStatsData({
           ...formsStats,
-          [`saved-${forms.formId}`]: formsStats?.offline
-            ? formsStats?.offline + 1
+          [`saved-${forms.formId}`]: formsStats?.[`saved-${forms.formId}`]
+            ? formsStats?.[`saved-${forms.formId}`] + 1
             : 1,
         });
 
@@ -224,15 +227,15 @@ function FormDetailsScreen({ route, navigation }) {
           "@Stats",
           JSON.stringify({
             ...formsStats,
-            [`online-${forms.formId}`]: formsStats?.online
-              ? formsStats?.online + 1
+            [`online-${forms.formId}`]: formsStats?.[`online-${forms.formId}`]
+              ? formsStats?.[`online-${forms.formId}`] + 1
               : 1,
           })
         );
         setStatsData({
           ...formsStats,
-          [`online-${forms.formId}`]: formsStats?.online
-            ? formsStats?.online + 1
+          [`online-${forms.formId}`]: formsStats?.[`online-${forms.formId}`]
+            ? formsStats?.[`online-${forms.formId}`] + 1
             : 1,
         });
 
@@ -278,15 +281,15 @@ function FormDetailsScreen({ route, navigation }) {
         "@Stats",
         JSON.stringify({
           ...formsStats,
-          [`draft-${forms.formId}`]: formsStats?.draft
-            ? formsStats?.draft + 1
+          [`draft-${forms.formId}`]: formsStats?.[`draft-${forms.formId}`]
+            ? formsStats?.[`draft-${forms.formId}`] + 1
             : 1,
         })
       );
       setStatsData({
         ...formsStats,
-        [`draft-${forms.formId}`]: formsStats?.draft
-          ? formsStats?.draft + 1
+        [`draft-${forms.formId}`]: formsStats?.[`draft-${forms.formId}`]
+          ? formsStats?.[`draft-${forms.formId}`] + 1
           : 1,
       });
       //navigate to homepage

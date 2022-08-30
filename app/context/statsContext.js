@@ -18,6 +18,7 @@ const StatsDataProvider = ({ children }) => {
 
   useEffect(() => {
     loadFromAsyncStorage();
+
   }, []);
 
   return (

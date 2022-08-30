@@ -48,6 +48,7 @@ function OfflineScreen({ navigation }) {
         }
       });
       Promise.all(output).then((res) => {
+        //console.log(res)
         setSaved(res);
       });
     }
@@ -64,17 +65,17 @@ function OfflineScreen({ navigation }) {
     <ScrollView>
       {saved.map((df) => (
         <View>
-          {df && (
+          {df !== undefined && df != "undefined" && (
             <View>
               <FormListItem
                 //  IconComponent={<MaterialCommunityIcons name="access-point-network" color="green" size={30}/>}
                 title={df[0]?.form.formName}
-                subSubTitle={df[0].form.createdDate}
+                subSubTitle={df[0]?.form.createdDate}
                 onPress={() => console.log("online pressed")}
                 icon=""
               />
               <View style={{ marginLeft: 25 }}>
-                {df[0].save.map((saveIn) => {
+                {df[0]?.saved.map((saveIn) => {
                   const answeres = Object.values(saveIn);
                   //count only real values, skip ""
                   const length = answeres.filter(
