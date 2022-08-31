@@ -8,7 +8,8 @@ import { Signup } from "../../screens/Signup";
 import HeaderTabs from "./HeaderTabs";
 import HeaderTopLeft from "./HeaderTopLeft";
 import colors from "../../config/colors";
-// import { AuthContext } from "../../context/authContext";
+import { AuthContext } from "../../context/authContext";
+import { StatsDataContext } from "../../context/statsContext"
 import FormDetailsScreen from "../../screens/FormDetailsScreen";
 import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
@@ -19,6 +20,14 @@ import sync_response from "../../utils/sync_response";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
+  const [state, setState] = useContext(AuthContext);
+  const [formsStats, setStatsData] = useContext(StatsDataContext)
+  const userId = state?.user_id || state?.user?.user_id;
+  const phone_number = state?.phone_number || state?.user?.phone_number;
+
+  const [loading, setLoading] = React.useState(false)
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -49,9 +58,10 @@ export default function AppNavigator() {
             headerRight: () => (
               <HeaderTabs
                 icon="refresh"
+                name={loading?"Syncing...":""}
                 onPress={() =>
                   //function to sync offline forms to online
-                  sync_response()
+                  sync_response(userId,phone_number,setLoading,formsStats,setStatsData)
                 }
               />
             ),
