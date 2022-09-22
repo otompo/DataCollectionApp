@@ -1,6 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import * as Battery from "expo-battery";
-import { StyleSheet, View, Platform, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ToastAndroid,
+  AlertIOS,
+  Platform,
+} from "react-native";
 import * as Cellular from "expo-cellular";
 import Text from "@kaloraat/react-native-text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -9,7 +16,7 @@ import SubmitButton from "../components/Button/SubmitButton";
 import { nativeApplicationVersion } from "expo-application";
 import axios from "axios";
 import colors from "../config/colors";
-import { AuthContext } from "../context/authContext";
+// import { AuthContext } from "../context/authContext";
 
 export const Signup = ({ navigation }) => {
   const [server_address, setServer_Address] = useState("beta.kpododo.com");
@@ -24,19 +31,13 @@ export const Signup = ({ navigation }) => {
   const [batteryLevel, setBatteryLevel] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [state, setState] = useContext(AuthContext);
-  const authenticated = state && state.status !== "" && state.user !== null;
+  // const [state, setState] = useContext(AuthContext);
+  // const authenticated = state && state.status !== "" && state.user !== null;
 
   useEffect(() => {
     getCellular();
     getBatteryLevel();
   }, []);
-
-  // useEffect(() => {
-  //   if (authenticated) {
-  //     navigation.navigate("Drawer");
-  //   }
-  // }, [authenticated]);
 
   const getBatteryLevel = async () => {
     const batteryLevel = await Battery.getBatteryLevelAsync();
@@ -57,20 +58,42 @@ export const Signup = ({ navigation }) => {
       return;
     }
     try {
-      const { data } = await axios.get(
-        `/usersignup?fullName=${fullName}&phone_number=${
+      const { data } = await axios.post(
+        `/usersignup?full_name=${fullName}&phone_number=${
           countryCode + phone_number
         }&password=${password}&batteryLevel=${batteryLevel}
-        &networkUsed=${networkUsed}&signUptime=${signUptime}&appVersion${appVersion}&androidVersion${androidVersion}&mobileModel${mobileModel}`
+        &networkUsed=${networkUsed}&signUptime=${signUptime}&appVersion=${appVersion}&androidVersion=${androidVersion}&mobileModel=${mobileModel}`
       );
+
       if (data.error) {
-        alert(data.error);
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            data.error,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert(data.error);
+        }
         setLoading(false);
       } else {
         // save in context
         // console.log(data);
         // setState(data);
         // await AsyncStorage.setItem("@auth", JSON.stringify(data));
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            "Success",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert("Success");
+        }
         setFullName("");
         setPhone_Number("");
         setPassword("");

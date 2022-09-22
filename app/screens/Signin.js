@@ -1,5 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ToastAndroid,
+  AlertIOS,
+  Platform,
+} from "react-native";
 import Text from "@kaloraat/react-native-text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppTextInput from "../components/Auth/AppTextInput";
@@ -16,9 +23,9 @@ export const Signin = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useContext(AuthContext);
-
+  const { user } = state;
   useEffect(() => {
-    if (state) {
+    if (user) {
       navigation.navigate("Drawer");
     }
   }, []);
@@ -39,7 +46,17 @@ export const Signin = ({ navigation }) => {
       );
 
       if (data.error) {
-        alert(data.error);
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            data.error,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert(data.error);
+        }
         setLoading(false);
       } else {
         const prepData = { user: data, status: true };

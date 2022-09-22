@@ -10,11 +10,11 @@ import {
   ToastAndroid,
   Platform,
   AlertIOS,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { AuthContext } from "../context/authContext";
 import { FormDataContext } from "../context/formContext";
-import { StatsDataContext } from '../context/statsContext'
+import { StatsDataContext } from "../context/statsContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
@@ -24,62 +24,50 @@ import moment from "moment";
 
 export const HomeScreen = ({ navigation }) => {
   const [state, setState] = useContext(AuthContext);
+  const { user } = state;
   const [formsData, setFormsData] = useContext(FormDataContext);
-  const [formsStats, setStatsData] = useContext(StatsDataContext)
-  const [networkConnection, setNetworkConnection] = useState("");
+  const [formsStats, setStatsData] = useContext(StatsDataContext);
+  const [notConnected, setNotConnected] = useState(false);
+  const [netInfo, setNetInfo] = useState("");
   const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!state || state.status === false) {
+    if (!user || user.status === false || user.data === null) {
       navigation.navigate("Signup");
     }
-    // if (state.user) {
-    //   const { user_id } = state.user;
-    //   setUserId(user_id);
-    // }
   }, [formsData]);
 
   useEffect(() => {
+    const data = NetInfo.addEventListener((state) => {
+      setNetInfo(
+        `connectionType:${state.type} IsConnected?: ${state.isConnected}`
+      );
+      if (state.isConnected === true) {
+        setNotConnected(false);
+      } else {
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            "You are offline ",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert("You are offline ");
+        }
+        setNotConnected(true);
+      }
+    });
 
-    if (!networkConnection) {
-      if (Platform.OS === "android") {
-        //load forms from local storage
-        ToastAndroid.showWithGravityAndOffset(
-          "You are offline ",
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      } else {
-        AlertIOS.alert("You are offline");
-      }
-    } else {
-      if (Platform.OS === "android") {
-        ToastAndroid.showWithGravityAndOffset(
-          "Network Restored",
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      } else {
-        AlertIOS.alert("Network Restored");
-      }
-    }
-    loadForms();
+    return data;
   }, []);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setNetworkConnection(state.isInternetReachable);
-    });
-    return () => {
-      unsubscribe();
-    };
+    loadForms();
   }, []);
 
   const loadForms = async () => {
@@ -104,10 +92,6 @@ export const HomeScreen = ({ navigation }) => {
     }, 2000);
   };
 
-  // if (!forms) {
-  //   return <ActivityIndicator size="large" />;
-  // }
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -116,7 +100,29 @@ export const HomeScreen = ({ navigation }) => {
       }
     >
       <View style={{ padding: 5 }}>
-        {/* <Text>Showing 3 Forms</Text> */}
+        {!notConnected ? (
+          <>
+            <View>
+              <Text
+                style={{
+                  color: "green",
+                  fontSize: 16,
+                  textTransform: "uppercase",
+                }}
+              >
+                OnLine
+              </Text>
+            </View>
+          </>
+        ) : (
+          <View>
+            <Text
+              style={{ color: "red", fontSize: 16, textTransform: "uppercase" }}
+            >
+              OffLine
+            </Text>
+          </View>
+        )}
       </View>
       {loading ? (
         <View
@@ -128,24 +134,63 @@ export const HomeScreen = ({ navigation }) => {
         </View>
       ) : (
         <>
-          {!networkConnection ? (
+          {!notConnected ? (
             <FlatList
               data={formsData}
               keyExtractor={(formsData) => formsData.formId.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View style={{backgroundColor:'white',elevation:2,marginBottom:5}}>
-                <FormListItem
-                  title={item.formName}
-                  subSubTitle={`${moment(item.createdDate).fromNow()} `}
-                  onPress={() => navigation.navigate("FormDetailsScreen", item)}
-                />
-                <Divider />
-                <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{formsStats && formsStats[`online-${item.formId}`]||0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{formsStats && formsStats[`saved-${item.formId}`]||0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{formsStats && formsStats[`draft-${item.formId}`]+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
-                </TouchableOpacity>
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    elevation: 2,
+                    marginBottom: 5,
+                  }}
+                >
+                  <FormListItem
+                    title={item.formName}
+                    subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                    onPress={() =>
+                      navigation.navigate("FormDetailsScreen", item)
+                    }
+                  />
+                  <Divider />
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => navigation.navigate("ResponseStats")}
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      paddingVertical: 15,
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "green", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`online-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "green" }}>Online</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "red", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`saved-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "red" }}>Offline</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "gray", fontWeight: "bold" }}>
+                        {formsStats && formsStats[`draft-${item.formId}`] + " "}
+                      </Text>
+                      <Text style={{ color: "gray" }}>Draft</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               )}
             />
@@ -155,20 +200,60 @@ export const HomeScreen = ({ navigation }) => {
               keyExtractor={(forms) => forms.formId.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <View style={{backgroundColor:'white',elevation:2,marginBottom:5}}>
-                <FormListItem
-                  // image={{ uri: item.image.url }}
-                  title={item.formName}
-                  // subTitle={`GHC ${item.food.price}.00`}
-                  subSubTitle={`${moment(item.createdDate).fromNow()} `}
-                  onPress={() => navigation.navigate("FormDetailsScreen", item)}
-                />
-                <Divider />
-                <TouchableOpacity activeOpacity={1} onPress={()=>navigation.navigate("ResponseStats")} style={{flexDirection:'row',justifyContent:'space-around',paddingVertical:15}}>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'green',fontWeight:'bold'}}>{formsStats && formsStats[`online-${item.formId}`]||0+" "}</Text><Text style={{color:'green'}}>Online</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'red',fontWeight:'bold'}}>{formsStats && formsStats[`saved-${item.formId}`]||0+" "}</Text><Text style={{color:'red'}}>Offline</Text></View>
-                  <View style={{flexDirection:'row',justifyContent:'center'}}><Text style={{color:'gray',fontWeight:'bold'}}>{formsStats && formsStats[`draft-${item.formId}`]||0+" "}</Text><Text style={{color:'gray'}}>Draft</Text></View>
-                </TouchableOpacity>
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    elevation: 2,
+                    marginBottom: 5,
+                  }}
+                >
+                  <FormListItem
+                    // image={{ uri: item.image.url }}
+                    title={item.formName}
+                    // subTitle={`GHC ${item.food.price}.00`}
+                    subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                    onPress={() =>
+                      navigation.navigate("FormDetailsScreen", item)
+                    }
+                  />
+                  <Divider />
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => navigation.navigate("ResponseStats")}
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      paddingVertical: 15,
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "green", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`online-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "green" }}>Online</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "red", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`saved-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "red" }}>Offline</Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", justifyContent: "center" }}
+                    >
+                      <Text style={{ color: "gray", fontWeight: "bold" }}>
+                        {(formsStats && formsStats[`draft-${item.formId}`]) ||
+                          0 + " "}
+                      </Text>
+                      <Text style={{ color: "gray" }}>Draft</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               )}
             />

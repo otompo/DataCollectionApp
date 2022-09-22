@@ -17,7 +17,7 @@ import colors from "../config/colors";
 import moment from "moment";
 
 function ResponseScanner({ route, navigation }) {
-  const responseData = JSON.parse(route.params);
+  const responseData = route.params;
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
   const [identifier, setIdentifier] = useState("");

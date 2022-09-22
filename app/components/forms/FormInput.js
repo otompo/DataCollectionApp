@@ -630,29 +630,26 @@ export const UserImageGeoTagInput = ({
       // const { granted } = await Permissions.askAsync(Permissions.LOCATION);
       const { granted } = await Location.requestForegroundPermissionsAsync();
       if (!granted) return;
-      const location = await Location.getLastKnownPositionAsync()
+      const location = await Location.getLastKnownPositionAsync();
       //getCurrentPositionAsync({accuracy:16,timeInterval:10000})
 
-      if(location){
-        const loc_str= JSON.stringify(location)
+      if (location) {
+        const loc_str = JSON.stringify(location);
         setLocation(loc_str);
         setFieldValue(id, loc_str);
-        alert(
-          `Your Location have been picked successfully`
-        );
+        alert(`Your Location have been picked successfully`);
         setLoading(false);
-      }else{
+      } else {
         alert(
           `Unable to pick your location, please make sure you are not obstracted by any structure`
         );
         setLoading(false);
       }
-     
     } catch (error) {
       console.log(error);
       setLoading(false);
-    } finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
