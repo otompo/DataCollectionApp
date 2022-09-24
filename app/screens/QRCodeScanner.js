@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, Pressable, SafeAreaView } from "react-native";
-import { BarCodeScanner } from "expo-barcode-scanner";
-import SubmitButton from "../components/Button/SubmitButton";
-import colors from "../config/colors";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  SafeAreaView,
+  Platform,
+  AlertIOS,
+  ToastAndroid,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { BarCodeScanner } from "expo-barcode-scanner";
+// import SubmitButton from "../components/Button/SubmitButton";
+import colors from "../config/colors";
 
 function QRCodeScanner({ navigation }) {
   const [scanned, setScanned] = useState(false);
@@ -34,14 +43,36 @@ function QRCodeScanner({ navigation }) {
   //     }
   //   }
 
-  const handleScanned = ({ type, data }) => {
-    setScannedData(data);
-    if (data) {
-      navigation.navigate("ResponseScanner", data);
+  const handleScanned = async ({ type, data }) => {
+    try {
+      setScannedData(data);
+      const relData = JSON.parse(data);
+      if (relData) {
+        // console.log(relData);
+        navigation.navigate("ResponseScanner", relData);
+      } else {
+        setShowScanner(false);
+        setScanned(true);
+        setScannedData("");
+        setScanned(false);
+      }
       setShowScanner(false);
       setScanned(true);
       setScannedData("");
       setScanned(false);
+    } catch (error) {
+      console.log(error);
+      if (Platform.OS === "android") {
+        ToastAndroid.showWithGravityAndOffset(
+          "Not applicable, use kpododo QR Codes",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+      } else {
+        AlertIOS.alert("Not applicable, use kpododo QR Codes");
+      }
     }
   };
 

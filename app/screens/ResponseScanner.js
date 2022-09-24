@@ -6,17 +6,18 @@ import {
   Platform,
   AlertIOS,
   ToastAndroid,
+  TextInput,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
 import AppTextInput from "../components/Auth/AppTextInput";
-import AppTextArea from "../components/Auth/AppTextArea";
 import axios from "axios";
 import colors from "../config/colors";
 import moment from "moment";
 
 function ResponseScanner({ route, navigation }) {
-  const responseData = JSON.parse(route.params);
+  const responseData = route.params;
   const [loading, setLoading] = useState(false);
   const [readData, setReadData] = useState("");
   const [identifier, setIdentifier] = useState("");
@@ -26,6 +27,13 @@ function ResponseScanner({ route, navigation }) {
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [locationInfo, setLocationInfo] = useState("");
+
+  // const dataSay = {
+  //   response: "52",
+  //   tracker: "0",
+  //   form: "2",
+  // };
 
   useEffect(() => {
     if (route.params != null) {
@@ -33,11 +41,10 @@ function ResponseScanner({ route, navigation }) {
     } else {
       console.log("empty");
     }
-  }, [route.params]);
+  }, [route.parama]);
 
   const handleReadData = () => {
     // console.log("DATA", responseData);
-
     var data = new FormData();
     data.append("form", responseData.form);
     data.append("tracker", responseData.tracker);
@@ -55,7 +62,6 @@ function ResponseScanner({ route, navigation }) {
     axios(config)
       .then(function (response) {
         const data = response.data;
-        //JSON.parse(response.data);
         setReadData(data);
         setIdentifier(data?.identifier);
         setCreatedBy(data?.created_by);
@@ -125,14 +131,14 @@ function ResponseScanner({ route, navigation }) {
         <Text style={styles.text}>Location: {location}</Text>
       </View>
       <View style={styles.MainContainer}>
-        <AppTextArea
-          multiline={true}
-          numberOfLines={4}
+        <AutoGrowingTextInput
+          style={styles.remarks}
           value={remarks}
-          setValue={setRemarks}
-          placeholder="Remark... "
+          height={200}
+          rows={10}
+          onChangeText={(txt) => setRemarks(txt)}
+          placeholder={"Remark "}
         />
-
         {/* <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}

@@ -24,61 +24,50 @@ import moment from "moment";
 
 export const HomeScreen = ({ navigation }) => {
   const [state, setState] = useContext(AuthContext);
+  const { user } = state;
   const [formsData, setFormsData] = useContext(FormDataContext);
   const [formsStats, setStatsData] = useContext(StatsDataContext);
-  const [networkConnection, setNetworkConnection] = useState("");
+  const [notConnected, setNotConnected] = useState(false);
+  const [netInfo, setNetInfo] = useState("");
   const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!state || state.status === false) {
+    if (!user || user.status === false || user.data === null) {
       navigation.navigate("Signup");
     }
-    // if (state.user) {
-    //   const { user_id } = state.user;
-    //   setUserId(user_id);
-    // }
   }, [formsData]);
 
   useEffect(() => {
-    if (!networkConnection) {
-      if (Platform.OS === "android") {
-        //load forms from local storage
-        ToastAndroid.showWithGravityAndOffset(
-          "You are offline ",
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
+    const data = NetInfo.addEventListener((state) => {
+      setNetInfo(
+        `connectionType:${state.type} IsConnected?: ${state.isConnected}`
+      );
+      if (state.isConnected === true) {
+        setNotConnected(false);
       } else {
-        AlertIOS.alert("You are offline");
+        if (Platform.OS === "android") {
+          ToastAndroid.showWithGravityAndOffset(
+            "You are offline ",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+            25,
+            50
+          );
+        } else {
+          AlertIOS.alert("You are offline ");
+        }
+        setNotConnected(true);
       }
-    } else {
-      if (Platform.OS === "android") {
-        ToastAndroid.showWithGravityAndOffset(
-          "Network Restored",
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      } else {
-        AlertIOS.alert("Network Restored");
-      }
-    }
-    loadForms();
+    });
+
+    return data;
   }, []);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setNetworkConnection(state.isInternetReachable);
-    });
-    return () => {
-      unsubscribe();
-    };
+    loadForms();
   }, []);
 
   const loadForms = async () => {
@@ -103,10 +92,6 @@ export const HomeScreen = ({ navigation }) => {
     }, 2000);
   };
 
-  // if (!forms) {
-  //   return <ActivityIndicator size="large" />;
-  // }
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -114,7 +99,31 @@ export const HomeScreen = ({ navigation }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View style={{ padding: 5 }}>{/* <Text>Showing 3 Forms</Text> */}</View>
+      <View style={{ padding: 5 }}>
+        {!notConnected ? (
+          <>
+            <View>
+              <Text
+                style={{
+                  color: "green",
+                  fontSize: 16,
+                  textTransform: "uppercase",
+                }}
+              >
+                OnLine
+              </Text>
+            </View>
+          </>
+        ) : (
+          <View>
+            <Text
+              style={{ color: "red", fontSize: 16, textTransform: "uppercase" }}
+            >
+              OffLine
+            </Text>
+          </View>
+        )}
+      </View>
       {loading ? (
         <View
           style={{
@@ -125,7 +134,7 @@ export const HomeScreen = ({ navigation }) => {
         </View>
       ) : (
         <>
-          {!networkConnection ? (
+          {!notConnected ? (
             <FlatList
               data={formsData}
               keyExtractor={(formsData) => formsData.formId.toString()}
@@ -245,9 +254,6 @@ export const HomeScreen = ({ navigation }) => {
                       <Text style={{ color: "gray" }}>Draft</Text>
                     </View>
                   </TouchableOpacity>
-                  {/* <View>
-                    <Text>{JSON.stringify(formsStats, null, 4)}</Text>
-                  </View> */}
                 </View>
               )}
             />
