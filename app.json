@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Kpododo Sync",
-    "slug": "Kpododosync",
+    "slug": "kpododosync",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/kpododoSync-icon.png",

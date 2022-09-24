@@ -18,8 +18,8 @@ import { AuthContext } from "../context/authContext";
 
 export const Signin = ({ navigation }) => {
   const [server_address, setServer_Address] = useState("beta.kpododo.com");
-  const [phone_number, setPhone_Number] = useState("5055856458");
-  const [password, setPassword] = useState("otompo123@");
+  const [phone_number, setPhone_Number] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useContext(AuthContext);
