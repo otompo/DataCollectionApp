@@ -25,7 +25,7 @@ function AppTextInput({
       )}
       <TextInput
         placeholderTextColor={defaultStyles.colors.medium}
-        style={defaultStyles.text}
+        style={[defaultStyles.text,{paddingRight:60}]}
         placeholder={placeholder}
         autoCorrect={false}
         autoCapitalize={autoCapitalize}

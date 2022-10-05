@@ -17,7 +17,7 @@ import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 
 export const Signin = ({ navigation }) => {
-  const [server_address, setServer_Address] = useState("beta.kpododo.com");
+  const [server_address, setServer_Address] = useState("https://beta.kpododo.com/api/v1");
   const [phone_number, setPhone_Number] = useState("5055856458");
   const [password, setPassword] = useState("otompo123@");
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,7 @@ export const Signin = ({ navigation }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
+    AsyncStorage.setItem("baseUrl",server_address)
     if (!phone_number || !password) {
       alert("All fields are requied");
       setLoading(false);
@@ -55,6 +56,7 @@ export const Signin = ({ navigation }) => {
             50
           );
         } else {
+          console.log(data.eror.response)
           AlertIOS.alert(data.error);
         }
         setLoading(false);

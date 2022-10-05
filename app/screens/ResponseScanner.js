@@ -50,6 +50,7 @@ function ResponseScanner({ route, navigation }) {
     data.append("tracker", responseData.tracker);
     data.append("response", responseData.response);
 
+
     var config = {
       method: "post",
       url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
@@ -76,10 +77,13 @@ function ResponseScanner({ route, navigation }) {
   };
 
   const handleSubmit = async () => {
-    var bodyFormData = new FormData(readData);
+    var bodyFormData = new FormData();
     Object.keys(readData).map((key) => {
       bodyFormData.append(key, readData[key]);
     });
+    bodyFormData.append("tracker",readData['tracker_id'])
+    bodyFormData.append("response",readData['response_id'])
+    bodyFormData.append("form",readData['form_id'])
     bodyFormData.append("remark", remarks);
 
     setLoading(true);
@@ -91,19 +95,34 @@ function ResponseScanner({ route, navigation }) {
     })
       .then(function (response) {
         // setReadData(response.data);
-        // console.log("response Data", response);
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            "Success",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert("Success");
+        if(response.status === 200){
+          if (Platform.OS === "android") {
+            ToastAndroid.showWithGravityAndOffset(
+              "Success",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM,
+              25,
+              50
+            );
+          } else {
+            AlertIOS.alert("Success");
+          }
+          navigation.navigate("Home");
+        }else{
+          if (Platform.OS === "android") {
+            ToastAndroid.showWithGravityAndOffset(
+              "Unable to submit the Record",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM,
+              25,
+              50
+            );
+          } else {
+            AlertIOS.alert("Error: Unable to submit the Record");
+          }
+          navigation.navigate("Home");
         }
-        navigation.navigate("Home");
+    
         setLoading(false);
       })
       .catch(function (err) {
