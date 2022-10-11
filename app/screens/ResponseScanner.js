@@ -123,7 +123,7 @@ function ResponseScanner({ route, navigation }) {
       <View style={styles.questionCard}>
         {/* <Text>{responseData}</Text> */}
         <Text style={styles.text}>Full Name: {fullName}</Text>
-        <Text style={styles.text}>Identifier:{identifier}</Text>
+        <Text style={styles.text}>Identifier: {identifier}</Text>
         <Text style={styles.text}>
           CreatedAt :{moment(createdAt).format("ll")}
         </Text>
