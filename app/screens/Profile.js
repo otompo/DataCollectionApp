@@ -92,7 +92,7 @@ function AccountScreen({ navigation }) {
   const handleUpload = async () => {
     let permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-    // console.log(permissionResult);
+
     if (permissionResult.granted !== true) {
       alert("Camera access is required");
       return;
@@ -105,23 +105,23 @@ function AccountScreen({ navigation }) {
       base64: true,
       quality: 1,
     });
-    // console.log(pickeResult);
+
     if (!pickerResult.cancelled) {
       let base64Image = `data:image/jpg;base64,${pickerResult.base64}`;
       // save image to state for preview
-      // console.log(base64Image);
+
       setUploadImage(base64Image);
       // send to backend for uploading to clouldnary
 
       const { data } = await axios.post(`/api/upload-image`, {
         image: base64Image,
       });
-      // console.log(data);
+
       // update user async storage
       const as = JSON.parse(await AsyncStorage.getItem("@auth"));
       // it has {user:{}, token}
       as.user = data;
-      // console.log("UPDATED DATA", data);
+
       await AsyncStorage.setItem("@auth", JSON.stringify(data));
       // update  constext
       setState({ ...state, user: data });
@@ -263,7 +263,7 @@ function PasswordScreen() {
             center
             bold
             style={{
-              textTransform: "uppercase"
+              textTransform: "uppercase",
             }}
           >
             Update Password
@@ -385,12 +385,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     marginHorizontal: 5,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   container: {
     marginTop: 15,
     alignItems: "center",
-    padding: 10
+    padding: 10,
   },
   icon: {
     position: "absolute",

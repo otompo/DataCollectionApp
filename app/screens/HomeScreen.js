@@ -46,17 +46,6 @@ export const HomeScreen = ({ navigation }) => {
         `connectionType:${state.type} IsConnected?: ${state.isConnected}`
       );
       if (state.isConnected === true) {
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            "Online",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert("Online ");
-        }
         setNotConnected(false);
       } else {
         if (Platform.OS === "android") {

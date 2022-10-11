@@ -14,8 +14,14 @@ const AuthProvider = ({ children }) => {
   // config axios
   // const status = state && state.status ? state.status : "";
   //   configure axios
-
-  axios.defaults.baseURL = API;
+  AsyncStorage.getItem("baseUrl").then(data=>{
+    axios.defaults.baseURL = data;
+  }).catch(err=>{
+    console.log("error reading URL")
+    //pass default
+    axios.defaults.baseURL = API;
+  })
+  
   // axios.defaults.headers.common["Authorization"] = `Bearer ${status}`;
 
   const loadFromAsyncStorage = useCallback(async () => {
@@ -31,7 +37,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     loadFromAsyncStorage();
   });
-
   return (
     <AuthContext.Provider value={[state, setState]}>
       {children}

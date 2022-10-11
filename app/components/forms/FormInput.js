@@ -376,7 +376,6 @@ export const UserTimeInput = ({
   }, []);
 
   const handleTimeConfirm = (time) => {
-    // console.log(time);
     setFieldValue(id, getTime(time));
     setTime(time);
     hideTimePicker();
@@ -406,7 +405,6 @@ export const UserTimeInput = ({
     //   tempTime.getMinutes() +
     //   " | Secounds " +
     //   tempTime.getSeconds();
-    // console.log(dateTimeString);
     return hours + ":" + minutes + " " + ampm;
   };
 
@@ -496,8 +494,6 @@ export const UserImageInput = ({
   errors,
 }) => {
   const [image, setImage] = useState("");
-  // console.log(image);
-
   useEffect(() => {
     setFieldValue(id, image);
   }, [id, image]);
@@ -514,9 +510,7 @@ export const UserImageInput = ({
 
     const result = await ImagePicker.launchImageLibraryAsync();
     // Explore the result
-    // console.log(result);
     if (!result.cancelled) {
-      console.log(result.uri);
       setFieldValue(result.uri);
       setImage(result.uri);
     }
@@ -618,7 +612,6 @@ export const UserImageGeoTagInput = ({
 }) => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
-  // console.log(location);
 
   useEffect(() => {
     setFieldValue(id, location);
@@ -731,7 +724,6 @@ export const UserVideoInput = ({
 
   const videoData = React.useRef(null);
   const [status, setStatus] = React.useState({});
-  // console.log(location);
 
   useEffect(() => {
     setFieldValue(id, video);
@@ -751,7 +743,6 @@ export const UserVideoInput = ({
       mediaTypes: "Videos",
     });
     // Explore the result
-    // console.log(result);
     if (!result.cancelled) {
       setFieldValue(result.uri);
       setVideo(result.uri);
@@ -858,7 +849,6 @@ export const UserSingleSelectInput = ({
   errors,
 }) => {
   const [checked, setChecked] = useState("");
-  // console.log(option);
 
   useEffect(() => {
     setFieldValue(id, checked);
@@ -1019,7 +1009,6 @@ export const UserSliderScaletInput = ({
   minimum,
 }) => {
   const [value, setValue] = useState(0);
-  // console.log(value);
 
   useEffect(() => {
     setFieldValue(id, value);
@@ -1090,7 +1079,6 @@ export const UserLikertScaletInput = ({
   errors,
 }) => {
   const [option, setOption] = useState("");
-  // console.log(likerValue);
 
   useEffect(() => {
     setFieldValue(id, option);
@@ -1170,7 +1158,7 @@ export const UserBarQRCodeInput = ({
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
   const [showScanner, setShowScanner] = useState(false);
-  // console.log(scannedData);
+
   useEffect(() => {
     setFieldValue(id, scannedData);
   }, [id, scannedData]);
@@ -1287,7 +1275,7 @@ export const UserRatingInput = ({
   setFieldValue,
 }) => {
   const [rating, setRating] = useState("");
-  // console.log(rating);
+
   useEffect(() => {
     setFieldValue(id, rating);
   }, [id, rating]);
@@ -1398,7 +1386,6 @@ export const UserSignatureCaptureInput = ({
 }) => {
   const [image, setImage] = useState("");
   const [open, setOpen] = useState(false);
-  // console.log(image);
 
   useEffect(() => {
     setFieldValue(id, image);

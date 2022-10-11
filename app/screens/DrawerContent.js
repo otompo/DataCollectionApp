@@ -24,7 +24,6 @@ export function DrawerContent(props) {
   const paperTheme = useTheme();
 
   const [state, setState] = useContext(AuthContext);
-  // console.log(state.full_name);
   const [networkConnection, setNetworkConnection] = useState("");
   const navigation = useNavigation();
 
@@ -74,7 +73,7 @@ export function DrawerContent(props) {
 
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="qrcode" color={color} size={size} />
+                <Icon name="qrcode" color={colors.primary} size={size} />
               )}
               label="QR Scanner"
               onPress={() => {

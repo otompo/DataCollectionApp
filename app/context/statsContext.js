@@ -9,16 +9,17 @@ const StatsDataProvider = ({ children }) => {
 
   const loadFromAsyncStorage = useCallback(async () => {
     let data = await AsyncStorage.getItem("@Stats");
+console.log(data)
     if (data !== null) {
       const as = JSON.parse(data);
-      console.log({...as,...formsStats})
-      setStatsData({...as,...formsStats});
+      setStatsData({ ...as, ...formsStats });
     }
-  },[]);
+  }, []);
 
   useEffect(() => {
     loadFromAsyncStorage();
-  },[]);
+
+  }, []);
 
   return (
     <StatsDataContext.Provider value={[formsStats, setStatsData]}>
