@@ -208,9 +208,7 @@ export const HomeScreen = ({ navigation }) => {
                   }}
                 >
                   <FormListItem
-                    // image={{ uri: item.image.url }}
                     title={item.formName}
-                    // subTitle={`GHC ${item.food.price}.00`}
                     subSubTitle={`${moment(item.createdDate).fromNow()} `}
                     onPress={() =>
                       navigation.navigate("FormDetailsScreen", item)
@@ -244,7 +242,7 @@ export const HomeScreen = ({ navigation }) => {
                       </Text>
                       <Text style={{ color: "red" }}>Offline</Text>
                     </View>
-                    <View
+                    {/* <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
                       <Text style={{ color: "gray", fontWeight: "bold" }}>
@@ -252,7 +250,7 @@ export const HomeScreen = ({ navigation }) => {
                           0 + " "}
                       </Text>
                       <Text style={{ color: "gray" }}>Draft</Text>
-                    </View>
+                    </View> */}
                   </TouchableOpacity>
                 </View>
               )}

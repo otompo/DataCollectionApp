@@ -12,12 +12,15 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import AppTextInput from "../components/Auth/AppTextInput";
 import SubmitButton from "../components/Button/SubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
+import AppText from "../components/Auth/AppText";
+import axios from "axios";
 
 export const Signin = ({ navigation }) => {
-  const [server_address, setServer_Address] = useState("https://beta.kpododo.com/api/v1");
+  const [server_address, setServer_Address] = useState(
+    "https://beta.kpododo.com/api/v1"
+  );
   const [phone_number, setPhone_Number] = useState("5055856458");
   const [password, setPassword] = useState("otompo123@");
   const [loading, setLoading] = useState(false);
@@ -32,7 +35,7 @@ export const Signin = ({ navigation }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    AsyncStorage.setItem("baseUrl",server_address)
+    AsyncStorage.setItem("baseUrl", server_address);
     if (!phone_number || !password) {
       alert("All fields are requied");
       setLoading(false);
@@ -56,7 +59,7 @@ export const Signin = ({ navigation }) => {
             50
           );
         } else {
-          console.log(data.eror.response)
+          console.log(data.eror.response);
           AlertIOS.alert(data.error);
         }
         setLoading(false);
@@ -64,8 +67,6 @@ export const Signin = ({ navigation }) => {
         const prepData = { user: data, status: true };
         await AsyncStorage.setItem("@auth", JSON.stringify(prepData));
         setState(prepData);
-        // setPassword("");
-        // setPhone_Number("");
         setLoading(false);
         navigation.navigate("Drawer");
       }
@@ -91,20 +92,13 @@ export const Signin = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/syncLogo-1.png")}
-          style={{ width: "83%", height: 100 }}
-        />
-        <Text
-          center
-          style={{ marginTop: 20, fontWeight: "bold", fontSize: 18 }}
-        >
-          Welcome Back, Login below
-        </Text>
-      </View>
-
       <View style={styles.MainContainer}>
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/collect-logo.png")} />
+          <AppText center style={styles.title}>
+            Welcome Back
+          </AppText>
+        </View>
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -135,7 +129,7 @@ export const Signin = ({ navigation }) => {
           autoCompleteType="password"
         />
 
-        <SubmitButton title="Log In" onPress={handleSubmit} loading={loading} />
+        <SubmitButton title="Login" onPress={handleSubmit} loading={loading} />
 
         <Text center style={{ marginTop: 10 }}>
           Don't have an account?{" "}
@@ -176,6 +170,13 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: -15,
+    marginBottom: 50,
+  },
+  title: {
+    color: colors.black,
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: 10,
+    textAlign: "center",
   },
 });

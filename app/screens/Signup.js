@@ -16,6 +16,7 @@ import SubmitButton from "../components/Button/SubmitButton";
 import { nativeApplicationVersion } from "expo-application";
 import axios from "axios";
 import colors from "../config/colors";
+import AppText from "../components/Auth/AppText";
 // import { AuthContext } from "../context/authContext";
 
 export const Signup = ({ navigation }) => {
@@ -79,10 +80,6 @@ export const Signup = ({ navigation }) => {
         }
         setLoading(false);
       } else {
-        // save in context
-        // console.log(data);
-        // setState(data);
-        // await AsyncStorage.setItem("@auth", JSON.stringify(data));
         if (Platform.OS === "android") {
           ToastAndroid.showWithGravityAndOffset(
             "Success",
@@ -115,20 +112,16 @@ export const Signup = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/syncLogo-1.png")}
-          style={{ width: "80%", height: 100 }}
-        />
-        <Text
-          center
-          style={{ marginTop: 20, fontWeight: "bold", fontSize: 18 }}
-        >
-          Welcome, Create an Account below
-        </Text>
-      </View>
 
       <View style={styles.MainContainer}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require("../assets/collect-logo.png")}
+        />
+          <AppText center style={styles.title}>
+            Welcome
+          </AppText>
+      </View>
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -185,18 +178,6 @@ export const Signup = ({ navigation }) => {
             Privacy Policy.
           </Text>
         </View>
-
-        <View>
-          <Text center>
-            Already Joined?{" "}
-            <Text
-              onPress={() => navigation.navigate("Signin")}
-              color={colors.primary}
-            >
-              Log In
-            </Text>
-          </Text>
-        </View>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -218,6 +199,13 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: -10,
+    marginBottom: 50
+  },
+  title: {
+    color: colors.black,
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: 10,
+    textAlign: "center"
   },
 });

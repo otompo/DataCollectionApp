@@ -14,6 +14,7 @@ import SubmitButton from "../components/Button/SubmitButton";
 import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
+import AppText from "../components/Auth/AppText";
 
 function ForgotPassword({ navigation }) {
   const [server_address, setServer_Address] = useState("beta.kpododo.com");
@@ -71,20 +72,16 @@ function ForgotPassword({ navigation }) {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/syncLogo-1.png")}
-          style={{ width: "80%", height: 100 }}
-        />
-        <Text
-          center
-          style={{ marginTop: 20, fontWeight: "bold", fontSize: 18 }}
-        >
-          Reset your Password below
-        </Text>
-      </View>
 
       <View style={styles.MainContainer}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require("../assets/collect-logo.png")}
+        />
+          <AppText center style={styles.title}>
+            Reset Password
+          </AppText>
+      </View>
         <AppTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -145,5 +142,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: -15,
+  },
+  MainContainer: {
+    flex: 1,
+    paddingRight: 10,
+    paddingLeft: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoContainer: {
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 50
+  },
+  title: {
+    color: colors.black,
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: 10,
+    textAlign: "center"
   },
 });

@@ -7,13 +7,15 @@ import {
   AlertIOS,
   ToastAndroid,
   TextInput,
+  TouchableHighlight,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
-import AppTextInput from "../components/Auth/AppTextInput";
+import AppText from "../components/Auth/AppText";
 import axios from "axios";
 import colors from "../config/colors";
+import { FontAwesome } from "@expo/vector-icons";
 import moment from "moment";
 
 function ResponseScanner({ route, navigation }) {
@@ -26,14 +28,10 @@ function ResponseScanner({ route, navigation }) {
   const [fullName, setFullName] = useState("");
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("");
+  const [gender, setGender] = useState("");
+  const [care, setCare] = useState("");
+  const [week, setWeek] = useState("");
   const [remarks, setRemarks] = useState("");
-  const [locationInfo, setLocationInfo] = useState("");
-
-  // const dataSay = {
-  //   response: "52",
-  //   tracker: "0",
-  //   form: "2",
-  // };
 
   useEffect(() => {
     if (route.params != null) {
@@ -44,12 +42,11 @@ function ResponseScanner({ route, navigation }) {
   }, [route.parama]);
 
   const handleReadData = () => {
-    // console.log("DATA", responseData);
+    //console.log("DATA", responseData);
     var data = new FormData();
     data.append("form", responseData.form);
     data.append("tracker", responseData.tracker);
     data.append("response", responseData.response);
-
 
     var config = {
       method: "post",
@@ -63,6 +60,7 @@ function ResponseScanner({ route, navigation }) {
     axios(config)
       .then(function (response) {
         const data = response.data;
+        console.log("DATA2", data);
         setReadData(data);
         setIdentifier(data?.identifier);
         setCreatedBy(data?.created_by);
@@ -70,6 +68,9 @@ function ResponseScanner({ route, navigation }) {
         setFullName(data?.full_name);
         setLocation(data?.location);
         setLanguage(data?.language);
+        setGender(data?.gender);
+        setCare(data?.care);
+        setWeek(data?.week);
       })
       .catch(function (error) {
         console.log(error);
@@ -81,9 +82,9 @@ function ResponseScanner({ route, navigation }) {
     Object.keys(readData).map((key) => {
       bodyFormData.append(key, readData[key]);
     });
-    bodyFormData.append("tracker",readData['tracker_id'])
-    bodyFormData.append("response",readData['response_id'])
-    bodyFormData.append("form",readData['form_id'])
+    bodyFormData.append("tracker", readData["tracker_id"]);
+    bodyFormData.append("response", readData["response_id"]);
+    bodyFormData.append("form", readData["form_id"]);
     bodyFormData.append("remark", remarks);
 
     setLoading(true);
@@ -94,8 +95,7 @@ function ResponseScanner({ route, navigation }) {
       headers: { "Content-Type": "multipart/form-data" },
     })
       .then(function (response) {
-        // setReadData(response.data);
-        if(response.status === 200){
+        if (response.status === 200) {
           if (Platform.OS === "android") {
             ToastAndroid.showWithGravityAndOffset(
               "Success",
@@ -108,7 +108,7 @@ function ResponseScanner({ route, navigation }) {
             AlertIOS.alert("Success");
           }
           navigation.navigate("Home");
-        }else{
+        } else {
           if (Platform.OS === "android") {
             ToastAndroid.showWithGravityAndOffset(
               "Unable to submit the Record",
@@ -122,7 +122,7 @@ function ResponseScanner({ route, navigation }) {
           }
           navigation.navigate("Home");
         }
-    
+
         setLoading(false);
       })
       .catch(function (err) {
@@ -140,16 +140,37 @@ function ResponseScanner({ route, navigation }) {
       style={styles.container}
     >
       <View style={styles.questionCard}>
-        {/* <Text>{responseData}</Text> */}
-        <Text style={styles.text}>Full Name: {fullName}</Text>
-        <Text style={styles.text}>Identifier:{identifier}</Text>
-        <Text style={styles.text}>
-          CreatedAt :{moment(createdAt).format("ll")}
-        </Text>
-        <Text style={styles.text}>Language:{language}</Text>
-        <Text style={styles.text}>Location: {location}</Text>
+        <View style={styles.userInfoSection}>
+          <TouchableHighlight underlayColor={colors.light}>
+            <View style={styles.topcontainer}>
+              <View style={styles.image}>
+                <FontAwesome name="user" size={60} color={colors.white} />
+              </View>
+              <View style={styles.detailsContainer}>
+                <AppText style={styles.title} numberOfLines={1}>
+                  {identifier}
+                </AppText>
+                <AppText style={styles.subTitle}>
+                  <Text>Gender:</Text> {gender}
+                  {"\n"}
+                  <Text>Care:</Text> {care}
+                  {"\n"}
+                  <Text>Week:</Text> {week}
+                  {"\n"}
+                  <Text>Language:</Text> {language}
+                  {"\n"}
+                  <Text>Facility:</Text> {location}
+                  {"\n"}
+                </AppText>
+              </View>
+            </View>
+          </TouchableHighlight>
+        </View>
       </View>
       <View style={styles.MainContainer}>
+        <Text>
+          Enter your remarks here
+        </Text>
         <AutoGrowingTextInput
           style={styles.remarks}
           value={remarks}
@@ -158,16 +179,6 @@ function ResponseScanner({ route, navigation }) {
           onChangeText={(txt) => setRemarks(txt)}
           placeholder={"Remark "}
         />
-        {/* <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="map-marker-plus"
-          placeholder="Location Info"
-          keyboardType="text"
-          value={location}
-          setValue={setLocation}
-        /> */}
-
         <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
       </View>
     </KeyboardAwareScrollView>
@@ -181,19 +192,56 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.white,
   },
+  topcontainer: {
+    flexDirection: "row",
+    padding: 5
+  },
   MainContainer: {
     flex: 1,
     paddingRight: 10,
     paddingLeft: 10,
+  },
+  userInfoSection: {
+    backgroundColor: colors.primary,
+    marginVertical: -10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 35,
+    borderWidth: 2,
+    borderColor: colors.white,
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+    backgroundColor: colors.secoundary,
     justifyContent: "center",
     alignItems: "center",
+    alignContent: "center",
+  },
+  title: {
+    color: colors.white,
+    marginVertical: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  subTitle: {
+    color: colors.white,
+    fontSize: 14,
+  },
+  detailsContainer: {
+    marginLeft: 20,
+    justifyContent: "center",
+    flex: 1,
   },
   questionCard: {
     paddingVertical: 15,
     paddingHorizontal: 15,
     margin: 5,
     borderRadius: 5,
-    backgroundColor: colors.white,
+    backgroundColor: colors.primary,
     shadowColor: "#171717",
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,

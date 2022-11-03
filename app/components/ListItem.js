@@ -90,15 +90,15 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginVertical: 5,
     fontSize: 18,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   subTitle: {
     color: colors.white,
-    fontSize: 16
+    fontSize: 16,
   },
   subSubTitle: {
     color: colors.white,
-    fontSize: 12
+    fontSize: 12,
   },
   detailsContainer: {
     marginLeft: 10,
