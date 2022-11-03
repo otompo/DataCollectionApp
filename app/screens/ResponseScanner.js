@@ -60,7 +60,7 @@ function ResponseScanner({ route, navigation }) {
     axios(config)
       .then(function (response) {
         const data = response.data;
-        console.log("DATA2", data);
+        console.log("DATA:", data);
         setReadData(data);
         setIdentifier(data?.identifier);
         setCreatedBy(data?.created_by);
@@ -139,6 +139,17 @@ function ResponseScanner({ route, navigation }) {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
+      <AppText
+        center
+        style={{
+          marginVertical: 5,
+          fontSize: 30,
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        Subscriber Information
+      </AppText>
       <View style={styles.questionCard}>
         <View style={styles.userInfoSection}>
           <TouchableHighlight underlayColor={colors.light}>
@@ -168,9 +179,9 @@ function ResponseScanner({ route, navigation }) {
         </View>
       </View>
       <View style={styles.MainContainer}>
-        <Text>
+        <AppText center style={{ marginVertical: 5, fontSize: 20 }}>
           Enter your remarks here
-        </Text>
+        </AppText>
         <AutoGrowingTextInput
           style={styles.remarks}
           value={remarks}
@@ -194,7 +205,7 @@ const styles = StyleSheet.create({
   },
   topcontainer: {
     flexDirection: "row",
-    padding: 5
+    padding: 5,
   },
   MainContainer: {
     flex: 1,

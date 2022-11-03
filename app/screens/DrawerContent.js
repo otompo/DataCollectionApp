@@ -56,14 +56,12 @@ export function DrawerContent(props) {
               oncono="circle"
               offcono="circle"
               subSubTitle={`${networkConnection ? " Online" : " Offline"} `}
-              onPress={() => navigation.navigate("Profile")}
             />
           </View>
-          {/* <Divider /> */}
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="form-select" color={colors.primary} size={size} />
+                <Icon name="form-select" color={colors.primary} size={40} />
               )}
               label="Forms"
               onPress={() => {
@@ -73,7 +71,7 @@ export function DrawerContent(props) {
 
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="qrcode" color={colors.primary} size={size} />
+                <Icon name="qrcode" color={colors.primary} size={40} />
               )}
               label="QR Scanner"
               onPress={() => {
@@ -82,8 +80,8 @@ export function DrawerContent(props) {
             />
           </Drawer.Section>
         </View>
-        <Drawer.Section>
-          <DrawerItem
+        {/* <Drawer.Section> */}
+          {/* <DrawerItem
             icon={({ color, size }) => (
               <Icon name="account-outline" color={colors.primary} size={size} />
             )}
@@ -109,8 +107,8 @@ export function DrawerContent(props) {
             onPress={() => {
               props.navigation.navigate("SettingsScreen");
             }}
-          />
-        </Drawer.Section>
+          /> */}
+        {/* </Drawer.Section> */}
       </DrawerContentScrollView>
 
       <Drawer.Section
@@ -133,7 +131,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfoSection: {
-    // paddingLeft: 20,
     backgroundColor: colors.primary,
     marginVertical: -10,
   },

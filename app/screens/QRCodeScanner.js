@@ -10,9 +10,9 @@ import {
   ToastAndroid,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { BarCodeScanner } from "expo-barcode-scanner";
-// import SubmitButton from "../components/Button/SubmitButton";
+import AppText from "../components/Auth/AppText";
 import colors from "../config/colors";
 
 function QRCodeScanner({ navigation }) {
@@ -31,24 +31,11 @@ function QRCodeScanner({ navigation }) {
     })();
   };
 
-  //   const handleSubmit= async()=>{
-  //     try {
-  //         setLoading(true)
-  //         const {data}=await axios.post(``)
-  //         setLoading(false)
-
-  //     } catch (err) {
-  //         console.log(err)
-  //         setLoading(false)
-  //     }
-  //   }
-
   const handleScanned = async ({ type, data }) => {
     try {
       setScannedData(data);
       const relData = JSON.parse(data);
       if (relData) {
-        // console.log(relData);
         navigation.navigate("ResponseScanner", relData);
       } else {
         setShowScanner(false);
@@ -91,10 +78,13 @@ function QRCodeScanner({ navigation }) {
     >
       <SafeAreaView style={styles.container}>
         <>
+        <AppText center style={styles.title}>
+                Scan subscribers QR Code
+              </AppText>
           {showScanner ? (
             <View
               style={{
-                marginHorizontal: 24,
+                marginHorizontal: 10,
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -106,8 +96,8 @@ function QRCodeScanner({ navigation }) {
               <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleScanned}
                 style={{
-                  height: 400,
-                  width: 400,
+                  height: 500,
+                  width: 500,
                   flexDirection: "column",
                   justifyContent: "center",
                 }}
@@ -124,11 +114,7 @@ function QRCodeScanner({ navigation }) {
             >
               <Pressable style={styles.sbutton} onPress={askPermissions}>
                 <Text style={styles.text}>
-                  <MaterialCommunityIcons
-                    color={colors.white}
-                    name="magnify-scan"
-                    size={100}
-                  />
+                  <Icon name="qrcode" color={colors.white} size={100} />
                 </Text>
               </Pressable>
             </View>
@@ -144,14 +130,6 @@ function QRCodeScanner({ navigation }) {
                 </Text>
                 <Text>{scannedData}</Text>
               </View>
-              {/* <View style={styles.submitButtonContainer}>
-                <SubmitButton
-                  title="Submit"
-                    onPress={handleSubmit}
-                  loading={loading}
-                  bwidth={160}
-                />
-              </View> */}
             </>
           )}
         </>
@@ -165,6 +143,7 @@ export default QRCodeScanner;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 1,
   },
   cbutton: {
     alignItems: "center",
@@ -203,5 +182,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 50,
+  },
+  title: {
+    color: colors.black,
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: 10,
+    textAlign: "center",
   },
 });

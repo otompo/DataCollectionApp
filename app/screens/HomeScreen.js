@@ -182,14 +182,14 @@ export const HomeScreen = ({ navigation }) => {
                       </Text>
                       <Text style={{ color: "red" }}>Offline</Text>
                     </View>
-                    <View
+                    {/* <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
                       <Text style={{ color: "gray", fontWeight: "bold" }}>
                         {formsStats && formsStats[`draft-${item.formId}`] + " "}
                       </Text>
                       <Text style={{ color: "gray" }}>Draft</Text>
-                    </View>
+                    </View> */}
                   </TouchableOpacity>
                 </View>
               )}
