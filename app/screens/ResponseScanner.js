@@ -42,7 +42,6 @@ function ResponseScanner({ route, navigation }) {
   }, [route.parama]);
 
   const handleReadData = () => {
-    //console.log("DATA", responseData);
     var data = new FormData();
     data.append("form", responseData.form);
     data.append("tracker", responseData.tracker);
@@ -60,7 +59,6 @@ function ResponseScanner({ route, navigation }) {
     axios(config)
       .then(function (response) {
         const data = response.data;
-        console.log("DATA:", data);
         setReadData(data);
         setIdentifier(data?.identifier);
         setCreatedBy(data?.created_by);
@@ -79,9 +77,11 @@ function ResponseScanner({ route, navigation }) {
 
   const handleSubmit = async () => {
     var bodyFormData = new FormData();
-    Object.keys(readData).map((key) => {
-      bodyFormData.append(key, readData[key]);
-    });
+    // Object.keys(readData).map((key) => {
+    //   bodyFormData.append(key, readData[key]);
+    // });
+    bodyFormData.append("identifier", readData["identifier"]);
+    bodyFormData.append("created_by", readData["created_by"]);
     bodyFormData.append("tracker", readData["tracker_id"]);
     bodyFormData.append("response", readData["response_id"]);
     bodyFormData.append("form", readData["form_id"]);
@@ -180,7 +180,7 @@ function ResponseScanner({ route, navigation }) {
       </View>
       <View style={styles.MainContainer}>
         <AppText center style={{ marginVertical: 5, fontSize: 20 }}>
-          Enter your remarks here
+          List the Services Provided here
         </AppText>
         <AutoGrowingTextInput
           style={styles.remarks}
@@ -188,7 +188,7 @@ function ResponseScanner({ route, navigation }) {
           height={200}
           rows={10}
           onChangeText={(txt) => setRemarks(txt)}
-          placeholder={"Remark "}
+          placeholder={"Services "}
         />
         <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
       </View>

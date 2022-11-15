@@ -58,7 +58,7 @@ export default function AppNavigator() {
             headerRight: () => (
               <HeaderTabs
                 icon="refresh"
-                name={loading?"Syncing...":""}
+                name={loading?"":""}
                 onPress={() =>
                   //function to sync offline forms to online
                   sync_response(userId,phone_number,setLoading,formsStats,setStatsData)

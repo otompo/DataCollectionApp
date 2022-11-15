@@ -171,7 +171,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`online-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "green" }}>Online</Text>
+                      <Text style={{ color: "green" }}>{" "}Online</Text>
                     </View>
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -180,7 +180,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`saved-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "red" }}>Offline</Text>
+                      <Text style={{ color: "red" }}>{" "}Offline</Text>
                     </View>
                     {/* <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -231,7 +231,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`online-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "green" }}>Online</Text>
+                      <Text style={{ color: "green" }}>{" "}Online</Text>
                     </View>
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -240,7 +240,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`saved-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "red" }}>Offline</Text>
+                      <Text style={{ color: "red" }}>{" "}Offline</Text>
                     </View>
                     {/* <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
