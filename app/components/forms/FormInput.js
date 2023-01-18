@@ -891,7 +891,7 @@ export const UserSingleSelectInput = ({
       <View>
         {questionsDetail.options.map((item) => (
           <>
-            <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
+            <View style={{ marginBottom: 0.1, flexDirection: "row"}}>
               <RadioButton
                 value={item}
                 status={checked === item ? "checked" : "unchecked"}

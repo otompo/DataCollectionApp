@@ -132,6 +132,34 @@ function FormDetailsScreen({ route, navigation }) {
     }
   };
 
+  //refactoring
+
+  // const _storeQuestionsData = async (data) => {
+  //   try {
+  //     await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
+  //     _serveToast("Questions downloaded");
+  //   } catch (error) {
+  //     // Error saving data
+  //     _serveToast("Questions download failed");
+  //   }
+  // };
+
+  // function _serveToast(tMessage) {
+  //   if (Platform.OS === "android") {
+  //     ToastAndroid.showWithGravityAndOffset(
+  //       tMessage + " ",
+  //       ToastAndroid.SHORT,
+  //       ToastAndroid.BOTTOM,
+  //       25,
+  //       50
+  //     );
+  //   } else {
+  //     AlertIOS.alert(tMessage + " ");
+  //   }
+  // }
+
+  //end of refactor
+
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
@@ -313,7 +341,7 @@ function FormDetailsScreen({ route, navigation }) {
         }}
       >
         <ActivityIndicator size="large" />
-        <Text>Loading Questions ...</Text>
+        <Text>Loading Questions</Text>
       </View>
     );
   }

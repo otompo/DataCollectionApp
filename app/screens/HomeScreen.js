@@ -36,7 +36,7 @@ export const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!user || user.status === false || user.data === null) {
-      navigation.navigate("Signup");
+      navigation.navigate("Signin");
     }
   }, [formsData]);
 
@@ -48,17 +48,7 @@ export const HomeScreen = ({ navigation }) => {
       if (state.isConnected === true) {
         setNotConnected(false);
       } else {
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            "You are offline ",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert("You are offline ");
-        }
+        _serveToast("You are offline");
         setNotConnected(true);
       }
     });
@@ -74,22 +64,48 @@ export const HomeScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const { data } = await axios.get(`/forms?userid=${user_id}`);
-      //console.log(data);
       setForms(data.formDetail);
-      await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
+      _storeFormsData(data);
       setLoading(false);
     } catch (err) {
-      // console.log(err);
       setLoading(false);
     }
   };
+
+  //refactoring 
+
+  const _storeFormsData = async (data) => {
+    try {
+      await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
+      _serveToast("Forms downloaded");
+    } catch (error) {
+      // Error saving data
+      _serveToast("Forms download failed");
+    }
+  };
+
+  function _serveToast(tMessage) {
+    if (Platform.OS === "android") {
+      ToastAndroid.showWithGravityAndOffset(
+        tMessage + " ",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+    } else {
+      AlertIOS.alert(tMessage + " ");
+    }
+  }
+
+  //end of refactor
 
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
       loadForms();
       setRefreshing(false);
-    }, 2000);
+    }, 1000);
   };
 
   return (
@@ -110,7 +126,7 @@ export const HomeScreen = ({ navigation }) => {
                   textTransform: "uppercase",
                 }}
               >
-                OnLine
+                Online
               </Text>
             </View>
           </>
@@ -119,7 +135,7 @@ export const HomeScreen = ({ navigation }) => {
             <Text
               style={{ color: "red", fontSize: 16, textTransform: "uppercase" }}
             >
-              OffLine
+              Offline
             </Text>
           </View>
         )}
@@ -127,14 +143,18 @@ export const HomeScreen = ({ navigation }) => {
       {loading ? (
         <View
           style={{
-            marginVertical: 200,
+            justifyContent: "center",
+            alignItems: "center",
+            display: "flex",
+            flex: 1,
           }}
         >
           <ActivityIndicator size="large" color={colors.primary} />
+          <Text>Loading Forms</Text>
         </View>
       ) : (
         <>
-          {!notConnected ? (
+          {notConnected ? (
             <FlatList
               data={formsData}
               keyExtractor={(formsData) => formsData.formId.toString()}
@@ -171,7 +191,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`online-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "green" }}>{" "}Online</Text>
+                      <Text style={{ color: "green" }}> Online</Text>
                     </View>
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -180,7 +200,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`saved-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "red" }}>{" "}Offline</Text>
+                      <Text style={{ color: "red" }}> Offline</Text>
                     </View>
                     {/* <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -231,7 +251,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`online-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "green" }}>{" "}Online</Text>
+                      <Text style={{ color: "green" }}> Online</Text>
                     </View>
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -240,7 +260,7 @@ export const HomeScreen = ({ navigation }) => {
                         {(formsStats && formsStats[`saved-${item.formId}`]) ||
                           0 + " "}
                       </Text>
-                      <Text style={{ color: "red" }}>{" "}Offline</Text>
+                      <Text style={{ color: "red" }}> Offline</Text>
                     </View>
                     {/* <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
@@ -261,3 +281,4 @@ export const HomeScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
+

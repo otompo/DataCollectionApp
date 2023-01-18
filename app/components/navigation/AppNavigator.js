@@ -118,8 +118,8 @@ export default function AppNavigator() {
           name="Signup"
           component={Signup}
           options={{
-            title: "Signup",
-            // headerShown: false,
+            title: "",
+            headerLeft: ""
           }}
         />
         <Stack.Screen

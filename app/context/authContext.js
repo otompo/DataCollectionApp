@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
   AsyncStorage.getItem("baseUrl").then(data=>{
     axios.defaults.baseURL = data;
   }).catch(err=>{
-    console.log("error reading URL")
+    //console.log("error reading URL")
     //pass default
     axios.defaults.baseURL = API;
   })

@@ -8,191 +8,728 @@ import {
   ToastAndroid,
   TextInput,
   TouchableHighlight,
+  SafeAreaView,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
+import { RadioButton } from "react-native-paper";
+import { Dropdown } from "react-native-material-dropdown-v2";
 import AppText from "../components/Auth/AppText";
 import axios from "axios";
 import colors from "../config/colors";
 import { FontAwesome } from "@expo/vector-icons";
-import moment from "moment";
 
 function ResponseScanner({ route, navigation }) {
   const responseData = route.params;
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+
   const [readData, setReadData] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [createdBy, setCreatedBy] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [location, setLocation] = useState("");
-  const [language, setLanguage] = useState("");
-  const [gender, setGender] = useState("");
+  const [joined, setJoined] = useState("");
+
   const [care, setCare] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [age, setAge] = useState("");
   const [week, setWeek] = useState("");
-  const [remarks, setRemarks] = useState("");
+  const [channel, setChannel] = useState("");
+  const [language, setLanguage] = useState("");
+  const [ownership, setOwnership] = useState("");
+  const [region, setRegion] = useState("");
+  const [district, setDistrict] = useState("");
+  const [subdistrict, setSubdistrict] = useState("");
+  const [chps_zone, setChps_zone] = useState("");
+
+  const [healthArea, setHealthArea] = useState("");
+  const [services, setServices] = useState("");
+  const [comments, setComments] = useState("");
 
   useEffect(() => {
-    if (route.params != null) {
+    if (
+      responseData ||
+      responseData.form != "" ||
+      responseData.tracker === "" ||
+      responseData.response != ""
+    ) {
       handleReadData();
     } else {
-      console.log("empty");
+      _serveToast("The QR Code is empty");
+      navigation.navigate("Home");
     }
-  }, [route.parama]);
+  }, [route.params]);
 
-  const handleReadData = () => {
-    var data = new FormData();
-    data.append("form", responseData.form);
-    data.append("tracker", responseData.tracker);
-    data.append("response", responseData.response);
+  function _serveToast(tMessage) {
+    if (Platform.OS === "android") {
+      ToastAndroid.showWithGravityAndOffset(
+        tMessage + " ",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+    } else {
+      AlertIOS.alert("Error: " + tMessage + " ");
+    }
+  }
 
-    var config = {
-      method: "post",
-      url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      data: data,
-    };
+  const resetState = () => {
+    setLoading(false);
+    setDisabled(false);
+    setReadData("");
+    setIdentifier("");
+    setCreatedBy("");
+    setJoined("");
+    setCare("");
+    setPhone("");
+    setGender("");
+    setAge("");
+    setWeek("");
+    setChannel("");
+    setLanguage("");
+    setOwnership("");
+    setRegion("");
+    setDistrict("");
+    setSubdistrict("");
+    setChps_zone("");
+    setHealthArea("");
+    setServices("");
+    setComments("");
+  };
 
-    axios(config)
-      .then(function (response) {
-        const data = response.data;
-        setReadData(data);
-        setIdentifier(data?.identifier);
-        setCreatedBy(data?.created_by);
-        setCreatedAt(data?.created_at);
-        setFullName(data?.full_name);
-        setLocation(data?.location);
-        setLanguage(data?.language);
-        setGender(data?.gender);
-        setCare(data?.care);
-        setWeek(data?.week);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  const handleReadData = async () => {
+    try {
+      const data = new FormData();
+
+      data.append("form", responseData.form);
+      data.append("tracker", responseData.tracker);
+      data.append("response", responseData.response);
+
+      const config = {
+        method: "post",
+        url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data,
+      };
+
+      const response = await axios(config);
+
+      if (response.data.identifier) {
+        setReadData(response.data);
+        setCare(response.data?.servicetype);
+        setIdentifier(response.data?.identifier);
+        setGender(response.data?.gender);
+        setAge(response.data?.age);
+        setWeek(response.data?.week);
+        setCreatedBy(response.data?.created_by);
+        setJoined(response.data?.created_at);
+        setLanguage(response.data?.language);
+        setChps_zone(response.data?.facility);
+      } else {
+        setReadData("");
+      }
+      
+    } catch (error) {
+      _serveToast("Something went wrong");
+      navigation.navigate("Home");
+    }
   };
 
   const handleSubmit = async () => {
-    var bodyFormData = new FormData();
-    // Object.keys(readData).map((key) => {
-    //   bodyFormData.append(key, readData[key]);
-    // });
-    bodyFormData.append("identifier", readData["identifier"]);
-    bodyFormData.append("created_by", readData["created_by"]);
-    bodyFormData.append("tracker", readData["tracker_id"]);
-    bodyFormData.append("response", readData["response_id"]);
-    bodyFormData.append("form", readData["form_id"]);
-    bodyFormData.append("remark", remarks);
-
+    setDisabled(true);
     setLoading(true);
-    axios({
-      method: "post",
-      url: "/qr_scan_write.php",
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          if (Platform.OS === "android") {
-            ToastAndroid.showWithGravityAndOffset(
-              "Success",
-              ToastAndroid.SHORT,
-              ToastAndroid.BOTTOM,
-              25,
-              50
-            );
-          } else {
-            AlertIOS.alert("Success");
-          }
-          navigation.navigate("Home");
-        } else {
-          if (Platform.OS === "android") {
-            ToastAndroid.showWithGravityAndOffset(
-              "Unable to submit the Record",
-              ToastAndroid.SHORT,
-              ToastAndroid.BOTTOM,
-              25,
-              50
-            );
-          } else {
-            AlertIOS.alert("Error: Unable to submit the Record");
-          }
-          navigation.navigate("Home");
-        }
 
-        setLoading(false);
-      })
-      .catch(function (err) {
-        console.log(err);
-        setLoading(false);
+    try {
+      const bodyFormData = new FormData();
+
+      if (readData["identifier"]) {
+        bodyFormData.append("identifier", readData["identifier"]);
+        bodyFormData.append("created_by", readData["created_by"]);
+        bodyFormData.append("tracker", readData["tracker"]);
+        bodyFormData.append("response", readData["response"]);
+        bodyFormData.append("form", readData["form"]);
+        bodyFormData.append("healthArea", healthArea);
+        bodyFormData.append("services", services);
+        bodyFormData.append("comment", comments);
+      } else {
+        bodyFormData.append("tracker", readData["tracker"]);
+        bodyFormData.append("response", readData["response"]);
+        bodyFormData.append("form", readData["form"]);
+        bodyFormData.append("care", care);
+        bodyFormData.append("phone", phone);
+        bodyFormData.append("gender", gender);
+        bodyFormData.append("age", age);
+        bodyFormData.append("week", week);
+        bodyFormData.append("channel", channel);
+        bodyFormData.append("language", language);
+        bodyFormData.append("ownership", ownership);
+        bodyFormData.append("region", region);
+        bodyFormData.append("district", district);
+        bodyFormData.append("subdistrict", subdistrict);
+        bodyFormData.append("chps_zone", chps_zone);
+      }
+
+      const { status } = await axios({
+        method: "post",
+        url: "https://beta.kpododo.com/api/v1/qr_scan_write.php",
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
       });
+
+      if (status === 200) {
+        resetState();
+        _serveToast("Success");
+        navigation.navigate("Home");
+      } else {
+        _serveToast("Unable to submit the Record");
+        setLoading(false);
+        setDisabled(false);
+      }
+    } catch (err) {
+      _serveToast("Something went wrong 2");
+      setLoading(false);
+      setDisabled(false);
+      navigation.navigate("Home");
+    }
+    resetState();
   };
 
   return (
-    <KeyboardAwareScrollView
-      enableOnAndroid={true}
-      contentContainerStyle={{ flexGrow: 1 }}
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-      style={styles.container}
-    >
-      <AppText
-        center
-        style={{
-          marginVertical: 5,
-          fontSize: 30,
-          fontWeight: "bold",
-          textAlign: "center",
-        }}
+    <SafeAreaView style={{ backgroundColor: colors.light }}>
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        style={styles.container}
       >
-        Subscriber Information
-      </AppText>
-      <View style={styles.questionCard}>
-        <View style={styles.userInfoSection}>
-          <TouchableHighlight underlayColor={colors.light}>
-            <View style={styles.topcontainer}>
-              <View style={styles.image}>
-                <FontAwesome name="user" size={60} color={colors.white} />
-              </View>
-              <View style={styles.detailsContainer}>
-                <AppText style={styles.title} numberOfLines={1}>
-                  {identifier}
-                </AppText>
-                <AppText style={styles.subTitle}>
-                  <Text>Gender:</Text> {gender}
-                  {"\n"}
-                  <Text>Care:</Text> {care}
-                  {"\n"}
-                  <Text>Week:</Text> {week}
-                  {"\n"}
-                  <Text>Language:</Text> {language}
-                  {"\n"}
-                  <Text>Facility:</Text> {location}
-                  {"\n"}
-                </AppText>
-              </View>
-            </View>
-          </TouchableHighlight>
-        </View>
-      </View>
-      <View style={styles.MainContainer}>
-        <AppText center style={{ marginVertical: 5, fontSize: 20 }}>
-          List the Services Provided here
+        <AppText
+          center
+          style={{
+            marginVertical: 5,
+            fontSize: 30,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          Subscriber Information
         </AppText>
-        <AutoGrowingTextInput
-          style={styles.remarks}
-          value={remarks}
-          height={200}
-          rows={10}
-          onChangeText={(txt) => setRemarks(txt)}
-          placeholder={"Services "}
-        />
-        <SubmitButton title="Submit" onPress={handleSubmit} loading={loading} />
-      </View>
-    </KeyboardAwareScrollView>
+        <View style={styles.profileCard}>
+          <View style={styles.userInfoSection}>
+            <View>
+              <AppText
+                style={{
+                  color: colors.white,
+                  fontSize: 30,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+                numberOfLines={1}
+              >
+                {identifier}
+              </AppText>
+            </View>
+            <TouchableHighlight underlayColor={colors.light}>
+              <View style={styles.topcontainer}>
+                <View style={styles.image}>
+                  <FontAwesome name="user" size={60} color={colors.white} />
+                </View>
+                <View style={styles.detailsContainer}>
+                  <AppText style={styles.subTitle}>
+                    <Text>Care:</Text> {care}
+                    {"\n"}
+                    <Text>Week:</Text> {week}
+                    {"\n"}
+                    <Text>Language:</Text> {language}
+                    {"\n"}
+                    <Text>Facility:</Text> {chps_zone}
+                    {"\n"}
+                    <Text>Joined:</Text> {joined}
+                    {"\n"}
+                  </AppText>
+                </View>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </View>
+        {identifier ? (
+          <View style={styles.MainContainer}>
+            <AppText
+              center
+              style={{ marginVertical: 15, fontSize: 20, fontWeight: "bold" }}
+            >
+              Service delivery form
+            </AppText>
+            <View>
+              <Text>Health Area</Text>
+              <Dropdown
+                label="Select health area"
+                data={[
+                  {
+                    value: "Family Planning",
+                  },
+                  {
+                    value: "MNCH",
+                  },
+                  {
+                    value: "Malaria",
+                  },
+                  {
+                    value: "Nutrition",
+                  },
+                  {
+                    value: "Sexual Reproductive Health & Rights",
+                  },
+                  {
+                    value: "Emerging infectious diseases",
+                  },
+                ]}
+                value={healthArea}
+                onChangeText={(text) => setHealthArea(text)}
+              />
+            </View>
+            <View>
+              <Text>Services provided</Text>
+              <TextInput
+                autoComplete="off"
+                required
+                multiline
+                editable
+                maxLength={225}
+                value={services}
+                onChangeText={(text) => setServices(text)}
+                style={styles.remarks}
+                placeholder={"Services"}
+              />
+            </View>
+            <View>
+              <Text>Any comments</Text>
+              <TextInput
+                autoComplete="off"
+                required
+                multiline
+                editable
+                numberOfLines={4}
+                maxLength={225}
+                value={comments}
+                onChangeText={(text) => setComments(text)}
+                style={styles._tinput}
+                placeholder={"Any comments..."}
+              />
+            </View>
+            <SubmitButton
+              title="Submit"
+              onPress={handleSubmit}
+              disabled={disabled}
+              loading={loading}
+            />
+          </View>
+        ) : (
+          <View style={styles.MainContainer}>
+            <AppText
+              center
+              style={{ marginVertical: 15, fontSize: 20, fontWeight: "bold" }}
+            >
+              Register new beneficiary
+            </AppText>
+            <View>
+              <Text>Type of care</Text>
+              <RadioButton.Group
+                onValueChange={(newValue) => setCare(newValue)}
+                value={care}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="anc" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>ANC</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="pnc" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>PNC</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+            <View>
+              <Text>Mobile number</Text>
+              <TextInput
+                editable
+                autoComplete="off"
+                inputMode="tel"
+                keyboardType="phone-pad"
+                maxLength={40}
+                onChangeText={(text) => setPhone(text)}
+                value={phone}
+                style={styles.remarks}
+                placeholder={"Phone"}
+              />
+            </View>
+            <View>
+              <Text>Registrant is (gender)</Text>
+              <RadioButton.Group
+                onValueChange={(newValue) => setGender(newValue)}
+                value={gender}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="female" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Female</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="male" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Male</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+            <View>
+              <Text>Age of registrant</Text>
+              <TextInput
+                autoComplete="off"
+                inputMode="numeric"
+                keyboardType="numeric"
+                editable
+                maxLength={40}
+                onChangeText={(text) => setAge(text)}
+                value={age}
+                style={styles.remarks}
+                placeholder={"Age"}
+              />
+            </View>
+            <View>
+              <Text>Weeks of pregnancy/baby</Text>
+              <TextInput
+                autoComplete="off"
+                inputMode="numeric"
+                keyboardType="numeric"
+                editable
+                maxLength={40}
+                onChangeText={(text) => setWeek(text)}
+                value={week}
+                style={styles.remarks}
+                placeholder={"Weeks pregnant/baby"}
+              />
+            </View>
+            <View>
+              <Text>How would you like to receive the messages (channel)</Text>
+              <RadioButton.Group
+                onValueChange={(newValue) => setChannel(newValue)}
+                value={channel}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="sms" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>SMS</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="voice" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Voice</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="both" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Both</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+            <View>
+              <Text>What is your preferred language</Text>
+              <Dropdown
+                label="Select language"
+                data={[
+                  {
+                    value: "Dagbani",
+                  },
+                  {
+                    value: "Mampruli",
+                  },
+                  {
+                    value: "Buli",
+                  },
+                  {
+                    value: "Fula",
+                  },
+                  {
+                    value: "Twi",
+                  },
+                  {
+                    value: "Hausa",
+                  },
+                ]}
+                onChangeText={(newValue) => setLanguage(newValue)}
+                value={language}
+              />
+            </View>
+            <View>
+              <Text>Phone belongs to</Text>
+              <RadioButton.Group
+                onValueChange={(newValue) => setOwnership(newValue)}
+                value={ownership}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="self" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Self</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="partner" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Partner</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="relative" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Relative/Friend</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+            <View>
+              <Text>Region</Text>
+              <RadioButton.Group
+                onValueChange={(newValue) => setRegion(newValue)}
+                value={region}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="northern" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>Northen</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <RadioButton color={colors.primary} value="northeast" />
+                  </View>
+                  <View style={{ flex: 8 }}>
+                    <Text>North East</Text>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+            {region == "northern" ? (
+              <>
+                <View>
+                  <Text>District</Text>
+                  <Dropdown
+                    label="Select district"
+                    data={[
+                      {
+                        value: "Sagnarigu",
+                      },
+                    ]}
+                    value={district}
+                    onChangeText={(text) => setDistrict(text)}
+                  />
+                </View>
+
+                <View>
+                  <Text>Sub district</Text>
+                  <Dropdown
+                    label="Select subdistrict"
+                    data={[
+                      {
+                        value: "Choggu",
+                      },
+                      {
+                        value: "Sagnarigu",
+                      },
+                      {
+                        value: "Taha",
+                      },
+                    ]}
+                    value={subdistrict}
+                    onChangeText={(text) => setSubdistrict(text)}
+                  />
+                </View>
+                <View>
+                  <Text>CHPS zone</Text>
+                  <Dropdown
+                    label="Select CHPS"
+                    data={[
+                      {
+                        value: "Naaluro CHPS",
+                      },
+                      {
+                        value: "Sognaayilli CHPS",
+                      },
+                      {
+                        value: "Gurugu CHPS",
+                      },
+                      {
+                        value: "TACE CHPS",
+                      },
+                      {
+                        value: "BACE CHPS",
+                      },
+                      {
+                        value: "Kpene CHPS",
+                      },
+                      {
+                        value: "Shishegu CHPS",
+                      },
+                      {
+                        value: "Nyanshegu CHPS",
+                      },
+                      {
+                        value: "Taha CHPS",
+                      },
+                      {
+                        value: "Ward K CHPS",
+                      },
+                      {
+                        value: "Kalpohini CHPS",
+                      },
+                      {
+                        value: "CHNT CHPS",
+                      },
+                      {
+                        value: "Kulaa CHPS",
+                      },
+                      {
+                        value: "Gbalahi CHPS",
+                      },
+                      {
+                        value: "Fuo CHPS",
+                      },
+                      {
+                        value: "Gblima CHPS",
+                      },
+                      {
+                        value: "Estate CHPS",
+                      },
+                    ]}
+                    value={chps_zone}
+                    onChangeText={(text) => setChps_zone(text)}
+                  />
+                </View>
+              </>
+            ) : (
+              <>
+                <View>
+                  <Text>District</Text>
+                  <Dropdown
+                    label="Select district"
+                    data={[
+                      {
+                        value: "Mamprugu Moagduri",
+                      },
+                    ]}
+                    value={district}
+                    onChangeText={(text) => setDistrict(text)}
+                  />
+                </View>
+                <View>
+                  <Text>Sub district</Text>
+                  <Dropdown
+                    label="Select subdistrict"
+                    data={[
+                      {
+                        value: "Yagaba",
+                      },
+                      {
+                        value: "Kubori",
+                      },
+                      {
+                        value: "Kunkua",
+                      },
+                      {
+                        value: "Yikpabongo",
+                      },
+                    ]}
+                    value={subdistrict}
+                    onChangeText={(text) => setSubdistrict(text)}
+                  />
+                </View>
+                <View>
+                  <Text>CHPS zone</Text>
+                  <Dropdown
+                    label="Select CHPS"
+                    data={[
+                      {
+                        value: "Loagri CHPs",
+                      },
+                      {
+                        value: "Soo CHPs",
+                      },
+                      {
+                        value: "Gbima CHPS",
+                      },
+                      {
+                        value: "Kpatorigu CHPS",
+                      },
+                      {
+                        value: "Kuburu CHPS",
+                      },
+                      {
+                        value: "Namoo CHPS",
+                      },
+                      {
+                        value: "Zanwara CHPS",
+                      },
+                      {
+                        value: "Katigre CHPS",
+                      },
+                      {
+                        value: "Nangrumah CHPS",
+                      },
+                      {
+                        value: "Tantala CHPS",
+                      },
+                      {
+                        value: "Yikpabongo CHPS",
+                      },
+                    ]}
+                    value={chps_zone}
+                    onChangeText={(text) => setChps_zone(text)}
+                  />
+                </View>
+              </>
+            )}
+            <SubmitButton
+              title="Submit"
+              onPress={handleSubmit}
+              disabled={disabled}
+              loading={loading}
+            />
+          </View>
+        )}
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -201,6 +738,8 @@ export default ResponseScanner;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    paddingBottom: 20,
+    marginBottom: 10,
     backgroundColor: colors.white,
   },
   topcontainer: {
@@ -211,6 +750,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 10,
     paddingLeft: 10,
+  },
+  _tinput: {
+    backgroundColor: colors.white,
+    borderBottomColor: "#171717",
+    borderBottomWidth: 0.5,
+    marginVertical: 10,
   },
   userInfoSection: {
     backgroundColor: colors.primary,
@@ -247,7 +792,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
   },
-  questionCard: {
+  profileCard: {
     paddingVertical: 15,
     paddingHorizontal: 15,
     margin: 5,
@@ -264,7 +809,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     width: "100%",
-    height: 550,
     padding: 10,
     marginVertical: 10,
     shadowColor: "#171717",

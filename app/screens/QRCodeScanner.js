@@ -8,6 +8,7 @@ import {
   Platform,
   AlertIOS,
   ToastAndroid,
+  TouchableOpacity
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -16,9 +17,9 @@ import AppText from "../components/Auth/AppText";
 import colors from "../config/colors";
 
 function QRCodeScanner({ navigation }) {
-  const [scanned, setScanned] = useState(false);
-  const [scannedData, setScannedData] = useState("");
   const [showScanner, setShowScanner] = useState(false);
+  const [scannedData, setScannedData] = useState("");
+  const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
     askPermissions();
@@ -27,45 +28,50 @@ function QRCodeScanner({ navigation }) {
   const askPermissions = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setShowScanner(status == "granted");
+      setShowScanner(status === "granted");
     })();
   };
 
-  const handleScanned = async ({ type, data }) => {
-    try {
-      setScannedData(data);
-      const relData = JSON.parse(data);
-      if (relData) {
-        navigation.navigate("ResponseScanner", relData);
-      } else {
-        setShowScanner(false);
-        setScanned(true);
-        setScannedData("");
-        setScanned(false);
-      }
-      setShowScanner(false);
-      setScanned(true);
-      setScannedData("");
-      setScanned(false);
-    } catch (error) {
-      console.log(error);
+
+    const _serveToast = (tMessage) => {
       if (Platform.OS === "android") {
         ToastAndroid.showWithGravityAndOffset(
-          "Not applicable, use kpododo QR Codes",
+          tMessage + " ",
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM,
           25,
           50
         );
       } else {
-        AlertIOS.alert("Not applicable, use kpododo QR Codes");
+        AlertIOS.alert("Error: " + tMessage + " ");
       }
     }
+
+  const handleScanned = ({ type, data }) => {
+    try {
+      const qrcodeData = JSON.parse(data);
+
+      if (qrcodeData) {
+
+        setScannedData("");
+        setScanned(false);
+        setShowScanner(false);
+
+        navigation.navigate("ResponseScanner", qrcodeData);
+
+      } else {
+        _serveToast("Invalid QR code data");
+      }
+    } catch (error) {
+      _serveToast("Not applicable, use kpododo QR Codes");
+    }
+setScannedData("");
+setScanned(false);
+setShowScanner(false);
   };
 
   const handleClose = () => {
     setShowScanner(false);
-    setScanned(false);
   };
 
   return (
@@ -78,9 +84,9 @@ function QRCodeScanner({ navigation }) {
     >
       <SafeAreaView style={styles.container}>
         <>
-        <AppText center style={styles.title}>
-                Scan subscribers QR Code
-              </AppText>
+          <AppText center style={styles.title}>
+            Tap to Scan subscribers QRCode
+          </AppText>
           {showScanner ? (
             <View
               style={{
@@ -89,9 +95,11 @@ function QRCodeScanner({ navigation }) {
                 justifyContent: "center",
               }}
             >
-              <Pressable style={styles.cbutton} onPress={handleClose}>
-                <Text style={styles.text}>Close</Text>
-              </Pressable>
+              <TouchableOpacity style={styles.cbutton} onPress={handleClose}>
+                <Text style={styles.text}>
+                  Close Camera
+                </Text>
+              </TouchableOpacity>
 
               <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleScanned}
@@ -112,15 +120,21 @@ function QRCodeScanner({ navigation }) {
                 justifyContent: "center",
               }}
             >
-              <Pressable style={styles.sbutton} onPress={askPermissions}>
+              <TouchableOpacity style={styles.sbutton} onPress={askPermissions}>
+                <Text>
+                  <Icon name="qrcode" color={colors.white} size={100} />
+                </Text>
+              </TouchableOpacity>
+
+              {/* <Pressable style={styles.sbutton} onPress={askPermissions}>
                 <Text style={styles.text}>
                   <Icon name="qrcode" color={colors.white} size={100} />
                 </Text>
-              </Pressable>
+              </Pressable> */}
             </View>
           )}
 
-          {scanned && (
+          {/* {scanned && (
             <>
               <View style={styles.dataContainer}>
                 <Text
@@ -131,7 +145,7 @@ function QRCodeScanner({ navigation }) {
                 <Text>{scannedData}</Text>
               </View>
             </>
-          )}
+          )} */}
         </>
       </SafeAreaView>
     </KeyboardAwareScrollView>
@@ -148,17 +162,16 @@ const styles = StyleSheet.create({
   cbutton: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 100,
-    height: 40,
-    width: 40,
+    borderRadius: 8,
+    height: 30,
+    padding: 5,
     elevation: 3,
     backgroundColor: colors.danger,
     marginLeft: 290,
-    marginTop: 10,
+    marginVertical: 5,
   },
   text: {
     color: colors.white,
-    textTransform: "uppercase",
     fontSize: 10,
     fontWeight: "bold",
   },
@@ -187,7 +200,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 30,
     fontWeight: "bold",
-    marginTop: 10,
+    marginVertical: 10,
     textAlign: "center",
   },
 });

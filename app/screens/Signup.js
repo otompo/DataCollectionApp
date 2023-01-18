@@ -3,13 +3,13 @@ import * as Battery from "expo-battery";
 import {
   StyleSheet,
   View,
+  Text,
   Image,
   ToastAndroid,
   AlertIOS,
   Platform,
 } from "react-native";
 import * as Cellular from "expo-cellular";
-import Text from "@kaloraat/react-native-text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppTextInput from "../components/Auth/AppTextInput";
 import SubmitButton from "../components/Button/SubmitButton";
@@ -20,7 +20,9 @@ import AppText from "../components/Auth/AppText";
 // import { AuthContext } from "../context/authContext";
 
 export const Signup = ({ navigation }) => {
-  const [server_address, setServer_Address] = useState("beta.kpododo.com");
+  const [server_address, setServer_Address] = useState(
+    "https://beta.kpododo.com/api/v1"
+  );
   const [fullName, setFullName] = useState("");
   const [phone_number, setPhone_Number] = useState("");
   const [password, setPassword] = useState("");
@@ -31,6 +33,7 @@ export const Signup = ({ navigation }) => {
   const [networkUsed, setNetworkUsed] = useState("");
   const [batteryLevel, setBatteryLevel] = useState("");
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   // const [state, setState] = useContext(AuthContext);
   // const authenticated = state && state.status !== "" && state.user !== null;
@@ -39,6 +42,20 @@ export const Signup = ({ navigation }) => {
     getCellular();
     getBatteryLevel();
   }, []);
+
+  const _serveToast = (tMessage) => {
+    if (Platform.OS === "android") {
+      ToastAndroid.showWithGravityAndOffset(
+        tMessage + " ",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+    } else {
+      AlertIOS.alert("Error: " + tMessage + " ");
+    }
+  };
 
   const getBatteryLevel = async () => {
     const batteryLevel = await Battery.getBatteryLevelAsync();
@@ -53,9 +70,12 @@ export const Signup = ({ navigation }) => {
   const handleSubmit = async () => {
     let countryCode = "+233";
     setLoading(true);
+    setDisabled(true);
+
     if (!fullName || !phone_number || !password) {
-      alert("All fields are requied");
+      _serveToast("All fields are required");
       setLoading(false);
+      setDisabled(false);
       return;
     }
     try {
@@ -67,40 +87,22 @@ export const Signup = ({ navigation }) => {
       );
 
       if (data.error) {
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            data.error,
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert(data.error);
-        }
+        _serveToast(data.error);
         setLoading(false);
+        setDisabled(false);
       } else {
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            "Success",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert("Success");
-        }
+        _serveToast("Account created");
         setFullName("");
         setPhone_Number("");
         setPassword("");
-        navigation.navigate("Signin");
         setLoading(false);
+        setDisabled(false);
+        navigation.navigate("Signin");
       }
     } catch (err) {
-      console.log(err.response.data.message);
-      alert(err.response.data.message);
+      _serveToast("Something went wrong");
       setLoading(false);
+      setDisabled(false);
     }
   };
 
@@ -112,71 +114,75 @@ export const Signup = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-
       <View style={styles.MainContainer}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/collect-logo.png")}
-        />
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/collect-logo.png")} />
           <AppText center style={styles.title}>
-            Welcome
+            Create an account
           </AppText>
-      </View>
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="web"
-          placeholder="Server Address"
-          keyboardType="text"
-          value={server_address}
-          setValue={setServer_Address}
-        />
+        </View>
 
-        <AppTextInput
-          autoCapitalize="words"
-          autoCorrect={false}
-          icon="account"
-          placeholder="Full Name"
-          value={fullName}
-          setValue={setFullName}
-        />
+        <View style={{ paddingHorizontal: 20 }}>
+          <AppTextInput
+            autoCapitalize="words"
+            autoCorrect={false}
+            icon="account"
+            placeholder="Full Name"
+            value={fullName}
+            setValue={setFullName}
+          />
+        </View>
+        <View style={{ paddingHorizontal: 20 }}>
+          <AppTextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="phone"
+            placeholder="Phone Number"
+            keyboardType="numeric"
+            value={phone_number}
+            setValue={setPhone_Number}
+          />
+        </View>
+        <View style={{ paddingHorizontal: 20, marginBottom: 15 }}>
+          <AppTextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="lock"
+            value={password}
+            setValue={setPassword}
+            placeholder="Set Password"
+            secureTextEntry
+            textContentType="password"
+            autoCompleteType="password"
+          />
+        </View>
 
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="phone"
-          placeholder="Phone Number"
-          keyboardType="numeric"
-          value={phone_number}
-          setValue={setPhone_Number}
-        />
-
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="lock"
-          value={password}
-          setValue={setPassword}
-          placeholder="Set Password"
-          secureTextEntry
-          textContentType="password"
-          autoCompleteType="password"
-        />
-        <Text color={colors.medium}>
-          Password should have at least 6 characters.
-        </Text>
+        <View>
+          <Text color={colors.medium}>
+            Password should have at least 6 characters.
+          </Text>
+        </View>
 
         <SubmitButton
           title="CREATE ACCOUNT"
           onPress={handleSubmit}
           loading={loading}
+          disabled={disabled}
         />
 
-        <View style={{ marginVertical: 10 }}>
-          <Text center>
-            By creating an account, you have accepted our Terms of Service and
-            Privacy Policy.
-          </Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View>
+            <Text color={colors.primary}>Have account?</Text>
+          </View>
+          <View>
+            <Text
+              onPress={() => navigation.navigate("Signin")}
+              color={colors.primary}
+            >
+              {" "}
+              Login
+            </Text>
+          </View>
         </View>
       </View>
     </KeyboardAwareScrollView>
@@ -199,13 +205,13 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 50
+    marginBottom: 25,
   },
   title: {
     color: colors.black,
-    fontSize: 30,
+    fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
 });

@@ -1,13 +1,3 @@
-import {
-  Avatar,
-  Drawer,
-  DrawerItem,
-  IndexPath,
-  Layout,
-  StyleService,
-  Text,
-  useStyleSheet,
-} from "@ui-kitten/components";
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerContent } from "../../screens/DrawerContent";
@@ -41,28 +31,5 @@ export const HomeDrawerNavigator = () => (
     <Screen name="Profile" component={Profile} />
     <Screen name="QRCodeScanner" component={QRCodeScanner} />
     <Screen name="ResponseScanner" component={ResponseScanner} />
-    {/* 
-    <Screen name="Register" component={RegisterScreen} /> */}
   </Navigator>
 );
-
-const themedStyles = StyleService.create({
-  header: {
-    height: 128,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  profileName: {
-    marginHorizontal: 16,
-  },
-
-  icon: {
-    width: 22,
-    height: 22,
-    marginRight: 8,
-  },
-});

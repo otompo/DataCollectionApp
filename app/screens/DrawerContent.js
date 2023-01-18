@@ -63,7 +63,7 @@ export function DrawerContent(props) {
               icon={({ color, size }) => (
                 <Icon name="form-select" color={colors.primary} size={40} />
               )}
-              label="Forms"
+              label="All Forms"
               onPress={() => {
                 props.navigation.navigate("Home");
               }}
@@ -73,7 +73,7 @@ export function DrawerContent(props) {
               icon={({ color, size }) => (
                 <Icon name="qrcode" color={colors.primary} size={40} />
               )}
-              label="QR Scanner"
+              label="QR Code Scanner"
               onPress={() => {
                 props.navigation.navigate("QRCodeScanner");
               }}
@@ -81,7 +81,7 @@ export function DrawerContent(props) {
           </Drawer.Section>
         </View>
         {/* <Drawer.Section> */}
-          {/* <DrawerItem
+        {/* <DrawerItem
             icon={({ color, size }) => (
               <Icon name="account-outline" color={colors.primary} size={size} />
             )}
@@ -116,7 +116,7 @@ export function DrawerContent(props) {
       >
         <DrawerItem
           icon={({ color, size }) => (
-            <Icon name="exit-to-app" color={colors.danger} size={size} />
+            <Icon name="exit-to-app" color={colors.danger} size={40} />
           )}
           label="Logout"
           onPress={handleLogoutSubmit}

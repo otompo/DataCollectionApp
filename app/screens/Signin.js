@@ -2,12 +2,12 @@ import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   View,
+  Text,
   Image,
   ToastAndroid,
   AlertIOS,
   Platform,
 } from "react-native";
-import Text from "@kaloraat/react-native-text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppTextInput from "../components/Auth/AppTextInput";
 import SubmitButton from "../components/Button/SubmitButton";
@@ -21,26 +21,47 @@ export const Signin = ({ navigation }) => {
   const [server_address, setServer_Address] = useState(
     "https://beta.kpododo.com/api/v1"
   );
-  const [phone_number, setPhone_Number] = useState("5055856458");
-  const [password, setPassword] = useState("otompo123@");
+  const [phone_number, setPhone_Number] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const [state, setState] = useContext(AuthContext);
   const { user } = state;
+
   useEffect(() => {
     if (user) {
       navigation.navigate("Drawer");
     }
   }, []);
 
+  const _serveToast = (tMessage) => {
+    if (Platform.OS === "android") {
+      ToastAndroid.showWithGravityAndOffset(
+        tMessage + " ",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+    } else {
+      AlertIOS.alert("Error: " + tMessage + " ");
+    }
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
+    setDisabled(true);
+
     AsyncStorage.setItem("baseUrl", server_address);
+
     if (!phone_number || !password) {
-      alert("All fields are requied");
+      _serveToast("All fields are required");
       setLoading(false);
+      setDisabled(false);
       return;
     }
+
     let countryCode = "+233";
     try {
       const { data } = await axios.get(
@@ -49,40 +70,25 @@ export const Signin = ({ navigation }) => {
         }&password=${password}`
       );
 
-      if (data.error) {
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            data.error,
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          console.log(data.eror.response);
-          AlertIOS.alert(data.error);
-        }
+      if (!data || data.status === false || data.data === null) {
+        _serveToast("Login failed, try again");
         setLoading(false);
+        setDisabled(false);
+        setPassword("");
       } else {
         const prepData = { user: data, status: true };
         await AsyncStorage.setItem("@auth", JSON.stringify(prepData));
         setState(prepData);
         setLoading(false);
+        setDisabled(false);
         navigation.navigate("Drawer");
       }
     } catch (err) {
-      console.log(err);
-      alert(err);
+      _serveToast("Something went wrong");
       setLoading(false);
+      setDisabled(false);
     }
   };
-
-  const loadAsyncStorage = async () => {
-    let data = await AsyncStorage.getItem("@auth");
-    console.log("data from AsyncStorage", data);
-  };
-
-  // loadAsyncStorage();
 
   return (
     <KeyboardAwareScrollView
@@ -96,59 +102,55 @@ export const Signin = ({ navigation }) => {
         <View style={styles.logoContainer}>
           <Image source={require("../assets/collect-logo.png")} />
           <AppText center style={styles.title}>
-            Welcome Back
+            Log into your account
           </AppText>
         </View>
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="web"
-          placeholder="Server Address"
-          keyboardType="text"
-          value={server_address}
-          setValue={setServer_Address}
-        />
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="phone"
-          placeholder="Phone Number"
-          keyboardType="numeric"
-          value={phone_number}
-          setValue={setPhone_Number}
-        />
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="lock"
-          value={password}
-          setValue={setPassword}
-          placeholder="Password"
-          secureTextEntry
-          textContentType="password"
-          autoCompleteType="password"
+        <View style={{ paddingHorizontal: 20 }}>
+          <AppTextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="phone"
+            placeholder="Phone Number"
+            keyboardType="numeric"
+            value={phone_number}
+            setValue={setPhone_Number}
+          />
+        </View>
+        <View style={{ paddingHorizontal: 20 }}>
+          <AppTextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="lock"
+            value={password}
+            setValue={setPassword}
+            placeholder="Password"
+            secureTextEntry
+            textContentType="password"
+            autoCompleteType="password"
+          />
+        </View>
+
+        <SubmitButton
+          title="Login"
+          onPress={handleSubmit}
+          loading={loading}
+          disabled={disabled}
         />
 
-        <SubmitButton title="Login" onPress={handleSubmit} loading={loading} />
-
-        <Text center style={{ marginTop: 10 }}>
-          Don't have an account?{" "}
-          <Text
-            onPress={() => navigation.navigate("Signup")}
-            color={colors.primary}
-          >
-            Create Account
-          </Text>
-        </Text>
-
-        <Text
-          onPress={() => navigation.navigate("ForgotPassword")}
-          center
-          color={colors.primary}
-          style={{ marginTop: 15 }}
-        >
-          Forgot Password?
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View>
+            <Text color={colors.primary}>No account?</Text>
+          </View>
+          <View>
+            <Text
+              onPress={() => navigation.navigate("Signup")}
+              color={colors.primary}
+            >
+              {" "}
+              Signup
+            </Text>
+          </View>
+        </View>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -170,11 +172,11 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 50,
+    marginBottom: 25,
   },
   title: {
     color: colors.black,
-    fontSize: 30,
+    fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
     textAlign: "center",
