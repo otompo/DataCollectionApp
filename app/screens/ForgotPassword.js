@@ -6,8 +6,8 @@ import {
   Platform,
   AlertIOS,
   Image,
+  Text
 } from "react-native";
-import Text from "@kaloraat/react-native-text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppTextInput from "../components/Auth/AppTextInput";
 import SubmitButton from "../components/Button/SubmitButton";
@@ -58,7 +58,6 @@ function ForgotPassword({ navigation }) {
       }
       setLoading(false);
     } catch (err) {
-      console.log(err);
       alert(err.response.data.message);
       setLoading(false);
     }

@@ -48,7 +48,6 @@ function OfflineScreen({ navigation }) {
         }
       });
       Promise.all(output).then((res) => {
-        //console.log(res)
         setSaved(res);
       });
     }

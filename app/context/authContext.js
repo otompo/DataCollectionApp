@@ -3,42 +3,39 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API } from "../config/baseUrl";
 
-const AuthContext = createContext([{}, function () {}]);
+const AuthContext = createContext([{}, () => {}]);
 
 const AuthProvider = ({ children }) => {
-  const [state, setState] = useState({
+  const [authState, setAuthState] = useState({
     user: null,
     status: false,
   });
 
-  // config axios
-  // const status = state && state.status ? state.status : "";
-  //   configure axios
-  AsyncStorage.getItem("baseUrl").then(data=>{
-    axios.defaults.baseURL = data;
-  }).catch(err=>{
-    //console.log("error reading URL")
-    //pass default
-    axios.defaults.baseURL = API;
-  })
-  
-  // axios.defaults.headers.common["Authorization"] = `Bearer ${status}`;
+  useEffect(() => {
+    const loadFromAsyncStorage = async () => {
+      let data = await AsyncStorage.getItem("@auth");
+      const as = JSON.parse(data);
 
-  const loadFromAsyncStorage = useCallback(async () => {
-    let data = await AsyncStorage.getItem("@auth");
-    const as = JSON.parse(data);
-
-    setState({
-      ...state,
-      ...as,
-    });
+      setAuthState({
+        ...authState,
+        ...as,
+      });
+    };
+    loadFromAsyncStorage();
   }, []);
 
   useEffect(() => {
-    loadFromAsyncStorage();
-  });
+    AsyncStorage.getItem("baseUrl")
+      .then((data) => {
+        axios.defaults.baseURL = data;
+      })
+      .catch((err) => {
+        axios.defaults.baseURL = API;
+      });
+  }, []);
+
   return (
-    <AuthContext.Provider value={[state, setState]}>
+    <AuthContext.Provider value={[authState, setAuthState]}>
       {children}
     </AuthContext.Provider>
   );

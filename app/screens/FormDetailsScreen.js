@@ -340,7 +340,7 @@ function FormDetailsScreen({ route, navigation }) {
           flex: 1,
         }}
       >
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text>Loading Questions</Text>
       </View>
     );

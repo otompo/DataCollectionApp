@@ -18,6 +18,7 @@ import AppText from "../components/Auth/AppText";
 import axios from "axios";
 import colors from "../config/colors";
 import { FontAwesome } from "@expo/vector-icons";
+import _serveToast from "../utils/_serveToast";
 
 function ResponseScanner({ route, navigation }) {
   const responseData = route.params;
@@ -134,7 +135,7 @@ function ResponseScanner({ route, navigation }) {
       
     } catch (error) {
       _serveToast("Something went wrong");
-      navigation.navigate("Home");
+      //navigation.navigate("Home");
     }
   };
 
@@ -151,13 +152,14 @@ function ResponseScanner({ route, navigation }) {
         bodyFormData.append("tracker", readData["tracker"]);
         bodyFormData.append("response", readData["response"]);
         bodyFormData.append("form", readData["form"]);
+
         bodyFormData.append("healthArea", healthArea);
         bodyFormData.append("services", services);
         bodyFormData.append("comment", comments);
       } else {
-        bodyFormData.append("tracker", readData["tracker"]);
-        bodyFormData.append("response", readData["response"]);
-        bodyFormData.append("form", readData["form"]);
+        bodyFormData.append("tracker", responseData.tracker);
+        bodyFormData.append("response", responseData.response);
+        bodyFormData.append("form", responseData.form);
         bodyFormData.append("care", care);
         bodyFormData.append("phone", phone);
         bodyFormData.append("gender", gender);
@@ -189,7 +191,7 @@ function ResponseScanner({ route, navigation }) {
         setDisabled(false);
       }
     } catch (err) {
-      _serveToast("Something went wrong 2");
+      _serveToast("Something went wrong");
       setLoading(false);
       setDisabled(false);
       navigation.navigate("Home");

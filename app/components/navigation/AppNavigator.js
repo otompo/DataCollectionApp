@@ -15,17 +15,18 @@ import ForgotPassword from "../../screens/ForgotPassword";
 import SettingsScreen from "../../screens/SettingsScreen";
 import ResponseStats from "../../screens/ResponseStats";
 import Response from "../../screens/Response";
-import sync_response from "../../utils/sync_response";
+import _offlineDataSync from "../../utils/_offlineDataSync";
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
-  const [state, setState] = useContext(AuthContext);
+  const [authState, setAuthState] = useContext(AuthContext);
   const [formsStats, setStatsData] = useContext(StatsDataContext)
-  const userId = state?.user_id || state?.user?.user_id;
-  const phone_number = state?.phone_number || state?.user?.phone_number;
+  const userId = authState?.user_id || authState?.user?.user_id;
+  const phone_number = authState?.phone_number || authState?.phone_number;
 
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
 
 
   return (
@@ -57,11 +58,16 @@ export default function AppNavigator() {
             ),
             headerRight: () => (
               <HeaderTabs
-                icon="refresh"
-                name={loading?"":""}
+                icon="upload"
+                name={loading ? " Uploading" : " Upload Data"}
                 onPress={() =>
-                  //function to sync offline forms to online
-                  sync_response(userId,phone_number,setLoading,formsStats,setStatsData)
+                  _offlineDataSync(
+                    userId,
+                    phone_number,
+                    setLoading,
+                    formsStats,
+                    setStatsData
+                  )
                 }
               />
             ),
@@ -111,7 +117,7 @@ export default function AppNavigator() {
           component={Signin}
           options={{
             title: "",
-            // headerShown: false,
+            headerLeft: "",
           }}
         />
         <Stack.Screen
@@ -119,7 +125,7 @@ export default function AppNavigator() {
           component={Signup}
           options={{
             title: "",
-            headerLeft: ""
+            headerLeft: "",
           }}
         />
         <Stack.Screen

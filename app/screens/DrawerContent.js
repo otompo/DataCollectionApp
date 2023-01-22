@@ -21,21 +21,20 @@ import { Divider } from "@ui-kitten/components";
 import ListItem from "../components/ListItem";
 
 export function DrawerContent(props) {
-  const paperTheme = useTheme();
 
-  const [state, setState] = useContext(AuthContext);
+  const [authState, setAuthState] = useContext(AuthContext);
   const [networkConnection, setNetworkConnection] = useState("");
   const navigation = useNavigation();
 
   const handleLogoutSubmit = async () => {
-    setState({ user: null, status: null });
+    setAuthState({ user: null, status: null });
     await AsyncStorage.removeItem("@auth");
     navigation.navigate("Signin");
   };
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setNetworkConnection(state.isConnected);
+    const unsubscribe = NetInfo.addEventListener((authState) => {
+      setNetworkConnection(authState.isConnected);
     });
 
     return () => {
@@ -50,9 +49,9 @@ export function DrawerContent(props) {
           <View style={styles.userInfoSection}>
             <ListItem
               icons="user"
-              title={state && state.user && state.user.full_name}
+              title={authState && authState.user && authState.user.full_name}
               iconc="phone"
-              subTitle={state && state.user && state.user.phone_number}
+              subTitle={authState && authState.user && authState.user.phone_number}
               oncono="circle"
               offcono="circle"
               subSubTitle={`${networkConnection ? " Online" : " Offline"} `}

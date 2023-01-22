@@ -11,6 +11,7 @@ function AppTextInput({
   autoCapitalize = "none",
   keyboardType = "default",
   secureTextEntry = false,
+  maxLength = null,
   width = "100%",
 }) {
   return (
@@ -33,7 +34,8 @@ function AppTextInput({
         secureTextEntry={secureTextEntry}
         value={value}
         onChangeText={(text) => setValue(text)}
-      />
+        maxLength={maxLength}
+        />
     </View>
   );
 }

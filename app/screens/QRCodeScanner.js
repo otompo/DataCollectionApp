@@ -3,18 +3,15 @@ import {
   View,
   StyleSheet,
   Text,
-  Pressable,
   SafeAreaView,
-  Platform,
-  AlertIOS,
-  ToastAndroid,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import AppText from "../components/Auth/AppText";
 import colors from "../config/colors";
+import _serveToast from "../utils/_serveToast";
 
 function QRCodeScanner({ navigation }) {
   const [showScanner, setShowScanner] = useState(false);
@@ -32,42 +29,25 @@ function QRCodeScanner({ navigation }) {
     })();
   };
 
-
-    const _serveToast = (tMessage) => {
-      if (Platform.OS === "android") {
-        ToastAndroid.showWithGravityAndOffset(
-          tMessage + " ",
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      } else {
-        AlertIOS.alert("Error: " + tMessage + " ");
-      }
-    }
-
   const handleScanned = ({ type, data }) => {
     try {
       const qrcodeData = JSON.parse(data);
 
       if (qrcodeData) {
-
         setScannedData("");
         setScanned(false);
         setShowScanner(false);
 
         navigation.navigate("ResponseScanner", qrcodeData);
-
       } else {
         _serveToast("Invalid QR code data");
       }
     } catch (error) {
       _serveToast("Not applicable, use kpododo QR Codes");
     }
-setScannedData("");
-setScanned(false);
-setShowScanner(false);
+    setScannedData("");
+    setScanned(false);
+    setShowScanner(false);
   };
 
   const handleClose = () => {
@@ -96,9 +76,7 @@ setShowScanner(false);
               }}
             >
               <TouchableOpacity style={styles.cbutton} onPress={handleClose}>
-                <Text style={styles.text}>
-                  Close Camera
-                </Text>
+                <Text style={styles.text}>Close Camera</Text>
               </TouchableOpacity>
 
               <BarCodeScanner
@@ -125,27 +103,8 @@ setShowScanner(false);
                   <Icon name="qrcode" color={colors.white} size={100} />
                 </Text>
               </TouchableOpacity>
-
-              {/* <Pressable style={styles.sbutton} onPress={askPermissions}>
-                <Text style={styles.text}>
-                  <Icon name="qrcode" color={colors.white} size={100} />
-                </Text>
-              </Pressable> */}
             </View>
           )}
-
-          {/* {scanned && (
-            <>
-              <View style={styles.dataContainer}>
-                <Text
-                  style={{ fontSize: 18, fontWeight: "400", paddingBottom: 20 }}
-                >
-                  Scanned Data
-                </Text>
-                <Text>{scannedData}</Text>
-              </View>
-            </>
-          )} */}
         </>
       </SafeAreaView>
     </KeyboardAwareScrollView>

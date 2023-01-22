@@ -5,8 +5,6 @@ import {
   View,
   Text,
   Image,
-  ToastAndroid,
-  AlertIOS,
   Platform,
 } from "react-native";
 import * as Cellular from "expo-cellular";
@@ -17,14 +15,15 @@ import { nativeApplicationVersion } from "expo-application";
 import axios from "axios";
 import colors from "../config/colors";
 import AppText from "../components/Auth/AppText";
-// import { AuthContext } from "../context/authContext";
+import _serveToast from "../utils/_serveToast";
 
 export const Signup = ({ navigation }) => {
+
   const [server_address, setServer_Address] = useState(
     "https://beta.kpododo.com/api/v1"
   );
   const [fullName, setFullName] = useState("");
-  const [phone_number, setPhone_Number] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [signUptime, setSignUptime] = useState(new Date());
   const [appVersion, setAppVersion] = useState(nativeApplicationVersion);
@@ -32,30 +31,14 @@ export const Signup = ({ navigation }) => {
   const [mobileModel, setMobileModel] = useState(Platform.__constants.Model);
   const [networkUsed, setNetworkUsed] = useState("");
   const [batteryLevel, setBatteryLevel] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(false);
-
-  // const [state, setState] = useContext(AuthContext);
-  // const authenticated = state && state.status !== "" && state.user !== null;
+  const [isLoading, seIisLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [error, setError] = useState({});
 
   useEffect(() => {
     getCellular();
     getBatteryLevel();
   }, []);
-
-  const _serveToast = (tMessage) => {
-    if (Platform.OS === "android") {
-      ToastAndroid.showWithGravityAndOffset(
-        tMessage + " ",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-    } else {
-      AlertIOS.alert("Error: " + tMessage + " ");
-    }
-  };
 
   const getBatteryLevel = async () => {
     const batteryLevel = await Battery.getBatteryLevelAsync();
@@ -63,46 +46,52 @@ export const Signup = ({ navigation }) => {
   };
 
   const getCellular = async () => {
-    const cellular = await Cellular.carrier;
+    const cellular = await Cellular.getCarrierNameAsync();
     setNetworkUsed(cellular);
   };
 
-  const handleSubmit = async () => {
-    let countryCode = "+233";
-    setLoading(true);
-    setDisabled(true);
+  const validate = () => {
+    let errors = {};
+    if (!fullName) errors.fullName = "Full Name is required";
+    if (!phoneNumber) errors.phoneNumber = "Phone number is required";
+    if (!password) errors.password = "Password is required";
+    setError(errors);
+    return Object.keys(errors).length === 0;
+  };
 
-    if (!fullName || !phone_number || !password) {
+  const handleSubmit = async () => {
+    seIisLoading(true);
+    setIsDisabled(true);
+
+    if (!validate()) {
       _serveToast("All fields are required");
-      setLoading(false);
-      setDisabled(false);
+      seIisLoading(false);
+      setIsDisabled(false);
       return;
     }
+
     try {
       const { data } = await axios.post(
-        `/usersignup?full_name=${fullName}&phone_number=${
-          countryCode + phone_number
-        }&password=${password}&batteryLevel=${batteryLevel}
-        &networkUsed=${networkUsed}&signUptime=${signUptime}&appVersion=${appVersion}&androidVersion=${androidVersion}&mobileModel=${mobileModel}`
+        `/usersignup?full_name=${fullName}&phone_number=${phoneNumber}&password=${password}&batteryLevel=${batteryLevel}
+      &networkUsed=${networkUsed}&signUptime=${signUptime}&appVersion=${appVersion}&androidVersion=${androidVersion}&mobileModel=${mobileModel}`
       );
 
-      if (data.error) {
-        _serveToast(data.error);
-        setLoading(false);
-        setDisabled(false);
+      if (!data.status) {
+        _serveToast(data.message);
+        seIisLoading(false);
+        setIsDisabled(false);
       } else {
-        _serveToast("Account created");
-        setFullName("");
-        setPhone_Number("");
+        _serveToast("Great, account created");
+        setPhoneNumber("");
         setPassword("");
-        setLoading(false);
-        setDisabled(false);
+        seIisLoading(false);
+        setIsDisabled(false);
         navigation.navigate("Signin");
       }
     } catch (err) {
       _serveToast("Something went wrong");
-      setLoading(false);
-      setDisabled(false);
+      seIisLoading(false);
+      setIsDisabled(false);
     }
   };
 
@@ -139,8 +128,9 @@ export const Signup = ({ navigation }) => {
             icon="phone"
             placeholder="Phone Number"
             keyboardType="numeric"
-            value={phone_number}
-            setValue={setPhone_Number}
+            value={phoneNumber}
+            setValue={setPhoneNumber}
+            maxLength={10}
           />
         </View>
         <View style={{ paddingHorizontal: 20, marginBottom: 15 }}>
@@ -166,8 +156,8 @@ export const Signup = ({ navigation }) => {
         <SubmitButton
           title="CREATE ACCOUNT"
           onPress={handleSubmit}
-          loading={loading}
-          disabled={disabled}
+          isLoading={isLoading}
+          isDisabled={isDisabled}
         />
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>

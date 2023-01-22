@@ -3,10 +3,7 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
-  ToastAndroid,
-  AlertIOS,
-  Platform,
+  Image
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppTextInput from "../components/Auth/AppTextInput";
@@ -15,19 +12,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 import AppText from "../components/Auth/AppText";
+import _serveToast from "../utils/_serveToast";
 import axios from "axios";
 
 export const Signin = ({ navigation }) => {
-  const [server_address, setServer_Address] = useState(
-    "https://beta.kpododo.com/api/v1"
-  );
-  const [phone_number, setPhone_Number] = useState("");
+  const [serverAddress, setServerAddress] = useState("https://beta.kpododo.com/api/v1");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
-  const [state, setState] = useContext(AuthContext);
-  const { user } = state;
+  const [authState, setAuthState] = useContext(AuthContext);
+  const { user } = authState;
 
   useEffect(() => {
     if (user) {
@@ -35,58 +31,41 @@ export const Signin = ({ navigation }) => {
     }
   }, []);
 
-  const _serveToast = (tMessage) => {
-    if (Platform.OS === "android") {
-      ToastAndroid.showWithGravityAndOffset(
-        tMessage + " ",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-    } else {
-      AlertIOS.alert("Error: " + tMessage + " ");
-    }
-  };
-
   const handleSubmit = async () => {
-    setLoading(true);
-    setDisabled(true);
 
-    AsyncStorage.setItem("baseUrl", server_address);
+    setIsLoading(true);
+    setIsDisabled(true);
 
-    if (!phone_number || !password) {
+    AsyncStorage.setItem("baseUrl", serverAddress);
+
+    if (!phoneNumber || !password) {
       _serveToast("All fields are required");
-      setLoading(false);
-      setDisabled(false);
+      setIsLoading(false);
+      setIsDisabled(false);
       return;
     }
 
-    let countryCode = "+233";
     try {
-      const { data } = await axios.get(
-        `/userlogindetails?phone_number=${
-          countryCode + phone_number
-        }&password=${password}`
-      );
+      const { data } = await axios.get(`/userlogindetails?phone_number=${phoneNumber}&password=${password}`);
 
       if (!data || data.status === false || data.data === null) {
         _serveToast("Login failed, try again");
-        setLoading(false);
-        setDisabled(false);
+        setIsLoading(false);
+        setIsDisabled(false);
         setPassword("");
       } else {
         const prepData = { user: data, status: true };
         await AsyncStorage.setItem("@auth", JSON.stringify(prepData));
-        setState(prepData);
-        setLoading(false);
-        setDisabled(false);
+        setAuthState(prepData);
+        setIsLoading(false);
+        setIsDisabled(false);
+        setPassword("");
         navigation.navigate("Drawer");
       }
     } catch (err) {
       _serveToast("Something went wrong");
-      setLoading(false);
-      setDisabled(false);
+      setIsLoading(false);
+      setIsDisabled(false);
     }
   };
 
@@ -107,13 +86,13 @@ export const Signin = ({ navigation }) => {
         </View>
         <View style={{ paddingHorizontal: 20 }}>
           <AppTextInput
-            autoCapitalize="none"
             autoCorrect={false}
             icon="phone"
             placeholder="Phone Number"
             keyboardType="numeric"
-            value={phone_number}
-            setValue={setPhone_Number}
+            value={phoneNumber}
+            setValue={setPhoneNumber}
+            maxLength={10}
           />
         </View>
         <View style={{ paddingHorizontal: 20 }}>
@@ -133,8 +112,8 @@ export const Signin = ({ navigation }) => {
         <SubmitButton
           title="Login"
           onPress={handleSubmit}
-          loading={loading}
-          disabled={disabled}
+          loading={isLoading}
+          disabled={isDisabled}
         />
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>

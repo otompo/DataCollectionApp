@@ -18,7 +18,7 @@ export const HomeDrawerNavigator = () => (
         backgroundColor: colors.primary,
       },
       headerTitleStyle: {
-        fontWeight: "bold",
+        fontWeight: "600",
       },
       headerShown: false,
       drawerActiveBackgroundColor: colors.secondary,

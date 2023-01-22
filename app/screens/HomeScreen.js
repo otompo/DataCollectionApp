@@ -7,10 +7,7 @@ import {
   FlatList,
   ActivityIndicator,
   ScrollView,
-  ToastAndroid,
-  Platform,
-  AlertIOS,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import { AuthContext } from "../context/authContext";
 import { FormDataContext } from "../context/formContext";
@@ -21,101 +18,88 @@ import axios from "axios";
 import colors from "../config/colors";
 import FormListItem from "../components/FormListItem";
 import moment from "moment";
+import _serveToast from "../utils/_serveToast";
 
 export const HomeScreen = ({ navigation }) => {
-  const [state, setState] = useContext(AuthContext);
-  const { user } = state;
+
+  const [authState, setAuthState] = useContext(AuthContext);
+  const { user } = authState;
+  const userId = user?.user_id || user?.user?.user_id;
   const [formsData, setFormsData] = useContext(FormDataContext);
   const [formsStats, setStatsData] = useContext(StatsDataContext);
   const [notConnected, setNotConnected] = useState(false);
   const [netInfo, setNetInfo] = useState("");
-  const user_id = state?.user_id || state?.user?.user_id;
   const [forms, setForms] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!user || user.status === false || user.data === null) {
+    if (!user || user.status === false || user.length < 0) {
       navigation.navigate("Signin");
     }
   }, [formsData]);
 
   useEffect(() => {
-    const data = NetInfo.addEventListener((state) => {
+    const data = NetInfo.addEventListener((authState) => {
       setNetInfo(
-        `connectionType:${state.type} IsConnected?: ${state.isConnected}`
+        `connectionType:${authState.type} IsConnected?: ${authState.isConnected}`
       );
-      if (state.isConnected === true) {
+      if (authState.isConnected === true) {
         setNotConnected(false);
       } else {
         _serveToast("You are offline");
         setNotConnected(true);
       }
     });
-
     return data;
   }, []);
 
   useEffect(() => {
-    loadForms();
+    _loadForms();
   }, []);
 
-  const loadForms = async () => {
+  const _loadForms = async () => {
     try {
-      setLoading(true);
-      const { data } = await axios.get(`/forms?userid=${user_id}`);
+      setIsLoading(true);
+      const { data } = await axios.get(`/forms?userid=${userId}`);
       setForms(data.formDetail);
       _storeFormsData(data);
-      setLoading(false);
+      setIsLoading(false);
     } catch (err) {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
-
-  //refactoring 
 
   const _storeFormsData = async (data) => {
+
+    
+//console.log(data);
+    if(data.length > 0){
     try {
       await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
+      console.log(data);
       _serveToast("Forms downloaded");
     } catch (error) {
-      // Error saving data
-      _serveToast("Forms download failed");
-    }
-  };
-
-  function _serveToast(tMessage) {
-    if (Platform.OS === "android") {
-      ToastAndroid.showWithGravityAndOffset(
-        tMessage + " ",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-    } else {
-      AlertIOS.alert(tMessage + " ");
+      _serveToast("Forms download failed"); 
     }
   }
+  };
 
-  //end of refactor
-
-  const onRefresh = () => {
-    setRefreshing(true);
+  const handleRefresh = () => {
+    setIsRefreshing(true);
     setTimeout(() => {
-      loadForms();
-      setRefreshing(false);
+      _loadForms();
+      setIsRefreshing(false);
     }, 1000);
   };
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    <>
+      <View
+       RefreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
       }
-    >
-      <View style={{ padding: 5 }}>
+       style={{ padding: 5 }}>
         {!notConnected ? (
           <>
             <View>
@@ -133,14 +117,18 @@ export const HomeScreen = ({ navigation }) => {
         ) : (
           <View>
             <Text
-              style={{ color: "red", fontSize: 16, textTransform: "uppercase" }}
+              style={{
+                color: "red",
+                fontSize: 16,
+                textTransform: "uppercase",
+              }}
             >
               Offline
             </Text>
           </View>
         )}
       </View>
-      {loading ? (
+      {isLoading ? (
         <View
           style={{
             justifyContent: "center",
@@ -159,6 +147,7 @@ export const HomeScreen = ({ navigation }) => {
               data={formsData}
               keyExtractor={(formsData) => formsData.formId.toString()}
               showsVerticalScrollIndicator={false}
+              inverted={true}
               renderItem={({ item }) => (
                 <View
                   style={{
@@ -185,7 +174,10 @@ export const HomeScreen = ({ navigation }) => {
                     }}
                   >
                     <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
                     >
                       <Text style={{ color: "green", fontWeight: "bold" }}>
                         {(formsStats && formsStats[`online-${item.formId}`]) ||
@@ -194,7 +186,10 @@ export const HomeScreen = ({ navigation }) => {
                       <Text style={{ color: "green" }}> Online</Text>
                     </View>
                     <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
                     >
                       <Text style={{ color: "red", fontWeight: "bold" }}>
                         {(formsStats && formsStats[`saved-${item.formId}`]) ||
@@ -202,14 +197,6 @@ export const HomeScreen = ({ navigation }) => {
                       </Text>
                       <Text style={{ color: "red" }}> Offline</Text>
                     </View>
-                    {/* <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
-                    >
-                      <Text style={{ color: "gray", fontWeight: "bold" }}>
-                        {formsStats && formsStats[`draft-${item.formId}`] + " "}
-                      </Text>
-                      <Text style={{ color: "gray" }}>Draft</Text>
-                    </View> */}
                   </TouchableOpacity>
                 </View>
               )}
@@ -219,6 +206,7 @@ export const HomeScreen = ({ navigation }) => {
               data={forms}
               keyExtractor={(forms) => forms.formId.toString()}
               showsVerticalScrollIndicator={false}
+              inverted={true}
               renderItem={({ item }) => (
                 <View
                   style={{
@@ -245,7 +233,10 @@ export const HomeScreen = ({ navigation }) => {
                     }}
                   >
                     <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
                     >
                       <Text style={{ color: "green", fontWeight: "bold" }}>
                         {(formsStats && formsStats[`online-${item.formId}`]) ||
@@ -254,7 +245,10 @@ export const HomeScreen = ({ navigation }) => {
                       <Text style={{ color: "green" }}> Online</Text>
                     </View>
                     <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
                     >
                       <Text style={{ color: "red", fontWeight: "bold" }}>
                         {(formsStats && formsStats[`saved-${item.formId}`]) ||
@@ -262,15 +256,6 @@ export const HomeScreen = ({ navigation }) => {
                       </Text>
                       <Text style={{ color: "red" }}> Offline</Text>
                     </View>
-                    {/* <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
-                    >
-                      <Text style={{ color: "gray", fontWeight: "bold" }}>
-                        {(formsStats && formsStats[`draft-${item.formId}`]) ||
-                          0 + " "}
-                      </Text>
-                      <Text style={{ color: "gray" }}>Draft</Text>
-                    </View> */}
                   </TouchableOpacity>
                 </View>
               )}
@@ -278,7 +263,6 @@ export const HomeScreen = ({ navigation }) => {
           )}
         </>
       )}
-    </ScrollView>
+    </>
   );
 };
-
