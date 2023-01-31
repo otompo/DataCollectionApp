@@ -8,11 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
   SafeAreaView,
-  StyleSheet,
-  ToastAndroid,
-  Platform,
-  AlertIOS,
-  Alert,
+  StyleSheet
 } from "react-native";
 import axios from "axios";
 import colors from "../config/colors";
@@ -73,7 +69,9 @@ function FormDetailsScreen({ route, navigation }) {
       setUserId(user_id);
       setPhone_Number(phone_number);
     }
-    if (!questionsDetails?.length) loadQuestions();
+    if (!questionsDetails || questionsDetails.length < 1) {
+      loadQuestions();
+    }
   }, [state.user]);
 
   const loadQuestions = async () => {

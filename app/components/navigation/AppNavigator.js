@@ -32,7 +32,7 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Signin"
+        initialRouteName="Drawer"
         screenOptions={{
           headerTintColor: colors.white,
           headerStyle: {
