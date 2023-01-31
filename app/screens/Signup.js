@@ -16,12 +16,11 @@ import axios from "axios";
 import colors from "../config/colors";
 import AppText from "../components/Auth/AppText";
 import _serveToast from "../utils/_serveToast";
+import { API } from "../config/baseUrl";
 
 export const Signup = ({ navigation }) => {
 
-  const [server_address, setServer_Address] = useState(
-    "https://beta.kpododo.com/api/v1"
-  );
+  const [serverAddress, setServerAddress] = useState(API);
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -72,7 +71,8 @@ export const Signup = ({ navigation }) => {
 
     try {
       const { data } = await axios.post(
-        `/usersignup?full_name=${fullName}&phone_number=${phoneNumber}&password=${password}&batteryLevel=${batteryLevel}
+        serverAddress +
+          `/usersignup?full_name=${fullName}&phone_number=${phoneNumber}&password=${password}&batteryLevel=${batteryLevel}
       &networkUsed=${networkUsed}&signUptime=${signUptime}&appVersion=${appVersion}&androidVersion=${androidVersion}&mobileModel=${mobileModel}`
       );
 

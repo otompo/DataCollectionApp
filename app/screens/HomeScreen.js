@@ -7,7 +7,9 @@ import {
   FlatList,
   ActivityIndicator,
   ScrollView,
-  TouchableOpacity
+  SafeAreaView,
+  TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import { AuthContext } from "../context/authContext";
 import { FormDataContext } from "../context/formContext";
@@ -19,6 +21,7 @@ import colors from "../config/colors";
 import FormListItem from "../components/FormListItem";
 import moment from "moment";
 import _serveToast from "../utils/_serveToast";
+import { API } from "../config/baseUrl";
 
 export const HomeScreen = ({ navigation }) => {
 
@@ -37,7 +40,22 @@ export const HomeScreen = ({ navigation }) => {
     if (!user || user.status === false || user.length < 0) {
       navigation.navigate("Signin");
     }
-  }, [formsData]);
+  }, [user, formsData]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress
+    );
+    return () => backHandler.remove();
+  }, []);
+
+  function handleBackPress() {
+    if (user) {
+      return true;
+    }
+    return false;
+  }
 
   useEffect(() => {
     const data = NetInfo.addEventListener((authState) => {
@@ -61,7 +79,9 @@ export const HomeScreen = ({ navigation }) => {
   const _loadForms = async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.get(`/forms?userid=${userId}`);
+      const { data } = await axios.get(
+        API + `/forms?userid=${userId}`
+      );
       setForms(data.formDetail);
       _storeFormsData(data);
       setIsLoading(false);
@@ -72,8 +92,6 @@ export const HomeScreen = ({ navigation }) => {
 
   const _storeFormsData = async (data) => {
 
-    
-//console.log(data);
     if(data.length > 0){
     try {
       await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
@@ -94,14 +112,15 @@ export const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <>
-      <View
-       RefreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-      }
-       style={{ padding: 5 }}>
-        {!notConnected ? (
-          <>
+    <SafeAreaView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }
+      >
+        <View style={{ padding: 5 }}>
+          {!notConnected ? (
             <View>
               <Text
                 style={{
@@ -113,156 +132,159 @@ export const HomeScreen = ({ navigation }) => {
                 Online
               </Text>
             </View>
-          </>
-        ) : (
-          <View>
-            <Text
-              style={{
-                color: "red",
-                fontSize: 16,
-                textTransform: "uppercase",
-              }}
-            >
-              Offline
-            </Text>
-          </View>
-        )}
-      </View>
-      {isLoading ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            display: "flex",
-            flex: 1,
-          }}
-        >
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text>Loading Forms</Text>
-        </View>
-      ) : (
-        <>
-          {notConnected ? (
-            <FlatList
-              data={formsData}
-              keyExtractor={(formsData) => formsData.formId.toString()}
-              showsVerticalScrollIndicator={false}
-              inverted={true}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    backgroundColor: "white",
-                    elevation: 2,
-                    marginBottom: 5,
-                  }}
-                >
-                  <FormListItem
-                    title={item.formName}
-                    subSubTitle={`${moment(item.createdDate).fromNow()} `}
-                    onPress={() =>
-                      navigation.navigate("FormDetailsScreen", item)
-                    }
-                  />
-                  <Divider />
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => navigation.navigate("ResponseStats")}
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-around",
-                      paddingVertical: 15,
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text style={{ color: "green", fontWeight: "bold" }}>
-                        {(formsStats && formsStats[`online-${item.formId}`]) ||
-                          0 + " "}
-                      </Text>
-                      <Text style={{ color: "green" }}> Online</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text style={{ color: "red", fontWeight: "bold" }}>
-                        {(formsStats && formsStats[`saved-${item.formId}`]) ||
-                          0 + " "}
-                      </Text>
-                      <Text style={{ color: "red" }}> Offline</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
           ) : (
-            <FlatList
-              data={forms}
-              keyExtractor={(forms) => forms.formId.toString()}
-              showsVerticalScrollIndicator={false}
-              inverted={true}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    backgroundColor: "white",
-                    elevation: 2,
-                    marginBottom: 5,
-                  }}
-                >
-                  <FormListItem
-                    title={item.formName}
-                    subSubTitle={`${moment(item.createdDate).fromNow()} `}
-                    onPress={() =>
-                      navigation.navigate("FormDetailsScreen", item)
-                    }
-                  />
-                  <Divider />
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => navigation.navigate("ResponseStats")}
+            <View>
+              <Text
+                style={{
+                  color: "red",
+                  fontSize: 16,
+                  textTransform: "uppercase",
+                }}
+              >
+                Offline
+              </Text>
+            </View>
+          )}
+        </View>
+        {isLoading ? (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+              flex: 1,
+              marginVertical: 200,
+            }}
+          >
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text>Loading Forms</Text>
+          </View>
+        ) : (
+          <>
+            {notConnected ? (
+              <FlatList
+                data={formsData}
+                keyExtractor={(formsData) => formsData.formId.toString()}
+                showsVerticalScrollIndicator={false}
+                inverted={true}
+                renderItem={({ item }) => (
+                  <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-around",
-                      paddingVertical: 15,
+                      backgroundColor: "white",
+                      elevation: 2,
+                      marginBottom: 5,
                     }}
                   >
-                    <View
+                    <FormListItem
+                      title={item.formName}
+                      subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                      onPress={() =>
+                        navigation.navigate("FormDetailsScreen", item)
+                      }
+                    />
+                    <Divider />
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => navigation.navigate("ResponseStats")}
                       style={{
                         flexDirection: "row",
-                        justifyContent: "center",
+                        justifyContent: "space-around",
+                        paddingVertical: 15,
                       }}
                     >
-                      <Text style={{ color: "green", fontWeight: "bold" }}>
-                        {(formsStats && formsStats[`online-${item.formId}`]) ||
-                          0 + " "}
-                      </Text>
-                      <Text style={{ color: "green" }}> Online</Text>
-                    </View>
-                    <View
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text style={{ color: "green", fontWeight: "bold" }}>
+                          {(formsStats &&
+                            formsStats[`online-${item.formId}`]) ||
+                            0 + " "}
+                        </Text>
+                        <Text style={{ color: "green" }}> Online</Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text style={{ color: "red", fontWeight: "bold" }}>
+                          {(formsStats && formsStats[`saved-${item.formId}`]) ||
+                            0 + " "}
+                        </Text>
+                        <Text style={{ color: "red" }}> Offline</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            ) : (
+              <FlatList
+                data={forms}
+                keyExtractor={(forms) => forms.formId.toString()}
+                showsVerticalScrollIndicator={false}
+                inverted={true}
+                renderItem={({ item }) => (
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      elevation: 2,
+                      marginBottom: 5,
+                    }}
+                  >
+                    <FormListItem
+                      title={item.formName}
+                      subSubTitle={`${moment(item.createdDate).fromNow()} `}
+                      onPress={() =>
+                        navigation.navigate("FormDetailsScreen", item)
+                      }
+                    />
+                    <Divider />
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => navigation.navigate("ResponseStats")}
                       style={{
                         flexDirection: "row",
-                        justifyContent: "center",
+                        justifyContent: "space-around",
+                        paddingVertical: 15,
                       }}
                     >
-                      <Text style={{ color: "red", fontWeight: "bold" }}>
-                        {(formsStats && formsStats[`saved-${item.formId}`]) ||
-                          0 + " "}
-                      </Text>
-                      <Text style={{ color: "red" }}> Offline</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-          )}
-        </>
-      )}
-    </>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text style={{ color: "green", fontWeight: "bold" }}>
+                          {(formsStats &&
+                            formsStats[`online-${item.formId}`]) ||
+                            0 + " "}
+                        </Text>
+                        <Text style={{ color: "green" }}> Online</Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text style={{ color: "red", fontWeight: "bold" }}>
+                          {(formsStats && formsStats[`saved-${item.formId}`]) ||
+                            0 + " "}
+                        </Text>
+                        <Text style={{ color: "red" }}> Offline</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            )}
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };

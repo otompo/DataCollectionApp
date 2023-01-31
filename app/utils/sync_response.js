@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
 import _ from "lodash";
+import { API } from "../config/baseUrl";
 
 const sync_response = async (
   userId,
@@ -47,7 +48,8 @@ const sync_response = async (
               .join("&");
 
             const { data } = await axios.get(
-              `/questionResponse?formId=${form.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
+              API +
+                `/questionResponse?formId=${form.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
             );
 
             if (data.status) {

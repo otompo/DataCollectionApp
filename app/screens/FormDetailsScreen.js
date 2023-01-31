@@ -42,7 +42,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Formik } from "formik";
 import NetInfo from "@react-native-community/netinfo";
 import * as yup from "yup";
+import { API } from "../config/baseUrl";
 import OffLineButton from "../components/Button/OffLineButton";
+import _serveToast from "../utils/_serveToast";
 
 function FormDetailsScreen({ route, navigation }) {
   const forms = route.params;
@@ -71,11 +73,6 @@ function FormDetailsScreen({ route, navigation }) {
       setUserId(user_id);
       setPhone_Number(phone_number);
     }
-
-    // if (!state || state.status === false) {
-    //   navigation.navigate("Signup");
-    // }
-
     if (!questionsDetails?.length) loadQuestions();
   }, [state.user]);
 
@@ -85,7 +82,7 @@ function FormDetailsScreen({ route, navigation }) {
       setSuccess(false);
       if (networkConnection) {
         const { data } = await axios.get(
-          `/formquestions?FormId=${forms.formId}&UserId=${userId}`
+          API + `/formquestions?FormId=${forms.formId}&UserId=${userId}`
         );
 
         setQuestions(data);
@@ -102,7 +99,6 @@ function FormDetailsScreen({ route, navigation }) {
         setQuestionsDails(JSON.parse(data));
       }
     } catch (err) {
-      // console.log(err);
       setSuccess(false);
     } finally {
       setInitLoading(false);
@@ -114,7 +110,7 @@ function FormDetailsScreen({ route, navigation }) {
     try {
       setSuccess(false);
       const { data } = await axios.get(
-        `/formquestions?FormId=${forms.formId}&UserId=${userId}`
+        API + `/formquestions?FormId=${forms.formId}&UserId=${userId}`
       );
 
       setQuestions(data);
@@ -131,34 +127,6 @@ function FormDetailsScreen({ route, navigation }) {
       setInitLoading(false);
     }
   };
-
-  //refactoring
-
-  // const _storeQuestionsData = async (data) => {
-  //   try {
-  //     await AsyncStorage.setItem("@formdata", JSON.stringify(data.formDetail));
-  //     _serveToast("Questions downloaded");
-  //   } catch (error) {
-  //     // Error saving data
-  //     _serveToast("Questions download failed");
-  //   }
-  // };
-
-  // function _serveToast(tMessage) {
-  //   if (Platform.OS === "android") {
-  //     ToastAndroid.showWithGravityAndOffset(
-  //       tMessage + " ",
-  //       ToastAndroid.SHORT,
-  //       ToastAndroid.BOTTOM,
-  //       25,
-  //       50
-  //     );
-  //   } else {
-  //     AlertIOS.alert(tMessage + " ");
-  //   }
-  // }
-
-  //end of refactor
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -179,7 +147,20 @@ function FormDetailsScreen({ route, navigation }) {
   }, [questionsDetails]);
 
   if (!questionsDetails) {
-    return <ActivityIndicator size="large" />;
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
+          flex: 1,
+          marginVertical: 200,
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text>Loading Questions</Text>
+      </View>
+    );
   }
 
   const formValidationSchema = yup.object().shape({
@@ -223,18 +204,7 @@ function FormDetailsScreen({ route, navigation }) {
             ? formsStats?.[`saved-${forms.formId}`] + 1
             : 1,
         });
-
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            "Data saved offline",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert("Data saved offline");
-        }
+        _serveToast("Offline? we saved your data");
 
         navigation.navigate("Home");
       } else {
@@ -247,7 +217,8 @@ function FormDetailsScreen({ route, navigation }) {
           .join("&");
 
         const { data } = await axios.get(
-          `/questionResponse?formId=${forms.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
+          API +
+            `/questionResponse?formId=${forms.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
         );
 
         //update response statistics
@@ -266,24 +237,12 @@ function FormDetailsScreen({ route, navigation }) {
             ? formsStats?.[`online-${forms.formId}`] + 1
             : 1,
         });
-
-        if (Platform.OS === "android") {
-          ToastAndroid.showWithGravityAndOffset(
-            data.message,
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } else {
-          AlertIOS.alert(data.message);
-        }
+        _serveToast(data.message);
       }
       navigation.navigate("Home");
       setLoading(false);
     } catch (err) {
-      console.log(err);
-      Alert.alert(err.toString());
+      _serveToast(err.toString());
       setLoading(false);
     } finally {
       setLoading(false);
@@ -323,7 +282,7 @@ function FormDetailsScreen({ route, navigation }) {
       //navigate to homepage
       navigation.navigate("Home");
     } catch (err) {
-      console.log(err);
+      _serveToast(err);
       setLoading(false);
     } finally {
       setLoading(false);
@@ -338,6 +297,7 @@ function FormDetailsScreen({ route, navigation }) {
           alignItems: "center",
           display: "flex",
           flex: 1,
+          marginVertical: 200,
         }}
       >
         <ActivityIndicator size="large" color={colors.primary} />
@@ -347,11 +307,7 @@ function FormDetailsScreen({ route, navigation }) {
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: colors.light }}>
-      {/* <View style={styles.headContainer}>
-        <Text style={styles.headTitle}>{forms.formName}</Text>
-      </View> */}
-      {/* <Text>{JSON.stringify(formsData, null, 4)}</Text> */}
+    <SafeAreaView>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -759,7 +715,6 @@ function FormDetailsScreen({ route, navigation }) {
             );
           }}
         </Formik>
-        {/* <Text>{JSON.stringify(questionsDetails, null, 2)}</Text> */}
       </ScrollView>
     </SafeAreaView>
   );

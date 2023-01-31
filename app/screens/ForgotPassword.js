@@ -15,6 +15,7 @@ import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
 import AppText from "../components/Auth/AppText";
+import { API } from "../config/baseUrl";
 
 function ForgotPassword({ navigation }) {
   const [server_address, setServer_Address] = useState("beta.kpododo.com");
@@ -40,9 +41,10 @@ function ForgotPassword({ navigation }) {
     let countryCode = "+233";
     try {
       const { data } = await axios.get(
-        `/forgotpassword?&phone_number=${
-          countryCode + phone_number
-        }&password=${password}`
+        API +
+          `/forgotpassword?&phone_number=${
+            countryCode + phone_number
+          }&password=${password}`
       );
       navigation.navigate("Signin");
       if (Platform.OS === "android") {
@@ -81,15 +83,6 @@ function ForgotPassword({ navigation }) {
             Reset Password
           </AppText>
       </View>
-        <AppTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="web"
-          placeholder="Server Address"
-          keyboardType="text"
-          value={server_address}
-          setValue={setServer_Address}
-        />
 
         <AppTextInput
           autoCapitalize="none"

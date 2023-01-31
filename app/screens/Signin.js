@@ -13,10 +13,11 @@ import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 import AppText from "../components/Auth/AppText";
 import _serveToast from "../utils/_serveToast";
+import { API } from "../config/baseUrl";
 import axios from "axios";
 
 export const Signin = ({ navigation }) => {
-  const [serverAddress, setServerAddress] = useState("https://beta.kpododo.com/api/v1");
+  const [serverAddress, setServerAddress] = useState(API);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +30,7 @@ export const Signin = ({ navigation }) => {
     if (user) {
       navigation.navigate("Drawer");
     }
-  }, []);
+  }, [user]);
 
   const handleSubmit = async () => {
 
@@ -46,7 +47,9 @@ export const Signin = ({ navigation }) => {
     }
 
     try {
-      const { data } = await axios.get(`/userlogindetails?phone_number=${phoneNumber}&password=${password}`);
+      const { data } = await axios.get(
+        serverAddress + `/userlogindetails?phone_number=${phoneNumber}&password=${password}`
+      );
 
       if (!data || data.status === false || data.data === null) {
         _serveToast("Login failed, try again");
@@ -77,60 +80,60 @@ export const Signin = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-      <View style={styles.MainContainer}>
-        <View style={styles.logoContainer}>
-          <Image source={require("../assets/collect-logo.png")} />
-          <AppText center style={styles.title}>
-            Log into your account
-          </AppText>
-        </View>
-        <View style={{ paddingHorizontal: 20 }}>
-          <AppTextInput
-            autoCorrect={false}
-            icon="phone"
-            placeholder="Phone Number"
-            keyboardType="numeric"
-            value={phoneNumber}
-            setValue={setPhoneNumber}
-            maxLength={10}
-          />
-        </View>
-        <View style={{ paddingHorizontal: 20 }}>
-          <AppTextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            icon="lock"
-            value={password}
-            setValue={setPassword}
-            placeholder="Password"
-            secureTextEntry
-            textContentType="password"
-            autoCompleteType="password"
-          />
-        </View>
+          <View style={styles.MainContainer}>
+            <View style={styles.logoContainer}>
+              <Image source={require("../assets/collect-logo.png")} />
+              <AppText center style={styles.title}>
+                Log into your account
+              </AppText>
+            </View>
+            <View style={{ paddingHorizontal: 20 }}>
+              <AppTextInput
+                autoCorrect={false}
+                icon="phone"
+                placeholder="Phone Number"
+                keyboardType="numeric"
+                value={phoneNumber}
+                setValue={setPhoneNumber}
+                maxLength={10}
+              />
+            </View>
+            <View style={{ paddingHorizontal: 20 }}>
+              <AppTextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                icon="lock"
+                value={password}
+                setValue={setPassword}
+                placeholder="Password"
+                secureTextEntry
+                textContentType="password"
+                autoCompleteType="password"
+              />
+            </View>
 
-        <SubmitButton
-          title="Login"
-          onPress={handleSubmit}
-          loading={isLoading}
-          disabled={isDisabled}
-        />
+            <SubmitButton
+              title="Login"
+              onPress={handleSubmit}
+              loading={isLoading}
+              disabled={isDisabled}
+            />
 
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View>
-            <Text color={colors.primary}>No account?</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View>
+                <Text color={colors.primary}>No account?</Text>
+              </View>
+              <View>
+                <Text
+                  onPress={() => navigation.navigate("Signup")}
+                  color={colors.primary}
+                >
+                  {" "}
+                  Signup
+                </Text>
+              </View>
+            </View>
           </View>
-          <View>
-            <Text
-              onPress={() => navigation.navigate("Signup")}
-              color={colors.primary}
-            >
-              {" "}
-              Signup
-            </Text>
-          </View>
-        </View>
-      </View>
     </KeyboardAwareScrollView>
   );
 };

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import _serveToast from "./_serveToast";
+import { API } from "../config/baseUrl";
 
 const _offlineDataSync = async (
   userId,
@@ -12,7 +13,6 @@ const _offlineDataSync = async (
   try {
     setLoading(true);
     const data = await AsyncStorage.getItem("@formdata");
-    console.log(data)
     if (data && data.length > 0) {
       const forms = JSON.parse(data);
       const output = forms.map(async (form) => {
@@ -44,7 +44,8 @@ const _offlineDataSync = async (
                 .join("&");
 
               const { data } = await axios.get(
-                `/questionResponse?formId=${form.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
+                API +
+                  `/questionResponse?formId=${form.formId}&auditorId=${userId}&auditorNumber=${phone_number}&${queryString}`
               );
               if (data.status) {
                 const onlineData = await AsyncStorage.getItem(

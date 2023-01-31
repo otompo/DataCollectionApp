@@ -3,12 +3,10 @@ import {
   View,
   StyleSheet,
   Text,
-  Platform,
-  AlertIOS,
-  ToastAndroid,
   TextInput,
   TouchableHighlight,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import SubmitButton from "../components/Button/SubmitButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -19,10 +17,11 @@ import axios from "axios";
 import colors from "../config/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import _serveToast from "../utils/_serveToast";
+import { API } from "../config/baseUrl";
 
 function ResponseScanner({ route, navigation }) {
   const responseData = route.params;
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
   const [readData, setReadData] = useState("");
@@ -35,6 +34,8 @@ function ResponseScanner({ route, navigation }) {
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [week, setWeek] = useState("");
+  const [parity, setParity] = useState("");
+  const [household_phone, setHousehold_phone] = useState("");
   const [channel, setChannel] = useState("");
   const [language, setLanguage] = useState("");
   const [ownership, setOwnership] = useState("");
@@ -54,6 +55,7 @@ function ResponseScanner({ route, navigation }) {
       responseData.tracker === "" ||
       responseData.response != ""
     ) {
+      setIsLoading(true);
       handleReadData();
     } else {
       _serveToast("The QR Code is empty");
@@ -61,23 +63,101 @@ function ResponseScanner({ route, navigation }) {
     }
   }, [route.params]);
 
-  function _serveToast(tMessage) {
-    if (Platform.OS === "android") {
-      ToastAndroid.showWithGravityAndOffset(
-        tMessage + " ",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-    } else {
-      AlertIOS.alert("Error: " + tMessage + " ");
+  const _switchDistrict = (district) => {
+        switch (district) {
+          case "East Mamprusi":
+            return [
+              {
+                value: "Gambaga",
+              },
+              {
+                value: "Gbintiri",
+              },
+              {
+                value: "Langbinsi",
+              },
+              {
+                value: "Nalerigu",
+              },
+              {
+                value: "Jawani",
+              },
+              {
+                value: "Kolinvai",
+              },
+              {
+                value: "Sakogu",
+              },
+            ];
+          case "Mamprugu Moagduri":
+            return [
+              {
+                value: "Yagaba",
+              },
+              {
+                value: "Kubori",
+              },
+              {
+                value: "Kunkua",
+              },
+              {
+                value: "Yikpabongo",
+              },
+            ];
+        }
+  }
+
+  const _switchSubdistrict = (subdistrict) => {
+    switch (subdistrict) {
+      case "Yagaba":
+        return [
+            {
+              value: "Loagri CHPs",
+            },
+            {
+              value: "Soo CHPs",
+            },
+            {
+              value: "Gbima CHPS",
+            },
+          ];
+      case "Kubori":
+        return [
+            {
+              value: "Kpatorigu CHPS",
+            },
+            {
+              value: "Kubugu CHPS",
+            },
+            {
+              value: "Namoo CHPS",
+            },
+            {
+              value: "Zanwara CHPS",
+            },
+          ];
+      case "Kunkua":
+        return [
+            {
+              value: "Katigre CHPS",
+            },
+          ];
+      case "Yikpabongo":
+        return [
+            {
+              value: "Nangrumah CHPS",
+            },
+            {
+              value: "Tantala CHPS",
+            },
+            {
+              value: "Yikpabongo CHPS",
+            },
+          ];
     }
   }
 
   const resetState = () => {
-    setLoading(false);
-    setDisabled(false);
     setReadData("");
     setIdentifier("");
     setCreatedBy("");
@@ -86,7 +166,9 @@ function ResponseScanner({ route, navigation }) {
     setPhone("");
     setGender("");
     setAge("");
+    setParity("");
     setWeek("");
+    setHousehold_phone("");
     setChannel("");
     setLanguage("");
     setOwnership("");
@@ -109,7 +191,7 @@ function ResponseScanner({ route, navigation }) {
 
       const config = {
         method: "post",
-        url: `https://beta.kpododo.com/api/v1/qr_scan_read.php`,
+        url: API + `/qr_scan_read.php`,
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -118,7 +200,11 @@ function ResponseScanner({ route, navigation }) {
 
       const response = await axios(config);
 
-      if (response.data.identifier) {
+      if (response) {
+        setIsLoading(false);
+      }
+
+      if (response.data.identifier !== null) {
         setReadData(response.data);
         setCare(response.data?.servicetype);
         setIdentifier(response.data?.identifier);
@@ -130,29 +216,28 @@ function ResponseScanner({ route, navigation }) {
         setLanguage(response.data?.language);
         setChps_zone(response.data?.facility);
       } else {
-        setReadData("");
+        resetState();
+        setCreatedBy(response.data?.created_by);
       }
-      
     } catch (error) {
       _serveToast("Something went wrong");
-      //navigation.navigate("Home");
+      navigation.navigate("Home");
     }
   };
 
   const handleSubmit = async () => {
     setDisabled(true);
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const bodyFormData = new FormData();
 
-      if (readData["identifier"]) {
+      if (readData["identifier"] && readData["identifier"] > 0) {
         bodyFormData.append("identifier", readData["identifier"]);
         bodyFormData.append("created_by", readData["created_by"]);
         bodyFormData.append("tracker", readData["tracker"]);
         bodyFormData.append("response", readData["response"]);
         bodyFormData.append("form", readData["form"]);
-
         bodyFormData.append("healthArea", healthArea);
         bodyFormData.append("services", services);
         bodyFormData.append("comment", comments);
@@ -160,11 +245,14 @@ function ResponseScanner({ route, navigation }) {
         bodyFormData.append("tracker", responseData.tracker);
         bodyFormData.append("response", responseData.response);
         bodyFormData.append("form", responseData.form);
+        bodyFormData.append("created_by", createdBy);
         bodyFormData.append("care", care);
         bodyFormData.append("phone", phone);
         bodyFormData.append("gender", gender);
         bodyFormData.append("age", age);
         bodyFormData.append("week", week);
+        bodyFormData.append("parity", parity);
+        bodyFormData.append("household_phone", household_phone);
         bodyFormData.append("channel", channel);
         bodyFormData.append("language", language);
         bodyFormData.append("ownership", ownership);
@@ -176,31 +264,35 @@ function ResponseScanner({ route, navigation }) {
 
       const { status } = await axios({
         method: "post",
-        url: "https://beta.kpododo.com/api/v1/qr_scan_write.php",
+        url: API + "/qr_scan_write.php",
         data: bodyFormData,
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (status === 200) {
         resetState();
-        _serveToast("Success");
+        setIsLoading(false);
+        setDisabled(false);
+        _serveToast("Great! form is submitted.");
         navigation.navigate("Home");
       } else {
-        _serveToast("Unable to submit the Record");
-        setLoading(false);
+        _serveToast("Unable to submit the record");
+        setIsLoading(false);
         setDisabled(false);
       }
     } catch (err) {
       _serveToast("Something went wrong");
-      setLoading(false);
+      setIsLoading(false);
       setDisabled(false);
       navigation.navigate("Home");
     }
+    setIsLoading(false);
+    setDisabled(false);
     resetState();
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: colors.light }}>
+    <SafeAreaView>
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -219,516 +311,586 @@ function ResponseScanner({ route, navigation }) {
         >
           Subscriber Information
         </AppText>
-        <View style={styles.profileCard}>
-          <View style={styles.userInfoSection}>
-            <View>
-              <AppText
-                style={{
-                  color: colors.white,
-                  fontSize: 30,
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-                numberOfLines={1}
-              >
-                {identifier}
-              </AppText>
-            </View>
-            <TouchableHighlight underlayColor={colors.light}>
-              <View style={styles.topcontainer}>
-                <View style={styles.image}>
-                  <FontAwesome name="user" size={60} color={colors.white} />
-                </View>
-                <View style={styles.detailsContainer}>
-                  <AppText style={styles.subTitle}>
-                    <Text>Care:</Text> {care}
-                    {"\n"}
-                    <Text>Week:</Text> {week}
-                    {"\n"}
-                    <Text>Language:</Text> {language}
-                    {"\n"}
-                    <Text>Facility:</Text> {chps_zone}
-                    {"\n"}
-                    <Text>Joined:</Text> {joined}
-                    {"\n"}
-                  </AppText>
-                </View>
-              </View>
-            </TouchableHighlight>
-          </View>
-        </View>
-        {identifier ? (
-          <View style={styles.MainContainer}>
-            <AppText
-              center
-              style={{ marginVertical: 15, fontSize: 20, fontWeight: "bold" }}
-            >
-              Service delivery form
-            </AppText>
-            <View>
-              <Text>Health Area</Text>
-              <Dropdown
-                label="Select health area"
-                data={[
-                  {
-                    value: "Family Planning",
-                  },
-                  {
-                    value: "MNCH",
-                  },
-                  {
-                    value: "Malaria",
-                  },
-                  {
-                    value: "Nutrition",
-                  },
-                  {
-                    value: "Sexual Reproductive Health & Rights",
-                  },
-                  {
-                    value: "Emerging infectious diseases",
-                  },
-                ]}
-                value={healthArea}
-                onChangeText={(text) => setHealthArea(text)}
-              />
-            </View>
-            <View>
-              <Text>Services provided</Text>
-              <TextInput
-                autoComplete="off"
-                required
-                multiline
-                editable
-                maxLength={225}
-                value={services}
-                onChangeText={(text) => setServices(text)}
-                style={styles.remarks}
-                placeholder={"Services"}
-              />
-            </View>
-            <View>
-              <Text>Any comments</Text>
-              <TextInput
-                autoComplete="off"
-                required
-                multiline
-                editable
-                numberOfLines={4}
-                maxLength={225}
-                value={comments}
-                onChangeText={(text) => setComments(text)}
-                style={styles._tinput}
-                placeholder={"Any comments..."}
-              />
-            </View>
-            <SubmitButton
-              title="Submit"
-              onPress={handleSubmit}
-              disabled={disabled}
-              loading={loading}
-            />
+        {isLoading ? (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+              flex: 1,
+              marginVertical: 200,
+            }}
+          >
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text>Loading Information</Text>
           </View>
         ) : (
-          <View style={styles.MainContainer}>
-            <AppText
-              center
-              style={{ marginVertical: 15, fontSize: 20, fontWeight: "bold" }}
-            >
-              Register new beneficiary
-            </AppText>
-            <View>
-              <Text>Type of care</Text>
-              <RadioButton.Group
-                onValueChange={(newValue) => setCare(newValue)}
-                value={care}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="anc" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>ANC</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="pnc" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>PNC</Text>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
-            <View>
-              <Text>Mobile number</Text>
-              <TextInput
-                editable
-                autoComplete="off"
-                inputMode="tel"
-                keyboardType="phone-pad"
-                maxLength={40}
-                onChangeText={(text) => setPhone(text)}
-                value={phone}
-                style={styles.remarks}
-                placeholder={"Phone"}
-              />
-            </View>
-            <View>
-              <Text>Registrant is (gender)</Text>
-              <RadioButton.Group
-                onValueChange={(newValue) => setGender(newValue)}
-                value={gender}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="female" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Female</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="male" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Male</Text>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
-            <View>
-              <Text>Age of registrant</Text>
-              <TextInput
-                autoComplete="off"
-                inputMode="numeric"
-                keyboardType="numeric"
-                editable
-                maxLength={40}
-                onChangeText={(text) => setAge(text)}
-                value={age}
-                style={styles.remarks}
-                placeholder={"Age"}
-              />
-            </View>
-            <View>
-              <Text>Weeks of pregnancy/baby</Text>
-              <TextInput
-                autoComplete="off"
-                inputMode="numeric"
-                keyboardType="numeric"
-                editable
-                maxLength={40}
-                onChangeText={(text) => setWeek(text)}
-                value={week}
-                style={styles.remarks}
-                placeholder={"Weeks pregnant/baby"}
-              />
-            </View>
-            <View>
-              <Text>How would you like to receive the messages (channel)</Text>
-              <RadioButton.Group
-                onValueChange={(newValue) => setChannel(newValue)}
-                value={channel}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="sms" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>SMS</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="voice" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Voice</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="both" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Both</Text>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
-            <View>
-              <Text>What is your preferred language</Text>
-              <Dropdown
-                label="Select language"
-                data={[
-                  {
-                    value: "Dagbani",
-                  },
-                  {
-                    value: "Mampruli",
-                  },
-                  {
-                    value: "Buli",
-                  },
-                  {
-                    value: "Fula",
-                  },
-                  {
-                    value: "Twi",
-                  },
-                  {
-                    value: "Hausa",
-                  },
-                ]}
-                onChangeText={(newValue) => setLanguage(newValue)}
-                value={language}
-              />
-            </View>
-            <View>
-              <Text>Phone belongs to</Text>
-              <RadioButton.Group
-                onValueChange={(newValue) => setOwnership(newValue)}
-                value={ownership}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="self" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Self</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="partner" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Partner</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="relative" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Relative/Friend</Text>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
-            <View>
-              <Text>Region</Text>
-              <RadioButton.Group
-                onValueChange={(newValue) => setRegion(newValue)}
-                value={region}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="northern" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>Northen</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }}>
-                    <RadioButton color={colors.primary} value="northeast" />
-                  </View>
-                  <View style={{ flex: 8 }}>
-                    <Text>North East</Text>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
-            {region == "northern" ? (
+          <>
+            {identifier ? (
               <>
-                <View>
-                  <Text>District</Text>
-                  <Dropdown
-                    label="Select district"
-                    data={[
-                      {
-                        value: "Sagnarigu",
-                      },
-                    ]}
-                    value={district}
-                    onChangeText={(text) => setDistrict(text)}
-                  />
+                <View style={styles.profileCard}>
+                  <View style={styles.userInfoSection}>
+                    <View>
+                      <AppText
+                        style={{
+                          color: colors.white,
+                          fontSize: 30,
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                        numberOfLines={1}
+                      >
+                        {identifier}
+                      </AppText>
+                    </View>
+                    <TouchableHighlight underlayColor={colors.light}>
+                      <View style={styles.topcontainer}>
+                        <View style={styles.image}>
+                          <FontAwesome
+                            name="user"
+                            size={60}
+                            color={colors.white}
+                          />
+                        </View>
+                        <View style={styles.detailsContainer}>
+                          <AppText style={styles.subTitle}>
+                            <Text>Care:</Text> {care}
+                            {"\n"}
+                            <Text>Week:</Text> {week}
+                            {"\n"}
+                            <Text>Language:</Text> {language}
+                            {"\n"}
+                            <Text>Facility:</Text> {chps_zone}
+                            {"\n"}
+                            <Text>Joined:</Text> {joined}
+                            {"\n"}
+                          </AppText>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                  </View>
                 </View>
-
-                <View>
-                  <Text>Sub district</Text>
-                  <Dropdown
-                    label="Select subdistrict"
-                    data={[
-                      {
-                        value: "Choggu",
-                      },
-                      {
-                        value: "Sagnarigu",
-                      },
-                      {
-                        value: "Taha",
-                      },
-                    ]}
-                    value={subdistrict}
-                    onChangeText={(text) => setSubdistrict(text)}
-                  />
-                </View>
-                <View>
-                  <Text>CHPS zone</Text>
-                  <Dropdown
-                    label="Select CHPS"
-                    data={[
-                      {
-                        value: "Naaluro CHPS",
-                      },
-                      {
-                        value: "Sognaayilli CHPS",
-                      },
-                      {
-                        value: "Gurugu CHPS",
-                      },
-                      {
-                        value: "TACE CHPS",
-                      },
-                      {
-                        value: "BACE CHPS",
-                      },
-                      {
-                        value: "Kpene CHPS",
-                      },
-                      {
-                        value: "Shishegu CHPS",
-                      },
-                      {
-                        value: "Nyanshegu CHPS",
-                      },
-                      {
-                        value: "Taha CHPS",
-                      },
-                      {
-                        value: "Ward K CHPS",
-                      },
-                      {
-                        value: "Kalpohini CHPS",
-                      },
-                      {
-                        value: "CHNT CHPS",
-                      },
-                      {
-                        value: "Kulaa CHPS",
-                      },
-                      {
-                        value: "Gbalahi CHPS",
-                      },
-                      {
-                        value: "Fuo CHPS",
-                      },
-                      {
-                        value: "Gblima CHPS",
-                      },
-                      {
-                        value: "Estate CHPS",
-                      },
-                    ]}
-                    value={chps_zone}
-                    onChangeText={(text) => setChps_zone(text)}
+                <View style={styles.MainContainer}>
+                  <AppText
+                    center
+                    style={{
+                      marginVertical: 15,
+                      fontSize: 20,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Service delivery form
+                  </AppText>
+                  <View>
+                    <Text>Health Area</Text>
+                    <Dropdown
+                      label="Select health area"
+                      data={[
+                        {
+                          value: "Family Planning",
+                        },
+                        {
+                          value: "Maternal & Child Health",
+                        },
+                        {
+                          value: "Malaria",
+                        },
+                        {
+                          value: "Nutrition",
+                        },
+                        {
+                          value: "WASH",
+                        },
+                        {
+                          value: "Emerging infectious diseases",
+                        },
+                      ]}
+                      value={healthArea}
+                      onChangeText={(text) => setHealthArea(text)}
+                    />
+                  </View>
+                  <View>
+                    <Text>Services provided</Text>
+                    <TextInput
+                      autoComplete="off"
+                      required
+                      multiline
+                      editable
+                      maxLength={225}
+                      value={services}
+                      onChangeText={(text) => setServices(text)}
+                      style={styles.remarks}
+                      placeholder={"Services"}
+                    />
+                  </View>
+                  <View>
+                    <Text>Any comments</Text>
+                    <TextInput
+                      autoComplete="off"
+                      required
+                      multiline
+                      editable
+                      numberOfLines={4}
+                      maxLength={225}
+                      value={comments}
+                      onChangeText={(text) => setComments(text)}
+                      style={styles._tinput}
+                      placeholder={"Any comments..."}
+                    />
+                  </View>
+                  <SubmitButton
+                    title="Submit"
+                    onPress={handleSubmit}
+                    disabled={disabled}
+                    loading={isLoading}
                   />
                 </View>
               </>
             ) : (
               <>
-                <View>
-                  <Text>District</Text>
-                  <Dropdown
-                    label="Select district"
-                    data={[
-                      {
-                        value: "Mamprugu Moagduri",
-                      },
-                    ]}
-                    value={district}
-                    onChangeText={(text) => setDistrict(text)}
-                  />
-                </View>
-                <View>
-                  <Text>Sub district</Text>
-                  <Dropdown
-                    label="Select subdistrict"
-                    data={[
-                      {
-                        value: "Yagaba",
-                      },
-                      {
-                        value: "Kubori",
-                      },
-                      {
-                        value: "Kunkua",
-                      },
-                      {
-                        value: "Yikpabongo",
-                      },
-                    ]}
-                    value={subdistrict}
-                    onChangeText={(text) => setSubdistrict(text)}
-                  />
-                </View>
-                <View>
-                  <Text>CHPS zone</Text>
-                  <Dropdown
-                    label="Select CHPS"
-                    data={[
-                      {
-                        value: "Loagri CHPs",
-                      },
-                      {
-                        value: "Soo CHPs",
-                      },
-                      {
-                        value: "Gbima CHPS",
-                      },
-                      {
-                        value: "Kpatorigu CHPS",
-                      },
-                      {
-                        value: "Kuburu CHPS",
-                      },
-                      {
-                        value: "Namoo CHPS",
-                      },
-                      {
-                        value: "Zanwara CHPS",
-                      },
-                      {
-                        value: "Katigre CHPS",
-                      },
-                      {
-                        value: "Nangrumah CHPS",
-                      },
-                      {
-                        value: "Tantala CHPS",
-                      },
-                      {
-                        value: "Yikpabongo CHPS",
-                      },
-                    ]}
-                    value={chps_zone}
-                    onChangeText={(text) => setChps_zone(text)}
+                <View style={styles.MainContainer}>
+                  <AppText
+                    center
+                    style={{
+                      marginVertical: 15,
+                      fontSize: 20,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Register new beneficiary
+                  </AppText>
+                  <View>
+                    <Text>Type of care</Text>
+                    <RadioButton.Group
+                      onValueChange={(newValue) => setCare(newValue)}
+                      value={care}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="anc" />
+                        </View>
+                        <View>
+                          <Text>ANC</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="pnc" />
+                        </View>
+                        <View>
+                          <Text>PNC</Text>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View>
+                    <Text>Mobile number</Text>
+                    <TextInput
+                      editable
+                      autoComplete="off"
+                      inputMode="tel"
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                      onChangeText={(text) => setPhone(text)}
+                      value={phone}
+                      style={styles.remarks}
+                      placeholder={"Phone"}
+                    />
+                  </View>
+                  <View>
+                    <Text>Registrant is (gender)</Text>
+                    <RadioButton.Group
+                      onValueChange={(newValue) => setGender(newValue)}
+                      value={gender}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="female" />
+                        </View>
+                        <View>
+                          <Text>Female</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="male" />
+                        </View>
+                        <View>
+                          <Text>Male</Text>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View>
+                    <Text>Age of registrant</Text>
+                    <TextInput
+                      autoComplete="off"
+                      inputMode="numeric"
+                      keyboardType="numeric"
+                      editable
+                      maxLength={2}
+                      onChangeText={(text) => setAge(text)}
+                      value={age}
+                      style={styles.remarks}
+                      placeholder={"Age"}
+                    />
+                  </View>
+                  <View>
+                    <Text>Weeks of pregnancy/baby</Text>
+                    <TextInput
+                      autoComplete="off"
+                      inputMode="numeric"
+                      keyboardType="numeric"
+                      editable
+                      maxLength={2}
+                      onChangeText={(text) => setWeek(text)}
+                      value={week}
+                      style={styles.remarks}
+                      placeholder={"Weeks pregnant/baby"}
+                    />
+                  </View>
+                  <View>
+                    <Text>Number of times you have given birth</Text>
+                    <TextInput
+                      autoComplete="off"
+                      inputMode="numeric"
+                      keyboardType="numeric"
+                      editable
+                      maxLength={2}
+                      onChangeText={(text) => setParity(text)}
+                      value={parity}
+                      style={styles.remarks}
+                      placeholder={
+                        "No. of deliveries with atleast 6 months gestation"
+                      }
+                    />
+                  </View>
+                  <View>
+                    <Text>
+                      Do you or anyone in your household own a mobile phone?
+                    </Text>
+                    <RadioButton.Group
+                      onValueChange={(newValue) => setHousehold_phone(newValue)}
+                      value={household_phone}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="yes" />
+                        </View>
+                        <View>
+                          <Text>Yes</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="no" />
+                        </View>
+                        <View>
+                          <Text>No</Text>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View>
+                    <Text>
+                      How would you like to receive the messages (channel)
+                    </Text>
+                    <RadioButton.Group
+                      onValueChange={(newValue) => setChannel(newValue)}
+                      value={channel}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="sms" />
+                        </View>
+                        <View>
+                          <Text>SMS</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="voice" />
+                        </View>
+                        <View>
+                          <Text>Voice</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="both" />
+                        </View>
+                        <View>
+                          <Text>Both</Text>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View>
+                    <Text>What is your preferred language</Text>
+                    <Dropdown
+                      label="Select language"
+                      data={[
+                        {
+                          value: "Dagbani",
+                        },
+                        {
+                          value: "Mampruli",
+                        },
+                        {
+                          value: "Buli",
+                        },
+                        {
+                          value: "Fula",
+                        },
+                        {
+                          value: "Twi",
+                        },
+                        {
+                          value: "Hausa",
+                        },
+                      ]}
+                      onChangeText={(newValue) => setLanguage(newValue)}
+                      value={language}
+                    />
+                  </View>
+                  <View>
+                    <Text>Phone belongs to</Text>
+                    <RadioButton.Group
+                      onValueChange={(newValue) => setOwnership(newValue)}
+                      value={ownership}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="self" />
+                        </View>
+                        <View>
+                          <Text>Self</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton color={colors.primary} value="partner" />
+                        </View>
+                        <View>
+                          <Text>Partner</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton
+                            color={colors.primary}
+                            value="relative"
+                          />
+                        </View>
+                        <View>
+                          <Text>Relative/Friend</Text>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View>
+                    <Text>Region</Text>
+                    <RadioButton.Group
+                      onValueChange={(newValue) => setRegion(newValue)}
+                      value={region}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton
+                            color={colors.primary}
+                            value="northern"
+                          />
+                        </View>
+                        <View>
+                          <Text>Northen</Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <View>
+                          <RadioButton
+                            color={colors.primary}
+                            value="northeast"
+                          />
+                        </View>
+                        <View>
+                          <Text>North East</Text>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  {region == "northern" ? (
+                    <>
+                      <View>
+                        <Text>District</Text>
+                        <Dropdown
+                          label="Select district"
+                          data={[
+                            {
+                              value: "Sagnarigu",
+                            },
+                          ]}
+                          value={district}
+                          onChangeText={(text) => setDistrict(text)}
+                        />
+                      </View>
+
+                      <View>
+                        <Text>Sub district</Text>
+                        <Dropdown
+                          label="Select subdistrict"
+                          data={[
+                            {
+                              value: "Choggu",
+                            },
+                            {
+                              value: "Sagnarigu",
+                            },
+                            {
+                              value: "Taha",
+                            },
+                          ]}
+                          value={subdistrict}
+                          onChangeText={(text) => setSubdistrict(text)}
+                        />
+                      </View>
+                      <View>
+                        <Text>CHPS zone</Text>
+                        <Dropdown
+                          label="Select CHPS"
+                          data={[
+                            {
+                              value: "Naaluro CHPS",
+                            },
+                            {
+                              value: "Sognaayilli CHPS",
+                            },
+                            {
+                              value: "Gurugu CHPS",
+                            },
+                            {
+                              value: "TACE CHPS",
+                            },
+                            {
+                              value: "BACE CHPS",
+                            },
+                            {
+                              value: "Kpene CHPS",
+                            },
+                            {
+                              value: "Shishegu CHPS",
+                            },
+                            {
+                              value: "Nyanshegu CHPS",
+                            },
+                            {
+                              value: "Taha CHPS",
+                            },
+                            {
+                              value: "Ward K CHPS",
+                            },
+                            {
+                              value: "Kalpohini CHPS",
+                            },
+                            {
+                              value: "CHNT CHPS",
+                            },
+                            {
+                              value: "Kulaa CHPS",
+                            },
+                            {
+                              value: "Gbalahi CHPS",
+                            },
+                            {
+                              value: "Fuo CHPS",
+                            },
+                            {
+                              value: "Gblima CHPS",
+                            },
+                            {
+                              value: "Estate CHPS",
+                            },
+                          ]}
+                          value={chps_zone}
+                          onChangeText={(text) => setChps_zone(text)}
+                        />
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <View>
+                        <Text>District</Text>
+                        <Dropdown
+                          label="Select district"
+                          data={[
+                            {
+                              value: "East Mamprusi",
+                            },
+                            {
+                              value: "Mamprugu Moagduri",
+                            },
+                          ]}
+                          value={district}
+                          onChangeText={(text) => setDistrict(text)}
+                        />
+                      </View>
+                      <View>
+                        <Text>Sub district</Text>
+                        <Dropdown
+                          label="Select subdistrict"
+                          data={_switchDistrict(district)}
+                          value={subdistrict}
+                          onChangeText={(text) => setSubdistrict(text)}
+                        />
+                      </View>
+                      <View>
+                        <Text>CHPS zone</Text>
+                        <Dropdown
+                          label="Select CHPS"
+                          data={_switchSubdistrict(subdistrict)}
+                          value={chps_zone}
+                          onChangeText={(text) => setChps_zone(text)}
+                        />
+                      </View>
+                    </>
+                  )}
+                  <SubmitButton
+                    title="Submit"
+                    onPress={handleSubmit}
+                    disabled={disabled}
+                    loading={isLoading}
                   />
                 </View>
               </>
             )}
-            <SubmitButton
-              title="Submit"
-              onPress={handleSubmit}
-              disabled={disabled}
-              loading={loading}
-            />
-          </View>
+          </>
         )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -742,7 +904,6 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 20,
     marginBottom: 10,
-    backgroundColor: colors.white,
   },
   topcontainer: {
     flexDirection: "row",
@@ -754,9 +915,8 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   _tinput: {
-    backgroundColor: colors.white,
-    borderBottomColor: "#171717",
-    borderBottomWidth: 0.5,
+    borderBottomColor: colors.primary,
+    borderBottomWidth: 1 - 0.6,
     marginVertical: 10,
   },
   userInfoSection: {
