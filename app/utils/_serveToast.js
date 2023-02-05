@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Platform,
   AlertIOS,
@@ -8,14 +7,14 @@ import {
 const _serveToast = (tMessage) => {
   if (Platform.OS === "android") {
     ToastAndroid.showWithGravityAndOffset(
-      tMessage + " ",
+      tMessage,
       ToastAndroid.SHORT,
       ToastAndroid.BOTTOM,
       25,
       50
     );
   } else {
-    AlertIOS.alert("Error: " + tMessage + " ");
+    AlertIOS.alert("Error: " + tMessage);
   }
 };
 

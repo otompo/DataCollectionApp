@@ -842,7 +842,7 @@ export const UserSingleSelectInput = ({
   desc,
   type,
   id,
-  questionsDetail,
+  question,
   questionMandatoryOption,
   setFieldValue,
   errors,
@@ -888,17 +888,19 @@ export const UserSingleSelectInput = ({
         ) : null}
       </View>
       <View>
-        {questionsDetail.options.map((item) => (
-          <>
-            <View style={{ marginBottom: 0.1, flexDirection: "row"}}>
-              <RadioButton
-                value={item}
-                status={checked === item ? "checked" : "unchecked"}
-                onPress={() => setChecked(item)}
-              />
-              <Text style={{ marginTop: 8 }}>{item}</Text>
-            </View>
-          </>
+        {question.options.map((item) => (
+          <View
+            key={item.toString() + Math.random().toString()}
+            style={{ marginBottom: 0.1, flexDirection: "row" }}
+          >
+            <RadioButton
+              color={colors.primary}
+              value={item}
+              status={checked === item ? "checked" : "unchecked"}
+              onPress={() => setChecked(item)}
+            />
+            <Text style={{ marginTop: 8 }}>{item}</Text>
+          </View>
         ))}
       </View>
       <View>
@@ -917,7 +919,7 @@ export const UserMultySelectInput = ({
   type,
   setFieldValue,
   questionMandatoryOption,
-  questionsDetail,
+  question,
   errors,
 }) => {
   const [check, setCheck] = useState(Array());
@@ -931,7 +933,7 @@ export const UserMultySelectInput = ({
       setCheck([...check, item]);
     }
 
-    setFieldValue(questionsDetail.questionId, [...check, item]);
+    setFieldValue(question.questionId, [...check, item]);
   };
 
   return (
@@ -968,8 +970,9 @@ export const UserMultySelectInput = ({
         ) : null}
       </View>
       <View>
-        {questionsDetail.options.map((item) => (
+        {question.options.map((item) => (
           <View
+            key={item.toString() + Math.random().toString()}
             style={{
               marginVertical: 1,
               flexDirection: "row",
@@ -977,6 +980,7 @@ export const UserMultySelectInput = ({
             }}
           >
             <Checkbox
+              color={colors.primary}
               style={{ marginRight: 10 }}
               status={check?.includes(item) ? "checked" : "unchecked"}
               onPress={() => {

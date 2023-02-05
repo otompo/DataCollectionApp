@@ -35,7 +35,6 @@ function ResponseScanner({ route, navigation }) {
   const [age, setAge] = useState("");
   const [week, setWeek] = useState("");
   const [parity, setParity] = useState("");
-  const [household_phone, setHousehold_phone] = useState("");
   const [channel, setChannel] = useState("");
   const [language, setLanguage] = useState("");
   const [ownership, setOwnership] = useState("");
@@ -168,7 +167,6 @@ function ResponseScanner({ route, navigation }) {
     setAge("");
     setParity("");
     setWeek("");
-    setHousehold_phone("");
     setChannel("");
     setLanguage("");
     setOwnership("");
@@ -252,7 +250,6 @@ function ResponseScanner({ route, navigation }) {
         bodyFormData.append("age", age);
         bodyFormData.append("week", week);
         bodyFormData.append("parity", parity);
-        bodyFormData.append("household_phone", household_phone);
         bodyFormData.append("channel", channel);
         bodyFormData.append("language", language);
         bodyFormData.append("ownership", ownership);
@@ -572,36 +569,6 @@ function ResponseScanner({ route, navigation }) {
                         "No. of deliveries with atleast 6 months gestation"
                       }
                     />
-                  </View>
-                  <View>
-                    <Text>
-                      Do you or anyone in your household own a mobile phone?
-                    </Text>
-                    <RadioButton.Group
-                      onValueChange={(newValue) => setHousehold_phone(newValue)}
-                      value={household_phone}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <View>
-                          <RadioButton color={colors.primary} value="yes" />
-                        </View>
-                        <View>
-                          <Text>Yes</Text>
-                        </View>
-                      </View>
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <View>
-                          <RadioButton color={colors.primary} value="no" />
-                        </View>
-                        <View>
-                          <Text>No</Text>
-                        </View>
-                      </View>
-                    </RadioButton.Group>
                   </View>
                   <View>
                     <Text>
