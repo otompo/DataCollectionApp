@@ -1,14 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image
-} from "react-native";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { StyleSheet, View, Text, Image } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppTextInput from "../components/Auth/AppTextInput";
 import SubmitButton from "../components/Button/SubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 import colors from "../config/colors";
 import { AuthContext } from "../context/authContext";
 import AppText from "../components/Auth/AppText";
@@ -17,59 +13,86 @@ import { API } from "../config/baseUrl";
 import axios from "axios";
 
 export const Signin = ({ navigation }) => {
-  const [serverAddress, setServerAddress] = useState(API);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
-
   const [authState, setAuthState] = useContext(AuthContext);
   const { user } = authState;
 
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+
   useEffect(() => {
-    if (user) {
+    AsyncStorage.setItem("baseURL", API);
+    if (user && user.status === true) {
       navigation.navigate("Drawer");
     }
   }, [user]);
 
-  const handleSubmit = async () => {
+  const netInfoListener = useRef();
+  useEffect(() => {
+    netInfoListener.current = NetInfo.addEventListener((user) => {
+      setIsConnected(user.isInternetReachable);
+    });
+  }, []);
 
-    setIsLoading(true);
-    setIsDisabled(true);
-
-    AsyncStorage.setItem("baseUrl", serverAddress);
-
-    if (!phoneNumber || !password) {
-      _serveToast("All fields are required");
-      setIsLoading(false);
-      setIsDisabled(false);
-      return;
-    }
-
+  const _handleOfflineLogin = async () => {
     try {
-      const { data } = await axios.get(
-        serverAddress + `/userlogindetails?phone_number=${phoneNumber}&password=${password}`
+      const loggedUser = JSON.parse(
+        await AsyncStorage.getItem("@auth")
       );
 
-      if (!data || data.status === false || data.data === null) {
-        _serveToast("Login failed, try again");
-        setIsLoading(false);
-        setIsDisabled(false);
-        setPassword("");
-      } else {
-        const prepData = { user: data, status: true };
-        await AsyncStorage.setItem("@auth", JSON.stringify(prepData));
-        setAuthState(prepData);
-        setIsLoading(false);
-        setIsDisabled(false);
-        setPassword("");
-        navigation.navigate("Drawer");
+      if (loggedUser && loggedUser.status === true) {
+        setAuthState(loggedUser);
       }
     } catch (err) {
       _serveToast("Something went wrong");
+    }
+  };
+
+  const _handleLogin = async () => {
+    
+        setIsLoading(true);
+        setIsDisabled(true);
+
+      try {
+            const { data } = await axios.get(
+              API +
+                `/userlogindetails?phone_number=${phoneNumber}&password=${password}`
+            );
+
+            if(data && data.status === true)
+            {
+              const loggedUser = { user: data, status: true };
+              await AsyncStorage.setItem(
+                "@auth",
+                JSON.stringify(loggedUser)
+              );
+              setAuthState(loggedUser);
+              setIsLoading(false);
+              setIsDisabled(false);
+              navigation.navigate("Drawer");
+            } else {
+              _serveToast("Login failed, try again");
+              return;
+            }
+
+      } catch (error) {
+        _serveToast("Something went wrong");
+        return;
+      }
+  };
+
+  const handleSubmit = async () => {
+
+    if (!phoneNumber || !password) {
+      _serveToast("All fields are required");
+      return;
+    }
+      _handleLogin();
+
       setIsLoading(false);
       setIsDisabled(false);
-    }
   };
 
   return (
@@ -80,60 +103,60 @@ export const Signin = ({ navigation }) => {
       showsHorizontalScrollIndicator={false}
       style={styles.container}
     >
-          <View style={styles.MainContainer}>
-            <View style={styles.logoContainer}>
-              <Image source={require("../assets/collect-logo.png")} />
-              <AppText center style={styles.title}>
-                Log into your account
-              </AppText>
-            </View>
-            <View style={{ paddingHorizontal: 20 }}>
-              <AppTextInput
-                autoCorrect={false}
-                icon="phone"
-                placeholder="Phone Number"
-                keyboardType="numeric"
-                value={phoneNumber}
-                setValue={setPhoneNumber}
-                maxLength={10}
-              />
-            </View>
-            <View style={{ paddingHorizontal: 20 }}>
-              <AppTextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                icon="lock"
-                value={password}
-                setValue={setPassword}
-                placeholder="Password"
-                secureTextEntry
-                textContentType="password"
-                autoCompleteType="password"
-              />
-            </View>
+      <View style={styles.MainContainer}>
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/collect-logo.png")} />
+          <AppText center style={styles.title}>
+            Log into your account
+          </AppText>
+        </View>
+        <View style={{ paddingHorizontal: 20 }}>
+          <AppTextInput
+            autoCorrect={false}
+            icon="phone"
+            placeholder="Phone Number"
+            keyboardType="numeric"
+            value={phoneNumber}
+            setValue={setPhoneNumber}
+            maxLength={10}
+          />
+        </View>
+        <View style={{ paddingHorizontal: 20 }}>
+          <AppTextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="lock"
+            value={password}
+            setValue={setPassword}
+            placeholder="Password"
+            secureTextEntry
+            textContentType="password"
+            autoCompleteType="password"
+          />
+        </View>
 
-            <SubmitButton
-              title="Login"
-              onPress={handleSubmit}
-              loading={isLoading}
-              disabled={isDisabled}
-            />
+        <SubmitButton
+          title="Login"
+          onPress={handleSubmit}
+          loading={isLoading}
+          disabled={isDisabled}
+        />
 
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View>
-                <Text color={colors.primary}>No account?</Text>
-              </View>
-              <View>
-                <Text
-                  onPress={() => navigation.navigate("Signup")}
-                  color={colors.primary}
-                >
-                  {" "}
-                  Signup
-                </Text>
-              </View>
-            </View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View>
+            <Text color={colors.primary}>No account?</Text>
           </View>
+          <View>
+            <Text
+              onPress={() => navigation.navigate("Signup")}
+              color={colors.primary}
+            >
+              {" "}
+              Signup
+            </Text>
+          </View>
+        </View>
+      </View>
     </KeyboardAwareScrollView>
   );
 };

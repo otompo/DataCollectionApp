@@ -42,6 +42,8 @@
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
     "react-native-autogrow-textinput": "^5.4.0",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-element-dropdown": "^2.9.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-material-dropdown-v2": "^0.12.0",

@@ -51,7 +51,9 @@ export function DrawerContent(props) {
               icons="user"
               title={authState && authState.user && authState.user.full_name}
               iconc="phone"
-              subTitle={authState && authState.user && authState.user.phone_number}
+              subTitle={
+                authState && authState.user && authState.user.phone_number
+              }
               oncono="circle"
               offcono="circle"
               subSubTitle={`${networkConnection ? " Online" : " Offline"} `}
@@ -75,6 +77,21 @@ export function DrawerContent(props) {
               label="QR Code Scanner"
               onPress={() => {
                 props.navigation.navigate("QRCodeScanner");
+              }}
+            />
+
+            <DrawerItem
+              icon={({ color, size }) => (
+                <Icon name="qrcode" color={colors.primary} size={40} />
+              )}
+              label="Registration"
+              onPress={() => {
+                //props.navigation.navigate("ResponseScanner");
+                props.navigation.navigate("ResponseScanner", {
+                  response: "20230322080802",
+                  form: "1",
+                  tracker: "12",
+                });
               }}
             />
           </Drawer.Section>
